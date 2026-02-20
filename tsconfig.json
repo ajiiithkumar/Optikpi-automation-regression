@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "es2019",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "strict": false,
+        "noImplicitAny": false,
+        "outDir": "dist",
+        "skipLibCheck": true,
+        "types": [
+            "node",
+            "playwright"
+        ]
+    },
+    "include": [
+        "src/**/*",
+        "scripts/**/*",
+        "config/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

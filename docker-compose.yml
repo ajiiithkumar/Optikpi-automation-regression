@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: optikpi-smoke-tests
+    environment:
+      - HEADLESS=true
+      - PARALLEL_THREADS=4
+    volumes:
+      # Extract test reports to host
+      - ./reports:/app/reports
+      # Mount credentials / user data from host
+      - ./data:/app/data
+    # Override the test command if needed, e.g.:
+    #   docker compose run tests npm run test:serial
+    #   docker compose run tests npm test -- --dry-run

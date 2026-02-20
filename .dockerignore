@@ -1,0 +1,30 @@
+# Dependencies (rebuilt in container)
+node_modules/
+
+# Reports & runtime artifacts
+reports/
+*.log
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Runtime ephemeral data
+data/auth/
+data/.user-locks/
+src/users/auth/
+src/users/.user-locks/
+
+# Git
+.git/
+.gitignore
+
+# Docker (avoid recursive builds)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store

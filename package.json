@@ -1,0 +1,36 @@
+{
+  "name": "optikpi_v2.0_smoketest_automation",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node -e \"const fs=require('fs');const s='src/support/reporting/templates/step_logs_macro.njk';const d='node_modules/cucumber-js-extent/extent/view/macros/step_logs_macro.njk';if(fs.existsSync(s)&&fs.existsSync('node_modules/cucumber-js-extent')){fs.cpSync(s,d);console.log('Patched extent report template')}\"",
+    "clean": "rimraf reports/extent reports/screenshots reports/json src/users/.user-locks src/users/auth",
+    "pretest": "npm run clean",
+    "test": "cucumber-js -c config/cucumber.js",
+    "test:serial": "cross-env PARALLEL_THREADS=1 npm test",
+    "test:screenshots": "cross-env STEP_SCREENSHOTS=always SCENARIO_SCREENSHOTS=always npm test",
+    "test:extent": "npm run test:serial",
+    "test:parallel": "node src/runner/runner.js --groups",
+    "test:parallel:continue": "node src/runner/runner.js --groups --continue-on-fail",
+    "test:parallel:dry-run": "node src/runner/runner.js --groups --dry-run",
+    "slack:report": "node scripts/slack-report.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@cucumber/cucumber": "^12.5.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/cucumber": "^7.0.0",
+    "@types/node": "^22.13.1",
+    "cross-env": "^10.1.0",
+    "cucumber-js-extent": "^0.1.0",
+    "playwright": "^1.58.2",
+    "rimraf": "^6.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Reports & screenshots (generated artifacts)
+reports/
+
+# Log files
+*.log
+
+# Auth tokens & session data (sensitive)
+data/auth/
+data/.user-locks/
+
+# User credentials (sensitive)
+data/users-config/users.json
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# TypeScript build output
+dist/
+*.js.map
+
+# Environment variables
+.env
+.env.*

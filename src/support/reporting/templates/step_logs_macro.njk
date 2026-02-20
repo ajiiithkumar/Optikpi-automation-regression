@@ -1,0 +1,30 @@
+{% macro step_logs_display(step) %}
+    {% for log in step.logs %}
+			{% if log.type == 'attachment' %}
+				{% if log.text %}
+					<div class="step-text-log">
+						<pre>{{ log.text }}</pre>
+					</div>
+				{% elif log.video %}
+					<details>
+						<summary>Video Log</summary>
+						<video controls>
+						<source src="data:{{ log.mediatype }};base64,{{ log.video | trim}}" />
+						Your browser is unable to display video
+						</video>
+					</details>
+				{% elif log.image %}
+					<div class="step-image-log">
+						<a href="data:{{ log.mediatype }};base64,{{ log.image | trim}}" class="base64-img" data-featherlight="image">
+							Click here
+						</a>
+					</div>
+				{% else %}
+					<details>
+						<summary>Invalid '{{ log.mediatype }}' Log</summary>
+						<pre>{{ log.error }}</pre>
+					</details>	
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+{% endmacro %}

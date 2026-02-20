@@ -1,0 +1,15 @@
+{
+    "failFast": false,
+    "excludeFromMainRun": true,
+    "prerequisites": [
+        {
+            "tag": "@ST-AUD-04",
+            "name": "Audience Creation"
+        },
+        {
+            "tag": "@ST-CAMP-04",
+            "name": "Campaign Setup"
+        }
+    ],
+    "parallel": 2
+}

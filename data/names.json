@@ -1,0 +1,16 @@
+{
+  "campaign": {
+    "title": "Campaign-1771583244924-22642836341815",
+    "timestamp": "2026-02-20T10:30:08.025Z"
+  },
+  "audience": {
+    "title": "Audience-1771583301063-22698988116888",
+    "timestamp": "2026-02-20T10:28:21.070Z",
+    "brand": "Test"
+  },
+  "workflow": {
+    "title": "Audience-1771583417615-22815569044250",
+    "timestamp": "2026-02-20T10:30:17.622Z",
+    "brand": "Test"
+  }
+}
