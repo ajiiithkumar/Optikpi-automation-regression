@@ -192,7 +192,7 @@ export class CampaignPage extends BasePage {
     }
 
     async verifyCampaignVisible(name: string, timeout = 30000) {
-        const xpath = `//span[text() ='${name}']`;
-        await this.waitForVisible(xpath, timeout);
+        await this.page.getByText(name, { exact: false }).first()
+            .waitFor({ state: 'attached', timeout });
     }
 }

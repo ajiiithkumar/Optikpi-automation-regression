@@ -280,7 +280,7 @@ export const readNameJson = async (filePath = NAME_JSON_PATH): Promise<any> => {
 };
 
 export const saveNameEntry = async (
-    type: 'campaign' | 'audience' | 'workflow',
+    type: 'campaign' | 'audience' | 'workflow' | 'existingAudience',
     title: string,
     brand?: string
 ): Promise<void> => {
@@ -297,7 +297,7 @@ export const saveNameEntry = async (
 };
 
 export const getNameEntry = async (
-    type: 'campaign' | 'audience' | 'workflow'
+    type: 'campaign' | 'audience' | 'workflow' | 'existingAudience'
 ): Promise<{ title: string; timestamp: string } | null> => {
     const data = await readNameJson();
     const entry = data?.[type];

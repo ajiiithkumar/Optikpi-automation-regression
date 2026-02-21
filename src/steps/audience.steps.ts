@@ -2,7 +2,7 @@
 import { Then } from '@cucumber/cucumber';
 import { AudiencePage } from '../pages/audience.page';
 import { DateTimePicker } from '../pages/components/date-time-picker.component';
-import { getOrSetAudienceTitle, saveDraftAudienceTitle, readUsersCsv, getNewAudienceTitle } from '../utils/helper';
+import { getOrSetAudienceTitle, saveDraftAudienceTitle, readUsersCsv, getNewAudienceTitle, saveNameEntry, generateAudienceTitle } from '../utils/helper';
 import { ExtentTestManager } from '../utils/extent-test-manager';
 import { PlaywrightWorld } from '../support/world';
 
@@ -41,7 +41,7 @@ Then('Verify All tab data loads successfully', async function (this: PlaywrightW
 Then('Static tab should load successfully', async function (this: PlaywrightWorld) {
     const audience = getAudiencePage(this);
     await audience.clickTabStatic();
-    await this.page.waitForTimeout(500);
+    await this.page.waitForTimeout(2000);
     const isActive = await audience.isStaticTabActive();
     if (!isActive) {
         await ExtentTestManager.logFail('Static tab is not active after opening');
@@ -87,6 +87,17 @@ Then('Fill in the Audience details and save', async function (this: PlaywrightWo
     await audience.fillDetails(audienceTitle, 'auto-tag');
     await audience.clickCreateSubmit();
     ExtentTestManager.logPass(`Audience created with title: ${audienceTitle}`);
+});
+
+Then('Fill in the Existing Audience details and save', async function (this: PlaywrightWorld) {
+    const audienceTitle = generateAudienceTitle();
+    this['currentAudienceTitle'] = audienceTitle;
+    await saveNameEntry('existingAudience', audienceTitle, 'Test');
+
+    const audience = getAudiencePage(this);
+    await audience.fillDetails(audienceTitle, 'auto-tag');
+    await audience.clickCreateSubmit();
+    ExtentTestManager.logPass(`Existing Audience created with title: ${audienceTitle}`);
 });
 
 Then('It should enter into the edit page of the created Audience', async function (this: PlaywrightWorld) {

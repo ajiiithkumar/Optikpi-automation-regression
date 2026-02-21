@@ -13,8 +13,8 @@ const CLEAN_TARGETS = [
   EXTENT_DIR,
   'reports/screenshots',
   'reports/json',
-  'src/users/.user-locks',
-  'src/users/auth'
+  'data/.user-locks',
+  'data/auth'
 ];
 
 // ──────────────────────────────────────────────

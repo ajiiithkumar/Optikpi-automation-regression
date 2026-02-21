@@ -8,9 +8,9 @@ import { uniqueId, saveNameEntry, readNameJson } from '../utils/helper';
 // ─── Shared state ────────────────────────────────────────────────────────────
 
 // Inlined selectors (previously from AllModulePages)
-const SCHEDULE_TIME_SEL = "//div[@data-testid='audience-dateTimeSelection-modal-hour-select']//input";
+const SCHEDULE_TIME_SEL = "//button[@data-testid='audience-dateTimeUtil-dropdown-btn']";
 const SCHEDULE_APPLY_SEL = "//button[@data-testid='audience-dateTimeUtil-modal-apply-btn']";
-const SCHEDULE_ERROR_SEL = "//div[contains(@class,'text-red') or contains(@class,'error')]";
+const SCHEDULE_ERROR_SEL = "//p[text() = 'Trigger dates are not set properly. Please update the dates to finish campaign setup.']";
 const LIBRARY_SEARCH_SEL = "//input[@data-testid='library-search-input' or @placeholder='Search']";
 const LIBRARY_USE_CONTENT_SEL = "//button[@data-testid='library-use-this-content-btn' or contains(normalize-space(),'Use this content')]";
 
@@ -134,8 +134,8 @@ Then('click the Existing Audience button', async function (this: PlaywrightWorld
 
 Then('select the audience from the list', async function (this: PlaywrightWorld) {
     const data = await readNameJson();
-    const audienceName = data?.audience?.title;
-    if (!audienceName) throw new Error('No audience name found in Name.json');
+    const audienceName = data?.existingAudience?.title;
+    if (!audienceName) throw new Error('No existing audience name found in names.json (key: existingAudience). Run @TestPreparation first.');
 
     const page = getCampaignPage(this);
     await page.clickSelectExistingAudience();
