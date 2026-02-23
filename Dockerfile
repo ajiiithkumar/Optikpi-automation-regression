@@ -15,7 +15,7 @@ RUN npm ci
 RUN npx playwright install --with-deps chromium
 
 # ── Copy project source ─────────────────────────────────
-COPY tsconfig.json extent-config.json ./
+COPY .env tsconfig.json extent-config.json ./
 COPY config/        config/
 COPY features/      features/
 COPY scripts/       scripts/
