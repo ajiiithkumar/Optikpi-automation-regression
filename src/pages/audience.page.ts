@@ -98,8 +98,10 @@ export class AudiencePage extends BasePage {
 
     // ─── Audience Creation ───────────────────────────────────────────────────
 
-    async clickCreateNew()       { await this.click(this.sel.createNewBtn); }
-    async clickCreateFromScratch() { await this.click(this.sel.createFromScratch); }
+    async clickCreateNew()       { await this.pause(1000);
+        await this.click(this.sel.createNewBtn); }
+    async clickCreateFromScratch() { await this.pause(1000);
+        await this.click(this.sel.createFromScratch); }
 
     async waitForCreatePage() {
         await this.waitForVisible(this.sel.nameInput, 30000);

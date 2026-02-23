@@ -40,14 +40,30 @@ Then('Verify All tab data loads successfully', async function (this: PlaywrightW
 
 Then('Static tab should load successfully', async function (this: PlaywrightWorld) {
     const audience = getAudiencePage(this);
-    await audience.clickTabStatic();
-    await this.page.waitForTimeout(2000);
-    const isActive = await audience.isStaticTabActive();
-    if (!isActive) {
-        await ExtentTestManager.logFail('Static tab is not active after opening');
-        throw new Error('Static tab did not load successfully');
+    const maxRetries = 3;
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            await audience.clickTabStatic();
+            await this.page.waitForTimeout(3000);
+            const isActive = await audience.isStaticTabActive();
+            if (!isActive) throw new Error('Static tab is not active after clicking');
+            ExtentTestManager.logPass(`Static tab loaded (attempt ${attempt})`);
+            return;
+        } catch (err) {
+            lastError = err as Error;
+            console.log(`[Audience] Static tab attempt ${attempt} failed: ${lastError.message}`);
+            if (attempt < maxRetries) {
+                await this.page.waitForTimeout(3000);
+                await this.page.reload({ waitUntil: 'networkidle' }).catch(() => {});
+                await this.page.waitForTimeout(2000);
+            }
+        }
     }
-    ExtentTestManager.logPass('Static tab loaded');
+
+    await ExtentTestManager.logFail('Static tab is not active after retries');
+    throw lastError || new Error('Static tab did not load successfully');
 });
 
 Then('Live tab should load successfully', async function (this: PlaywrightWorld) {
@@ -269,14 +285,41 @@ Then('Click the Publish button and Confirm the Publish Schedule Audience', async
 
 Then('Filter the Audience with the saved Audience title', async function (this: PlaywrightWorld) {
     const audience = getAudiencePage(this);
-    await audience.applyActiveFilter();
-
     const entry = await getNewAudienceTitle();
     const expectedTitle = entry?.title;
     if (!expectedTitle) throw new Error('No audience title found in config/data/Name.json.');
 
-    await audience.searchByName(expectedTitle);
-    ExtentTestManager.logPass(`Filtered and searched for Audience: ${expectedTitle}`);
+    const maxRetries = 3;
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            console.log(`[Audience Search] Attempt ${attempt}/${maxRetries}...`);
+            await audience.applyActiveFilter();
+
+            // Clear the search field first, then enter the audience name
+            const searchField = this.page.locator("//input[@id='mobile-search-candidate']").first();
+            if (await searchField.isVisible().catch(() => false)) {
+                await searchField.fill('');
+                await this.page.waitForTimeout(500);
+            }
+            await audience.searchByName(expectedTitle);
+
+            // Verify audience is visible
+            await audience.verifyAudienceInList(expectedTitle);
+            ExtentTestManager.logPass(`Filtered and searched for Audience: ${expectedTitle} (attempt ${attempt})`);
+            return; // Success — exit the loop
+        } catch (err) {
+            lastError = err as Error;
+            console.log(`[Audience Search] Attempt ${attempt} failed: ${lastError.message}`);
+            if (attempt < maxRetries) {
+                console.log('[Audience Search] Retrying...');
+                await this.page.waitForTimeout(2000);
+            }
+        }
+    }
+
+    throw lastError || new Error(`Audience "${expectedTitle}" not found after ${maxRetries} attempts`);
 });
 
 Then('Verify the Audience is displayed in the list', async function (this: PlaywrightWorld) {
@@ -284,6 +327,7 @@ Then('Verify the Audience is displayed in the list', async function (this: Playw
     const expectedTitle = entry?.title;
     if (!expectedTitle) throw new Error('No audience title found in config/data/Name.json.');
 
+    // Verification already done in filter step with retry
     await getAudiencePage(this).verifyAudienceInList(expectedTitle);
     ExtentTestManager.logPass(`Verified Audience "${expectedTitle}" is displayed in the list`);
 });

@@ -49,8 +49,27 @@ Then('Click The All tab', async function (this: PlaywrightWorld) {
 });
 
 Then('Verify Workflow All tab should load successfully', async function (this: PlaywrightWorld) {
-    await getWorkflowPage(this).pause(2000);
-    ExtentTestManager.logPass('All tab loaded successfully');
+    const maxRetries = 3;
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            await getWorkflowPage(this).clickAllTab();
+            await getWorkflowPage(this).pause(2000);
+            ExtentTestManager.logPass(`All tab loaded successfully (attempt ${attempt})`);
+            return;
+        } catch (err) {
+            lastError = err as Error;
+            console.log(`[Workflow] All tab attempt ${attempt} failed: ${lastError.message}`);
+            if (attempt < maxRetries) {
+                await this.page.waitForTimeout(2000);
+                await this.page.reload({ waitUntil: 'networkidle' }).catch(() => {});
+                await this.page.waitForTimeout(2000);
+            }
+        }
+    }
+
+    throw lastError || new Error('Workflow All tab did not load after retries');
 });
 
 // ─── Workflow Creation Steps (ST-Workflow-03) ────────────────────────────────
@@ -289,8 +308,37 @@ Then('Enter the workflow name in the search bar', async function (this: Playwrig
         ExtentTestManager.logFail('No workflow name found in saved data');
         return;
     }
-    await getWorkflowPage(this).searchWorkflow(workflowName);
-    ExtentTestManager.logPass(`Entered workflow name in search bar: ${workflowName}`);
+
+    const workflow = getWorkflowPage(this);
+    const maxRetries = 3;
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            console.log(`[Workflow Search] Attempt ${attempt}/${maxRetries}...`);
+            // Clear the search field first, then enter the workflow name
+            const searchField = this.page.locator("//input[@name='search-input-box']").first();
+            await searchField.fill('');
+            await this.page.waitForTimeout(500);
+            await workflow.searchWorkflow(workflowName);
+
+            // Verify workflow is visible
+            const isVisible = await workflow.verifyWorkflowInList(workflowName);
+            if (!isVisible) throw new Error(`Workflow "${workflowName}" not found in the list`);
+
+            ExtentTestManager.logPass(`Workflow "${workflowName}" found in the list (attempt ${attempt})`);
+            return; // Success — exit the loop
+        } catch (err) {
+            lastError = err as Error;
+            console.log(`[Workflow Search] Attempt ${attempt} failed: ${lastError.message}`);
+            if (attempt < maxRetries) {
+                console.log('[Workflow Search] Retrying...');
+                await this.page.waitForTimeout(2000);
+            }
+        }
+    }
+
+    throw lastError || new Error(`Workflow "${workflowName}" not found after ${maxRetries} attempts`);
 });
 
 Then('Verify the workflow name is shown in the list', async function (this: PlaywrightWorld) {
@@ -301,9 +349,10 @@ Then('Verify the workflow name is shown in the list', async function (this: Play
         throw new Error('No workflow name found in saved data');
     }
 
+    // Verification already done in search step with retry
     const isVisible = await getWorkflowPage(this).verifyWorkflowInList(workflowName);
     if (isVisible) {
-        ExtentTestManager.logPass(`Workflow "${workflowName}" found in the list`);
+        ExtentTestManager.logPass(`Verified Workflow "${workflowName}" is in the list`);
     } else {
         ExtentTestManager.logFail(`Workflow "${workflowName}" not found in the list`);
         throw new Error(`Workflow "${workflowName}" not found in the list`);

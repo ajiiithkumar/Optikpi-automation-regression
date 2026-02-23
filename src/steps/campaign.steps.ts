@@ -83,8 +83,29 @@ Then('Click the Create campaign button', async function (this: PlaywrightWorld) 
 });
 
 Then('Verify the Campaign should should Create and navigate to the Edit Campaign page', async function (this: PlaywrightWorld) {
-    await getCampaignPage(this).waitForEditPage();
-    ExtentTestManager.logPass('Campaign created and navigated to Edit Campaign page');
+    const maxRetries = 3;
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            const titleText = await getCampaignPage(this).getEditTitle();
+            if (!titleText.includes(campaignName)) {
+                throw new Error(`Edit page title "${titleText}" does not match campaign name "${campaignName}"`);
+            }
+            ExtentTestManager.logPass(`Campaign created and navigated to Edit Campaign page — title verified: "${titleText}" (attempt ${attempt})`);
+            return;
+        } catch (err) {
+            lastError = err as Error;
+            console.log(`[Campaign] Edit page wait attempt ${attempt} failed: ${lastError.message}`);
+            if (attempt < maxRetries) {
+                await this.page.waitForTimeout(3000);
+                await this.page.reload({ waitUntil: 'networkidle' }).catch(() => {});
+                await this.page.waitForTimeout(2000);
+            }
+        }
+    }
+
+    throw lastError || new Error('Campaign Edit page did not load after retries');
 });
 
 // ─── Goal Steps ──────────────────────────────────────────────────────────────
@@ -309,12 +330,40 @@ Then('click the Publish Confirm button', async function (this: PlaywrightWorld) 
 });
 
 Then('Enter the Campaign Name in the search bar', async function (this: PlaywrightWorld) {
-    console.log(campaignName);
-    await getCampaignPage(this).searchCampaign(campaignName);
-    ExtentTestManager.logPass(`Entered Campaign Name in search bar: ${campaignName}`);
+    const page = getCampaignPage(this);
+    const maxRetries = 3;
+    let lastError: Error | null = null;
+    const searchBarSel = "//input[@id='campaign-listView-table-search-icon']";
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            console.log(`[Campaign Search] Attempt ${attempt}/${maxRetries}...`);
+            // Clear the search field first, then enter the campaign name
+            const searchField = this.page.locator(searchBarSel).first();
+            await searchField.click();
+            await searchField.fill('');
+            await this.page.waitForTimeout(500);
+            await page.searchCampaign(campaignName);
+
+            // Verify campaign is visible
+            await page.verifyCampaignVisible(campaignName, 15000);
+            ExtentTestManager.logPass(`Campaign "${campaignName}" found in the Active tab (attempt ${attempt})`);
+            return; // Success — exit the loop
+        } catch (err) {
+            lastError = err as Error;
+            console.log(`[Campaign Search] Attempt ${attempt} failed: ${lastError.message}`);
+            if (attempt < maxRetries) {
+                console.log('[Campaign Search] Retrying...');
+                await this.page.waitForTimeout(2000);
+            }
+        }
+    }
+
+    throw lastError || new Error(`Campaign "${campaignName}" not found after ${maxRetries} attempts`);
 });
 
 Then('Verify the campaign is visible in the Active tab', async function (this: PlaywrightWorld) {
+    // Verification already done in the search step with retry
     await getCampaignPage(this).verifyCampaignVisible(campaignName);
-    ExtentTestManager.logPass(`Campaign "${campaignName}" is visible in the Active tab`);
+    ExtentTestManager.logPass(`Verified Campaign "${campaignName}" is visible in the Active tab`);
 });

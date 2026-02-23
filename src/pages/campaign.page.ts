@@ -95,6 +95,11 @@ export class CampaignPage extends BasePage {
         await this.waitForVisible(this.sel.editTitle, timeout);
     }
 
+    async getEditTitle(timeout = 30000): Promise<string> {
+        await this.waitForVisible(this.sel.editTitle, timeout);
+        return this.page.locator(this.sel.editTitle).first().innerText();
+    }
+
     // ─── Goal ────────────────────────────────────────────────────────────────
 
     async clickGoalClick() {

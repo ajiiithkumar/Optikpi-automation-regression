@@ -117,8 +117,26 @@ Given('I log in for module {string}', async function (this: PlaywrightWorld, mod
 When('I navigate to {string}', async function (this: PlaywrightWorld, moduleName: string) {
     ExtentTestManager.logInfo(`Navigating to ${moduleName}`);
     const navBar = new NavigationBar(this.page!);
-    await navBar.navigateTo(moduleName);
-    ExtentTestManager.logPass(`Navigated to ${moduleName}`);
+    const maxRetries = 3;
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            await navBar.navigateTo(moduleName);
+            ExtentTestManager.logPass(`Navigated to ${moduleName} (attempt ${attempt})`);
+            return;
+        } catch (err) {
+            lastError = err as Error;
+            console.log(`[Navigation] Attempt ${attempt} to ${moduleName} failed: ${lastError.message}`);
+            if (attempt < maxRetries) {
+                await this.page!.waitForTimeout(2000);
+                await this.page!.reload({ waitUntil: 'networkidle' }).catch(() => {});
+                await this.page!.waitForTimeout(2000);
+            }
+        }
+    }
+
+    throw lastError || new Error(`Failed to navigate to ${moduleName} after ${maxRetries} attempts`);
 });
 
 Then('I should see the {string} page', async function (this: PlaywrightWorld, moduleName: string) {

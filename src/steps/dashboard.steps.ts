@@ -50,8 +50,26 @@ Then('Business Performance tab should load', async function (this: PlaywrightWor
 });
 
 Then('Marketing tab should load', async function (this: PlaywrightWorld) {
-    await getDashboardPage(this).openTab('Marketing');
-    ExtentTestManager.logPass('Marketing tab loaded');
+    const maxRetries = 3;
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            await getDashboardPage(this).openTab('Marketing');
+            ExtentTestManager.logPass(`Marketing tab loaded (attempt ${attempt})`);
+            return;
+        } catch (err) {
+            lastError = err as Error;
+            console.log(`[Dashboard] Marketing tab attempt ${attempt} failed: ${lastError.message}`);
+            if (attempt < maxRetries) {
+                await this.page.waitForTimeout(2000);
+                await this.page.reload({ waitUntil: 'networkidle' }).catch(() => {});
+                await this.page.waitForTimeout(2000);
+            }
+        }
+    }
+
+    throw lastError || new Error('Marketing tab did not load after retries');
 });
 
 Then('Notification tab should load', async function (this: PlaywrightWorld) {

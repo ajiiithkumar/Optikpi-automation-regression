@@ -1,6 +1,6 @@
 {
     "failFast": false,
-    "parallel": 3,
+    "parallel": 4,
     "prerequisites": [
         {
             "tag": "@TestPreparation",

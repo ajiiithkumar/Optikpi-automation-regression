@@ -30,11 +30,11 @@ RUN cp src/support/reporting/templates/step_logs_macro.njk \
 # Force headless mode inside the container (no display)
 ENV HEADLESS=true
 # Single-threaded by default; override with -e PARALLEL_THREADS=N
-ENV PARALLEL_THREADS=1
+ENV PARALLEL_THREADS=4
 # Set timezone to IST to match the OptiKPI app
 ENV TZ=Asia/Kolkata
 # Register ts-node ESM loader so Cucumber can import .ts formatters
 ENV NODE_OPTIONS="--loader ts-node/esm --no-warnings"
 
 # ── Entrypoint ──────────────────────────────────────────
-CMD ["npm", "test"]
+CMD ["npm", "run", "test:parallel"]

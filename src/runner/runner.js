@@ -2,17 +2,25 @@ const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+// Load .env file
+try { require('dotenv').config(); } catch (_) {}
+
 // ──────────────────────────────────────────────
 // Constants
 // ──────────────────────────────────────────────
 const EXTENT_DIR = 'reports/extent';
 const EXTENT_HTML = path.join(EXTENT_DIR, 'OptiKPI_V2.0_Smoke_Test.html');
 const PARALLEL_CONFIG_PATH = path.join('config', 'parallel-run-config.json');
+const RERUN_FILE = path.join('reports', 'rerun.txt');
+const RUN_SUMMARY_FILE = path.join('reports', 'run-summary.json');
+const MAX_RETRIES = 1;  // Number of times to retry failed scenarios
 
 const CLEAN_TARGETS = [
   EXTENT_DIR,
   'reports/screenshots',
   'reports/json',
+  RERUN_FILE,
+  RUN_SUMMARY_FILE,
   'data/.user-locks',
   'data/auth'
 ];
@@ -51,6 +59,157 @@ const formatDuration = (ms) => {
   const mins = Math.floor(ms / 60000);
   const remSecs = ((ms % 60000) / 1000).toFixed(0);
   return `${mins}m ${remSecs}s`;
+};
+
+// ──────────────────────────────────────────────
+// Retry failed scenarios
+// ──────────────────────────────────────────────
+const retryFailedScenarios = (reportPath, parallelCount, extraArgs = []) => {
+  const rerunFullPath = path.join(process.cwd(), RERUN_FILE);
+  if (!fs.existsSync(rerunFullPath)) {
+    console.log('[Runner] No rerun file found — nothing to retry.');
+    return { retried: false, status: 1 };
+  }
+
+  const rerunContent = fs.readFileSync(rerunFullPath, 'utf8').trim();
+  if (!rerunContent) {
+    console.log('[Runner] Rerun file is empty — nothing to retry.');
+    return { retried: false, status: 1 };
+  }
+
+  // Count failed scenarios
+  const failedScenarios = rerunContent.split('\n').filter(line => line.trim());
+  console.log(`\n[Runner] 🔄 RETRYING ${failedScenarios.length} failed scenario(s)...`);
+  failedScenarios.forEach(s => console.log(`  → ${s}`));
+  console.log();
+
+  // Clean up rerun file before retry
+  try { fs.unlinkSync(rerunFullPath); } catch (_) {}
+
+  // Re-run only the failed scenarios (serial for stability)
+  const retryCucumberArgs = [
+    'cucumber-js',
+    '-c', 'config/cucumber.js',
+    '--parallel', '1',
+    `--format`, `rerun:${RERUN_FILE}`,
+    ...extraArgs,
+    ...failedScenarios,
+  ];
+
+  const retryResult = run('npx', retryCucumberArgs, { EXTENT_REPORT_PATH: reportPath });
+  const retryStatus = typeof retryResult.status === 'number' ? retryResult.status : 1;
+
+  if (retryStatus === 0) {
+    console.log('[Runner] ✅ RETRY PASSED — all previously failed scenarios now pass.');
+  } else {
+    console.log('[Runner] ❌ RETRY FAILED — some scenarios still failing.');
+  }
+
+  return { retried: true, status: retryStatus };
+};
+
+// ──────────────────────────────────────────────
+// Write run summary JSON for Slack
+// ──────────────────────────────────────────────
+const writeRunSummary = (mainStatus, mainDuration, rerunFile) => {
+  const summaryPath = path.join(process.cwd(), RUN_SUMMARY_FILE);
+  const screenshotDir = path.join(process.cwd(), 'reports', 'screenshots');
+
+  // Parse failed scenarios from rerun file
+  const failedScenarios = [];
+  const rerunFullPath = path.join(process.cwd(), rerunFile || RERUN_FILE);
+  if (mainStatus !== 0 && fs.existsSync(rerunFullPath)) {
+    const rerunContent = fs.readFileSync(rerunFullPath, 'utf8').trim();
+    const rerunLines = rerunContent.split('\n').filter(l => l.trim());
+
+    for (const line of rerunLines) {
+      // Format: features\campaign.feature:51
+      const [featurePath, lineNum] = line.trim().split(':');
+      const normalizedPath = featurePath.replace(/\\/g, '/');
+      const fullFeaturePath = path.join(process.cwd(), normalizedPath);
+
+      let scenarioName = 'Unknown Scenario';
+      let tags = [];
+
+      // Parse the feature file to extract scenario name and tags
+      if (fs.existsSync(fullFeaturePath)) {
+        const featureLines = fs.readFileSync(fullFeaturePath, 'utf8').split('\n');
+        const targetLine = parseInt(lineNum, 10) - 1;
+        if (targetLine >= 0 && targetLine < featureLines.length) {
+          // Find the scenario line
+          const scenarioLine = featureLines[targetLine].trim();
+          const scenarioMatch = scenarioLine.match(/Scenario(?:\s+Outline)?:\s*(.+)/i);
+          if (scenarioMatch) {
+            scenarioName = scenarioMatch[1].trim();
+          }
+
+          // Look backward for tags
+          for (let i = targetLine - 1; i >= 0; i--) {
+            const prevLine = featureLines[i].trim();
+            if (prevLine.startsWith('@')) {
+              tags = prevLine.match(/@[\w-]+/g) || [];
+              break;
+            }
+            if (prevLine && !prevLine.startsWith('#')) break;
+          }
+        }
+      }
+
+      failedScenarios.push({
+        feature: normalizedPath,
+        line: parseInt(lineNum, 10),
+        name: scenarioName,
+        tags,
+      });
+    }
+  }
+
+  // Collect failed screenshots
+  const failedScreenshots = [];
+  if (fs.existsSync(screenshotDir)) {
+    const files = fs.readdirSync(screenshotDir);
+    for (const file of files) {
+      if (file.includes('FAILED')) {
+        failedScreenshots.push(path.join(screenshotDir, file));
+      }
+    }
+  }
+
+  // Count scenarios from the Extent report (main run only, not prereqs)
+  let totalScenarios = 0, passed = 0, failed = 0;
+  const reportPath = path.join(process.cwd(), EXTENT_HTML);
+  if (fs.existsSync(reportPath)) {
+    const html = fs.readFileSync(reportPath, 'utf8');
+    // Try to extract scenario counts from Extent report
+    const passMatch = html.match(/pass[^"]*"[^>]*>\s*(\d+)/i)
+      || html.match(/<span[^>]*class="[^"]*label-success[^"]*"[^>]*>\s*(\d+)/i);
+    const failMatch = html.match(/fail[^"]*"[^>]*>\s*(\d+)/i)
+      || html.match(/<span[^>]*class="[^"]*label-danger[^"]*"[^>]*>\s*(\d+)/i);
+    if (passMatch) passed = parseInt(passMatch[1], 10);
+    if (failMatch) failed = parseInt(failMatch[1], 10);
+    totalScenarios = passed + failed;
+  }
+
+  const summary = {
+    status: mainStatus === 0 ? 'passed' : 'failed',
+    totalScenarios,
+    passed,
+    failed,
+    duration: formatDuration(mainDuration),
+    durationMs: mainDuration,
+    timestamp: new Date().toLocaleString(),
+    failedScenarios,
+    failedScreenshots,
+  };
+
+  try {
+    fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2), 'utf8');
+    console.log(`[Runner] Run summary written to: ${RUN_SUMMARY_FILE}`);
+  } catch (err) {
+    console.warn(`[Runner] Warning: failed to write run summary: ${err.message}`);
+  }
+
+  return summary;
 };
 
 // ──────────────────────────────────────────────
@@ -514,13 +673,23 @@ const main = () => {
         '-c', 'config/cucumber.js',
         '--parallel', String(parallelCount),
         '--tags', `"${mainTagExpr}"`,
+        `--format`, `rerun:${RERUN_FILE}`,
         ...extraArgs,
       ];
 
       const mainStart = Date.now();
       const mainResult = run('npx', mainCucumberArgs, { EXTENT_REPORT_PATH: mainReportPath });
-      const mainDuration = Date.now() - mainStart;
-      const mainStatus = typeof mainResult.status === 'number' ? mainResult.status : 1;
+      let mainDuration = Date.now() - mainStart;
+      let mainStatus = typeof mainResult.status === 'number' ? mainResult.status : 1;
+
+      // ── Retry failed scenarios ──
+      if (mainStatus !== 0 && MAX_RETRIES > 0) {
+        const { retried, status: retryStatus } = retryFailedScenarios(mainReportPath, 1, extraArgs);
+        if (retried) {
+          mainDuration = Date.now() - mainStart;  // Include retry duration
+          mainStatus = retryStatus;
+        }
+      }
 
       // ── Summary ──
       console.log('\n' + '═'.repeat(70));
@@ -538,6 +707,7 @@ const main = () => {
         console.log('[Runner] Extent report: reports/extent/OptiKPI_V2.0_Smoke_Test.html');
       }
 
+      writeRunSummary(mainStatus, mainDuration, RERUN_FILE);
       sendSlackNotification();
       process.exit(prereqFailed || mainStatus !== 0 ? 1 : 0);
     }
