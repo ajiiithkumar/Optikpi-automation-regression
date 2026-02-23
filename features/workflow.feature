@@ -16,7 +16,7 @@ Feature: Workflow module
     Then Verify Workflow All tab should load successfully
 
   @SmokeTest @ST-Workflow-02
-  Scenario: Workflow page load
+  Scenario: Workflow Activation with error validation
     Given I log in for module "Workflow"
     When I navigate to "Workflow"
     Then I should see the "Workflow" page

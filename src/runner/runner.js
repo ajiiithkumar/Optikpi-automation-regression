@@ -82,7 +82,7 @@ const setupExtentReport = () => {
 // Slack notification
 // ──────────────────────────────────────────────
 const sendSlackNotification = () => {
-  if (!process.env.SLACK_WEBHOOK_URL) return;
+  if (!process.env.SLACK_WEBHOOK_URL && !process.env.SLACK_BOT_TOKEN) return;
   console.log('[Runner] Sending report summary to Slack...');
   const slackScript = path.join(process.cwd(), 'scripts', 'slack-report.js');
   if (fs.existsSync(slackScript)) {

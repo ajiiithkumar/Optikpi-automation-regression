@@ -241,9 +241,9 @@ export class AudiencePage extends BasePage {
         const searchField = this.page.locator(this.sel.mainSearchField).first();
         if (await searchField.isVisible().catch(() => false)) {
             await searchField.fill(name);
-            await this.pause(2000);
             await this.page.keyboard.press('Enter').catch(() => {});
-            await this.pause(2000);
+            await this.pause(4000);
+            await this.page.keyboard.press('Enter').catch(() => {});
         }
     }
 
