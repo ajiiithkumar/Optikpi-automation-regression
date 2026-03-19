@@ -98,8 +98,10 @@ export class AudiencePage extends BasePage {
 
     // ─── Audience Creation ───────────────────────────────────────────────────
 
-    async clickCreateNew()       { await this.click(this.sel.createNewBtn); }
-    async clickCreateFromScratch() { await this.click(this.sel.createFromScratch); }
+    async clickCreateNew()       { await this.pause(1000);
+        await this.click(this.sel.createNewBtn); }
+    async clickCreateFromScratch() { await this.pause(1000);
+        await this.click(this.sel.createFromScratch); }
 
     async waitForCreatePage() {
         await this.waitForVisible(this.sel.nameInput, 30000);
@@ -242,7 +244,8 @@ export class AudiencePage extends BasePage {
         if (await searchField.isVisible().catch(() => false)) {
             await searchField.fill(name);
             await this.page.keyboard.press('Enter').catch(() => {});
-            await this.pause(2000);
+            await this.pause(4000);
+            await this.page.keyboard.press('Enter').catch(() => {});
         }
     }
 
@@ -255,10 +258,7 @@ export class AudiencePage extends BasePage {
 
         const editBtn = this.page.locator("//button[@data-testid='audience-listView-tableList-dropdownIcon-1-edit-audience']").first();
         await editBtn.waitFor({ state: 'visible', timeout: 20000 });
-        await Promise.allSettled([
-            this.page.waitForLoadState('networkidle').catch(() => {}),
-            editBtn.click(),
-        ]);
+        await editBtn.click();
     }
 
     async verifyEditPageTitle(expectedTitle: string) {

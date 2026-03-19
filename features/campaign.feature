@@ -72,3 +72,7 @@ Feature: Campaign module
     Then click the Set Communication button
     Then click the Publish button
     Then click the Publish Confirm button
+    Then Click the Active tab
+    Then Verify Active tab should load successfully
+    Then Enter the Campaign Name in the search bar
+    Then Verify the campaign is visible in the Active tab

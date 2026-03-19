@@ -12,6 +12,7 @@ const SCREENSHOTS_DIR = path.join(process.cwd(), 'reports', 'screenshots');
 const MAX_PREFIX_LENGTH = 80;
 const FALLBACK_PNG_BASE64 =
     'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMB/axjX8sAAAAASUVORK5CYII=';
+const DEBUG_SCREENSHOTS = process.env.DEBUG_SCREENSHOTS === '1' || process.env.DEBUG_SCREENSHOTS === 'true';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 // audience.json path kept for cleanup only
@@ -195,10 +196,10 @@ export const captureScreenshot = async (world: any, options: any = {}): Promise<
         attachToReport = true
     } = options;
 
-    console.log(`[Screenshot] Capturing: ${filePrefix}`);
+    if (DEBUG_SCREENSHOTS) console.log(`[Screenshot] Capturing: ${filePrefix}`);
 
     if (label) {
-        console.log(`[Screenshot] Label: ${label}`);
+        if (DEBUG_SCREENSHOTS) console.log(`[Screenshot] Label: ${label}`);
     }
 
     const page = world?.page;
@@ -207,30 +208,30 @@ export const captureScreenshot = async (world: any, options: any = {}): Promise<
 
     if (!page || typeof page.screenshot !== 'function') {
         captureError = 'No page available for screenshot';
-        console.log(`[Screenshot] ${captureError}`);
+        if (DEBUG_SCREENSHOTS) console.log(`[Screenshot] ${captureError}`);
     } else {
         buffer = await page
             .screenshot({ fullPage, timeout: timeoutMs })
             .catch((err: any) => {
                 captureError = err?.message || 'Screenshot capture failed';
-                console.log(`[Screenshot] Capture failed: ${captureError}`);
+                if (DEBUG_SCREENSHOTS) console.log(`[Screenshot] Capture failed: ${captureError}`);
                 return null;
             });
     }
 
     if (!buffer) {
         buffer = Buffer.from(FALLBACK_PNG_BASE64, 'base64');
-        console.log('[Screenshot] Using fallback image');
+        if (DEBUG_SCREENSHOTS) console.log('[Screenshot] Using fallback image');
     } else {
-        console.log(`[Screenshot] Captured buffer size: ${buffer.length} bytes`);
+        if (DEBUG_SCREENSHOTS) console.log(`[Screenshot] Captured buffer size: ${buffer.length} bytes`);
     }
 
     if (writeToDisk) {
         try {
             const diskPath = await writeScreenshot(buffer, filePrefix, SCREENSHOTS_DIR);
-            console.log(`[Screenshot] Saved to disk: ${diskPath}`);
+            if (DEBUG_SCREENSHOTS) console.log(`[Screenshot] Saved to disk: ${diskPath}`);
         } catch (err: any) {
-            console.log(`[Screenshot] Disk write failed: ${err.message}`);
+            if (DEBUG_SCREENSHOTS) console.log(`[Screenshot] Disk write failed: ${err.message}`);
         }
     }
 
@@ -238,11 +239,11 @@ export const captureScreenshot = async (world: any, options: any = {}): Promise<
         try {
             await world.attach(buffer, 'image/png');
             if (captureError) {
-                console.log(`[Screenshot] Fallback reason: ${captureError}`);
+                if (DEBUG_SCREENSHOTS) console.log(`[Screenshot] Fallback reason: ${captureError}`);
             }
-            console.log('[Screenshot] Attached to Cucumber (Extent report)');
+            if (DEBUG_SCREENSHOTS) console.log('[Screenshot] Attached to Cucumber (Extent report)');
         } catch (err: any) {
-            console.log(`[Screenshot] Cucumber attach failed: ${err.message}`);
+            if (DEBUG_SCREENSHOTS) console.log(`[Screenshot] Cucumber attach failed: ${err.message}`);
         }
     }
 
@@ -280,7 +281,7 @@ export const readNameJson = async (filePath = NAME_JSON_PATH): Promise<any> => {
 };
 
 export const saveNameEntry = async (
-    type: 'campaign' | 'audience' | 'workflow',
+    type: 'campaign' | 'audience' | 'workflow' | 'existingAudience',
     title: string,
     brand?: string
 ): Promise<void> => {
@@ -297,7 +298,7 @@ export const saveNameEntry = async (
 };
 
 export const getNameEntry = async (
-    type: 'campaign' | 'audience' | 'workflow'
+    type: 'campaign' | 'audience' | 'workflow' | 'existingAudience'
 ): Promise<{ title: string; timestamp: string } | null> => {
     const data = await readNameJson();
     const entry = data?.[type];

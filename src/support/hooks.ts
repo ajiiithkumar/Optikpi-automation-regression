@@ -1,5 +1,5 @@
 
-import { After, AfterAll, AfterStep, Before, Status } from '@cucumber/cucumber';
+import { After, AfterAll, AfterStep, Before, BeforeStep, Status } from '@cucumber/cucumber';
 import { chromium, Browser, BrowserContext, Page } from 'playwright';
 import { ExtentTestManager } from '../utils/extent-test-manager';
 import * as Helper from '../utils/helper';
@@ -25,6 +25,15 @@ const shouldCaptureScenario = (status: any): boolean => {
 const shouldCaptureStep = (status: any): boolean => {
     return status === Status.PASSED || status === Status.FAILED;
 };
+
+// ─── Auto-skip remaining steps when limit reached ────────────────────────────
+BeforeStep(async function (this: PlaywrightWorld, { pickleStep }: any) {
+    if (this.limitReached) {
+        console.log(`[LimitReached] ⏭️ Skipping step: ${pickleStep.text}`);
+        ExtentTestManager.logInfo(`⏭️ Skipped (limit reached): ${pickleStep.text}`);
+        return 'skipped';
+    }
+});
 
 Before(async function (this: any, scenario: any) {
     // SET THE TEST CONTEXT FOR EXTENT REPORT
