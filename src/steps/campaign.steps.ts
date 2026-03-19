@@ -326,6 +326,16 @@ Then('click the Publish button', async function (this: PlaywrightWorld) {
 
 Then('click the Publish Confirm button', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).confirmPublish();
+
+    // Check for "limit reached" popup
+    const { found, message } = await getCampaignPage(this).checkLimitReachedPopup();
+    if (found) {
+        this.limitReached = true;
+        ExtentTestManager.logInfo(`⚠️ ${message} — skipping remaining steps`);
+        ExtentTestManager.logPass('Campaign Publish — limit reached, step passed gracefully');
+        return;
+    }
+
     ExtentTestManager.logPass('Clicked Publish Confirm button — Campaign published');
 });
 

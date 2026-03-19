@@ -77,7 +77,7 @@ const retryFailedScenarios = (reportPath, parallelCount, extraArgs = []) => {
     return { retried: false, status: 1 };
   }
 
-  // Count failed scenarios
+  // Parse failed scenario paths (e.g., "features\audience.feature:53")
   const failedScenarios = rerunContent.split('\n').filter(line => line.trim());
   console.log(`\n[Runner] 🔄 RETRYING ${failedScenarios.length} failed scenario(s)...`);
   failedScenarios.forEach(s => console.log(`  → ${s}`));
@@ -86,14 +86,20 @@ const retryFailedScenarios = (reportPath, parallelCount, extraArgs = []) => {
   // Clean up rerun file before retry
   try { fs.unlinkSync(rerunFullPath); } catch (_) {}
 
-  // Re-run only the failed scenarios (serial for stability)
+  // Build retry args WITHOUT config/cucumber.js to avoid loading all feature paths
+  // Pass only the failed scenario paths + required setup
   const retryCucumberArgs = [
     'cucumber-js',
-    '-c', 'config/cucumber.js',
-    '--parallel', '1',
+    '--require-module', 'ts-node/register',
+    '--require', 'src/steps/**/*.ts',
+    '--require', 'src/support/**/*.ts',
+    '--require', 'src/utils/**/*.ts',
+    '--format', 'progress',
+    `--format`, `./src/support/reporting/extent-adapter-wrapper.ts:${reportPath}`,
     `--format`, `rerun:${RERUN_FILE}`,
+    '--parallel', '1',
     ...extraArgs,
-    ...failedScenarios,
+    ...failedScenarios,   // ONLY the failed scenario paths (e.g., features/audience.feature:53)
   ];
 
   const retryResult = run('npx', retryCucumberArgs, { EXTENT_REPORT_PATH: reportPath });

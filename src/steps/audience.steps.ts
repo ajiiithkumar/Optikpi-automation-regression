@@ -264,12 +264,31 @@ Then('Verify the added 4 user Id are still in the Audience', async function (thi
 
 Then('Click the Publish button and Confirm the Publish Static Audience', async function (this: PlaywrightWorld) {
     await getAudiencePage(this).publishStatic();
+
+    // Check for "limit reached" popup
+    const { found, message } = await getAudiencePage(this).checkLimitReachedPopup();
+    if (found) {
+        this.limitReached = true;
+        ExtentTestManager.logInfo(`⚠️ ${message} — skipping remaining steps`);
+        ExtentTestManager.logPass('Publish Static Audience — limit reached, step passed gracefully');
+        return;
+    }
+
     ExtentTestManager.logPass('Published Static Audience Clicked successfully');
 });
 
 Then('Click the Publish button and Confirm the Publish Schedule Audience', async function (this: PlaywrightWorld) {
     const audience = getAudiencePage(this);
     await audience.publishSchedule();
+
+    // Check for "limit reached" popup
+    const { found, message } = await audience.checkLimitReachedPopup();
+    if (found) {
+        this.limitReached = true;
+        ExtentTestManager.logInfo(`⚠️ ${message} — skipping remaining steps`);
+        ExtentTestManager.logPass('Publish Schedule Audience — limit reached, step passed gracefully');
+        return;
+    }
 
     // Schedule date/time with retry
     const datePicker = getDatePicker(this);

@@ -1,39 +1,47 @@
 # ──────────────────────────────────────────────────────────
-# OptiKPI Smoke Test Automation — Docker image
-# Base: Official Playwright image (includes browsers + deps)
+# OptiKPI Smoke Test Automation — Optimized Docker image
+# Single-stage build with Chromium-only + aggressive cleanup
 # ──────────────────────────────────────────────────────────
 FROM mcr.microsoft.com/playwright:v1.52.0-noble
 
-# Set working directory
 WORKDIR /app
 
-# ── Install dependencies (layer-cached) ─────────────────
+# ── Install dependencies + Chromium only (single RUN = fewer layers) ──
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --ignore-scripts && \
+      npx playwright install --with-deps chromium && \
+      # ── Cleanup: remove Firefox & WebKit browsers ──
+      rm -rf /root/.cache/ms-playwright/firefox-* \
+      /root/.cache/ms-playwright/webkit-* && \
+      # ── Cleanup: npm cache ──
+      npm cache clean --force && \
+      # ── Cleanup: apt cache ──
+      rm -rf /tmp/* /var/lib/apt/lists/* /var/cache/apt/* && \
+      # ── Cleanup: prune node_modules junk ──
+      find node_modules \( -name "*.md" -o -name "LICENSE" -o -name "LICENSE.*" \
+      -o -name "CHANGELOG*" -o -name "*.map" -o -name "*.d.ts.map" \) \
+      -type f -delete 2>/dev/null || true && \
+      find node_modules \( -name ".github" -o -name "docs" -o -name "doc" \
+      -o -name "example" -o -name "examples" -o -name "test" \
+      -o -name "tests" -o -name "__tests__" -o -name ".nyc_output" \) \
+      -type d -exec rm -rf {} + 2>/dev/null || true
 
-# ── Install matching Chromium for the installed Playwright version ──
-RUN npx playwright install --with-deps chromium
-
-# ── Copy project source ─────────────────────────────────
-COPY .env tsconfig.json extent-config.json ./
+# ── Copy project source (minimal files only) ─────────────
+COPY tsconfig.json extent-config.json .env ./
 COPY config/        config/
 COPY features/      features/
 COPY scripts/       scripts/
 COPY src/           src/
 COPY data/          data/
 
-# ── Patch extent report template (inline text + image popup) ─
+# ── Patch extent report template ─────────────────────────
 RUN cp src/support/reporting/templates/step_logs_macro.njk \
       node_modules/cucumber-js-extent/extent/view/macros/step_logs_macro.njk
 
 # ── Default environment ─────────────────────────────────
-# Force headless mode inside the container (no display)
 ENV HEADLESS=true
-# Single-threaded by default; override with -e PARALLEL_THREADS=N
 ENV PARALLEL_THREADS=4
-# Set timezone to IST to match the OptiKPI app
 ENV TZ=Asia/Kolkata
-# Register ts-node ESM loader so Cucumber can import .ts formatters
 ENV NODE_OPTIONS="--loader ts-node/esm --no-warnings"
 
 # ── Entrypoint ──────────────────────────────────────────

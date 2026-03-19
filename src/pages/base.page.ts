@@ -67,4 +67,50 @@ export class BasePage {
     protected async waitForNetworkIdle() {
         await this.page.waitForLoadState('networkidle').catch(() => {});
     }
+
+    /**
+     * Check for a "limit reached" error popup and dismiss it.
+     * Returns { found: true, message } if popup was detected and dismissed,
+     * or { found: false } if no popup.
+     */
+    async checkLimitReachedPopup(): Promise<{ found: boolean; message: string }> {
+        await this.pause(2000);
+
+        // Look for popup text containing "limit reached"
+        const limitPopup = this.page.locator(
+            "//*[contains(translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'limit reached')]"
+        ).first();
+
+        const isVisible = await limitPopup.isVisible().catch(() => false);
+        if (!isVisible) return { found: false, message: '' };
+
+        // Grab the popup message
+        const message = await limitPopup.innerText().catch(() => 'Limit reached');
+        console.log(`[LimitCheck] ⚠️ Limit reached popup detected: ${message.trim()}`);
+
+        // Click Dismiss button
+        const dismissBtn = this.page.locator(
+            "//button[normalize-space()='Dismiss']"
+        ).first();
+
+        if (await dismissBtn.isVisible().catch(() => false)) {
+            await dismissBtn.click();
+            await this.pause(1000);
+            console.log('[LimitCheck] Clicked Dismiss button');
+        } else {
+            // Fallback: press Escape or click X
+            const closeBtn = this.page.locator(
+                "//*[contains(@class,'close') or @aria-label='Close'] | //button[contains(@class,'close')]"
+            ).first();
+            if (await closeBtn.isVisible().catch(() => false)) {
+                await closeBtn.click();
+            } else {
+                await this.page.keyboard.press('Escape');
+            }
+            await this.pause(1000);
+            console.log('[LimitCheck] Dismissed popup via close/escape');
+        }
+
+        return { found: true, message: message.trim() };
+    }
 }

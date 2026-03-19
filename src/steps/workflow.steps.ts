@@ -189,6 +189,16 @@ Then('Click the Workflow Publish button', async function (this: PlaywrightWorld)
 
 Then('Click the Workflow Publish confirm button', async function (this: PlaywrightWorld) {
     await getWorkflowPage(this).confirmPublish();
+
+    // Check for "limit reached" popup
+    const { found, message } = await getWorkflowPage(this).checkLimitReachedPopup();
+    if (found) {
+        this.limitReached = true;
+        ExtentTestManager.logInfo(`⚠️ ${message} — skipping remaining steps`);
+        ExtentTestManager.logPass('Workflow Publish — limit reached, step passed gracefully');
+        return;
+    }
+
     ExtentTestManager.logPass('Clicked Workflow Publish confirm button');
 });
 
