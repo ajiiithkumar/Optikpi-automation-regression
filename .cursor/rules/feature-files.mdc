@@ -1,0 +1,48 @@
+---
+description: Gherkin feature file conventions and tagging strategy
+globs: features/**/*.feature
+alwaysApply: false
+---
+
+# Feature File Conventions
+
+## File Organisation
+
+- One feature file per module: `audience.feature`, `campaign.feature`, `workflow.feature`, etc.
+- Smoke tests appear first, then regression scenarios below a comment separator
+- Group related regression scenarios under comment headers
+
+```gherkin
+Feature: Module name
+
+  @SmokeTest @ST-MODULE-01
+  Scenario: Smoke test scenario
+    ...
+
+  # ─────────────────────────────────────────────
+  # REGRESSION
+  # ─────────────────────────────────────────────
+
+  @Regression @Module @TC-MODULE-01
+  Scenario: Regression test scenario
+    ...
+```
+
+## Tagging Strategy
+
+| Tag | Purpose | Used by runner |
+|-----|---------|---------------|
+| `@SmokeTest` | Core smoke tests | Main parallel run |
+| `@Regression` | Extended regression tests | Filtered runs |
+| `@TestPreparation` | Must run before parallel groups | Prerequisites phase |
+| `@ExistingAudience` | Scenario creates a reusable published audience | Saves to `existingAudience` key |
+| `@ST-<MODULE>-<NN>` | Smoke test identifier | Reporting |
+| `@TC-<MODULE>-<NN>` | Regression test identifier | Reporting, `names.json` keys |
+
+## Step Wording
+
+- Steps must match existing step definitions exactly (case-sensitive)
+- Check `src/steps/*.ts` before writing new step text
+- Existing smoke test steps use lowercase verbs: `click the Set Goal button`
+- Regression steps may use title case: `Click the Set Goal button`
+- Do not mix styles within a single scenario

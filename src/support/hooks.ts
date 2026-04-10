@@ -41,6 +41,13 @@ Before(async function (this: any, scenario: any) {
 
     this._hasFailureScreenshot = false;
 
+    // Extract all scenario tags and the unique identifier tag
+    const tags: any[] = scenario?.pickle?.tags || [];
+    const allTags = tags.map((t: any) => String(t.name || '').replace('@', ''));
+    this.scenarioTags = allTags;
+    this.scenarioTag = allTags
+        .find((t: string) => /^TC-AUD-REG-\d+$/.test(t) || /^ST-/.test(t) || /^TestPreparation$/.test(t)) || '';
+
     if (!sharedBrowser) {
         const headless = process.env.HEADLESS === 'true' || this.parameters?.headless === true;
         sharedBrowser = await chromium.launch({

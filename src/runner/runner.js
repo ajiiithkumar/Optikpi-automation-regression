@@ -539,6 +539,165 @@ const mergeExtentReports = (groups, results) => {
 };
 
 // ──────────────────────────────────────────────
+// Merge prerequisite + main reports (Ordered mode)
+// ──────────────────────────────────────────────
+const mergeOrderedReports = (prereqResults, allResults) => {
+  const extentDir = path.join(process.cwd(), EXTENT_DIR);
+  const outputPath = path.join(extentDir, 'OptiKPI_V2.0_Smoke_Test.html');
+
+  const reportFiles = [];
+
+  // Collect prerequisite HTML files
+  for (let i = 0; i < prereqResults.length; i++) {
+    if (prereqResults[i].skipped) continue;
+    const prereqFile = path.join(extentDir, `prereq-${i + 1}.html`);
+    if (fs.existsSync(prereqFile)) {
+      reportFiles.push({
+        path: prereqFile,
+        name: `Prerequisite: ${prereqResults[i].name}`,
+        index: reportFiles.length + 1
+      });
+    }
+  }
+
+  // Collect main run HTML
+  const mainFile = path.join(extentDir, 'main-run.html');
+  if (fs.existsSync(mainFile)) {
+    reportFiles.push({
+      path: mainFile,
+      name: 'Main Run (@SmokeTest)',
+      index: reportFiles.length + 1
+    });
+  }
+
+  if (reportFiles.length === 0) {
+    console.warn('[Runner] No report files found — cannot merge.');
+    return;
+  }
+
+  // Only one report — just copy it as the final report
+  if (reportFiles.length === 1) {
+    fs.copyFileSync(reportFiles[0].path, outputPath);
+    console.log(`[Runner] Single report copied to: ${EXTENT_HTML}`);
+    return;
+  }
+
+  const now = new Date().toLocaleString();
+
+  const groupTabs = reportFiles.map(rf =>
+    `<button class="group-tab ${rf.index === 1 ? 'active' : ''}" onclick="showGroup(this, ${rf.index})">${rf.name}</button>`
+  ).join('\n        ');
+
+  const groupSections = reportFiles.map(rf => {
+    const relPath = path.basename(rf.path);
+    return `<iframe id="group-${rf.index}" class="group-section" src="${relPath}" style="display: ${rf.index === 1 ? 'block' : 'none'}"></iframe>`;
+  }).join('\n      ');
+
+  const summaryRows = allResults.map((r, i) => {
+    const statusClass = r.skipped ? 'skip' : r.status === 0 ? 'pass' : 'fail';
+    const statusLabel = r.skipped ? '⏭ SKIPPED' : r.status === 0 ? '✅ PASSED' : '❌ FAILED';
+    return `<tr class="${statusClass}">
+      <td>${i + 1}</td>
+      <td>${r.name}</td>
+      <td>${statusLabel}</td>
+      <td>${formatDuration(r.duration)}</td>
+    </tr>`;
+  }).join('\n          ');
+
+  const combinedHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>OptiKPI V2.0 Smoke Test — Combined Report</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }
+    .group-runner-header {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #fff;
+      padding: 20px 30px;
+    }
+    .group-runner-header h1 { margin: 0 0 5px; font-size: 20px; }
+    .group-runner-header .timestamp { font-size: 12px; opacity: 0.7; }
+    .group-summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 14px;
+    }
+    .group-summary-table th {
+      background: #475569;
+      color: #fff;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .group-summary-table td { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; }
+    .group-summary-table tr.pass td { background: #f0fdf4; }
+    .group-summary-table tr.fail td { background: #fef2f2; }
+    .group-summary-table tr.skip td { background: #f8fafc; color: #94a3b8; }
+    .group-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 10px 30px 0;
+      background: #f1f5f9;
+      border-bottom: 2px solid #e2e8f0;
+      flex-wrap: wrap;
+    }
+    .group-tab {
+      padding: 10px 20px;
+      border: none;
+      background: #e2e8f0;
+      cursor: pointer;
+      border-radius: 6px 6px 0 0;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .group-tab:hover { background: #cbd5e1; }
+    .group-tab.active { background: #fff; border-bottom: 2px solid #3b82f6; color: #1e40af; }
+    .group-section {
+      width: 100%;
+      height: calc(100vh - 60px);
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="group-runner-header">
+    <h1>OptiKPI V2.0 Smoke Test — Combined Report</h1>
+    <div class="timestamp">${now}</div>
+    <table class="group-summary-table">
+      <thead>
+        <tr><th>#</th><th>Phase</th><th>Status</th><th>Duration</th></tr>
+      </thead>
+      <tbody>
+        ${summaryRows}
+      </tbody>
+    </table>
+  </div>
+  <div class="group-tabs">
+    ${groupTabs}
+  </div>
+  <div class="group-content">
+    ${groupSections}
+  </div>
+  <script>
+    function showGroup(btn, idx) {
+      document.querySelectorAll('.group-section').forEach(function(s) { s.style.display = 'none'; });
+      document.querySelectorAll('.group-tab').forEach(function(t) { t.classList.remove('active'); });
+      document.getElementById('group-' + idx).style.display = 'block';
+      btn.classList.add('active');
+    }
+  </script>
+</body>
+</html>`;
+
+  fs.writeFileSync(outputPath, combinedHtml, 'utf8');
+  console.log(`[Runner] Merged ${reportFiles.length} phase reports into: ${EXTENT_HTML}`);
+};
+
+// ──────────────────────────────────────────────
 // Legacy runner (no groups — plain cucumber-js)
 // ──────────────────────────────────────────────
 const runLegacy = (argv) => {
@@ -574,6 +733,15 @@ const main = () => {
   }
 
   clean();
+  // Reset names.json to prevent stale data from previous runs
+  const namesJsonPath = path.join(process.cwd(), 'data', 'names.json');
+  try {
+    fs.mkdirSync(path.dirname(namesJsonPath), { recursive: true });
+    fs.writeFileSync(namesJsonPath, '{}', 'utf8');
+    console.log('[Runner] Reset data/names.json');
+  } catch (err) {
+    console.warn(`[Runner] Warning: failed to reset names.json: ${err.message}`);
+  }
   setupExtentReport();
 
   // ── Parallel / Ordered mode ──
@@ -646,10 +814,6 @@ const main = () => {
         } else {
           console.log(`[Runner] ✅ ${label} PASSED (${formatDuration(duration)})`);
         }
-
-        // Clean up temp prerequisite report
-        const tempFullPath = path.join(process.cwd(), tempReportPath);
-        try { if (fs.existsSync(tempFullPath)) fs.unlinkSync(tempFullPath); } catch (_) {}
       }
 
       if (prereqFailed && failFast) {
@@ -673,7 +837,7 @@ const main = () => {
       console.log(`[Runner]   tags: ${mainTagExpr}`);
       console.log('─'.repeat(50));
 
-      const mainReportPath = path.join(EXTENT_DIR, 'OptiKPI_V2.0_Smoke_Test.html');
+      const mainReportPath = path.join(EXTENT_DIR, 'main-run.html');
       const mainCucumberArgs = [
         'cucumber-js',
         '-c', 'config/cucumber.js',
@@ -708,6 +872,13 @@ const main = () => {
       const mainLabel = mainStatus === 0 ? '✅ PASSED' : '❌ FAILED';
       console.log(`  ${pad('→', 4)} ${pad('Main run (all @SmokeTest)', 38)} ${pad(mainLabel, 12)} ${pad(formatDuration(mainDuration), 12)}`);
       console.log('═'.repeat(70) + '\n');
+
+      // Merge prerequisite + main reports into a single HTML
+      const allResults = [
+        ...prereqResults.map(r => ({ ...r, name: `[prereq] ${r.name}` })),
+        { name: 'Main run (@SmokeTest)', status: mainStatus, skipped: false, duration: mainDuration }
+      ];
+      mergeOrderedReports(prereqResults, allResults);
 
       if (fs.existsSync(path.join(process.cwd(), EXTENT_HTML))) {
         console.log('[Runner] Extent report: reports/extent/OptiKPI_V2.0_Smoke_Test.html');
