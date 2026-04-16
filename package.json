@@ -4,9 +4,10 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "node -e \"const fs=require('fs');const s='src/support/reporting/templates/step_logs_macro.njk';const d='node_modules/cucumber-js-extent/extent/view/macros/step_logs_macro.njk';if(fs.existsSync(s)&&fs.existsSync('node_modules/cucumber-js-extent')){fs.cpSync(s,d);console.log('Patched extent report template')}\"",
-    "clean": "rimraf reports/extent reports/screenshots reports/json src/users/.user-locks src/users/auth",
+    "clean": "rimraf reports/extent reports/screenshots reports/json data/.user-locks data/auth",
     "pretest": "npm run clean",
     "test": "cucumber-js -c config/cucumber.js",
+    "pretest:tag": "rimraf data/.user-locks data/auth",
     "test:tag": "cucumber-js -c config/cucumber.js --tags",
     "test:serial": "cross-env PARALLEL_THREADS=1 npm test",
     "test:screenshots": "cross-env STEP_SCREENSHOTS=always SCENARIO_SCREENSHOTS=always npm test",
@@ -34,7 +35,7 @@
     "dotenv": "^17.3.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.57.0",
+    "@playwright/test": "^1.59.1",
     "@types/cucumber": "^7.0.0",
     "@types/node": "^22.13.1",
     "cross-env": "^10.1.0",

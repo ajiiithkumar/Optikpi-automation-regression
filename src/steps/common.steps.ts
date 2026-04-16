@@ -53,24 +53,40 @@ const createSession = async (world: PlaywrightWorld, username: string, password:
     if (!world.browser) throw new Error("Browser not initialized");
     const context = await world.browser.newContext(contextOptions);
     const page = await context.newPage();
+    const didLogin = await loginIfNeeded(page, username, password);
     if (!isHeadless) {
         await page.evaluate(() => {
-            (document.body.style as any).zoom = '70%';
-        });
+            if (document.body) {
+                (document.body.style as any).zoom = '70%';
+            }
+        }).catch(() => {});
     }
-    const didLogin = await loginIfNeeded(page, username, password);
     if (didLogin || !fs.existsSync(storagePath)) {
         await context.storageState({ path: storagePath });
     }
     return { username, context, page };
 };
 
+const RETRYABLE_LOGIN_ERRORS = [
+    'timeout',
+    'networkidle',
+    'net::',
+    'ERR_',
+    'navigation',
+    'waiting for main navigation',
+    'context was destroyed',
+    'target closed',
+];
+
+const isRetryableLoginError = (err: Error): boolean =>
+    RETRYABLE_LOGIN_ERRORS.some(keyword => err.message.toLowerCase().includes(keyword.toLowerCase()));
+
 async function loginForModule(this: PlaywrightWorld, moduleName: string) {
     const MAX_RETRIES = 3;
     const RETRY_DELAY_MS = 3000;
 
     if (!this.user) {
-        const { user, lockFile } = await acquireUser({ timeoutMs: 3600000 });
+        const { user, lockFile } = await acquireUser({ timeoutMs: 120000 });
         this.user = user;
         this.userLockFile = lockFile;
         ExtentTestManager.logInfo(`User acquired for scenario: ${user.username}`);
@@ -79,22 +95,64 @@ async function loginForModule(this: PlaywrightWorld, moduleName: string) {
     let lastError: Error | null = null;
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
-            if (this.context) {
-                await this.page!.close().catch(() => {});
-                await this.context.close().catch(() => {});
+            if (attempt === 1) {
+                // First attempt: full fresh context
+                if (this.context) {
+                    await this.page!.close().catch(() => {});
+                    await this.context.close().catch(() => {});
+                }
+                const session = await createSession(this, this.user.username, this.user.password);
+                this.context = session.context;
+                this.page = session.page;
+                this.username = session.username;
+            } else {
+                const pageUnusable = !this.page || this.page.isClosed();
+
+                if (pageUnusable) {
+                    // Attempt 1 threw before assigning this.page — close any orphaned context and start fresh
+                    ExtentTestManager.logInfo(`Login retry ${attempt}/${MAX_RETRIES} — page unavailable, creating fresh context`);
+                    if (this.context) {
+                        await this.context.close().catch(() => {});
+                        this.context = null;
+                        this.page = null;
+                    }
+                    const session = await createSession(this, this.user.username, this.user.password);
+                    this.context = session.context;
+                    this.page = session.page;
+                    this.username = session.username;
+                } else {
+                    // Page is alive — reuse existing context, just reload login and re-fill
+                    ExtentTestManager.logInfo(`Login retry ${attempt}/${MAX_RETRIES} — reusing context, reloading login page`);
+                    const loginPage = new LoginPage(this.page!);
+                    const navBar = new NavigationBar(this.page!);
+
+                    await loginPage.goto();
+                    const loginVisible = await loginPage.isLoginFormVisible();
+                    if (!loginVisible) {
+                        // Already logged in (session recovered) — nothing to do
+                        ExtentTestManager.logInfo('Session recovered — login form not visible on retry');
+                    } else {
+                        await loginPage.login(this.user.username, this.user.password!);
+                        const navReady = await navBar.waitForAnyNavVisible(60000);
+                        if (!navReady) {
+                            throw new Error('Timed out waiting for main navigation after retry login (60s).');
+                        }
+                    }
+                    this.username = this.user.username;
+                }
             }
 
-            const session = await createSession(this, this.user.username, this.user.password);
-            this.context = session.context;
-            this.page = session.page;
-            this.username = session.username;
             if (attempt > 1) {
                 ExtentTestManager.logInfo(`Login succeeded on attempt ${attempt}/${MAX_RETRIES}`);
             }
             return;
         } catch (err: any) {
             lastError = err;
-            ExtentTestManager.logInfo(`Login attempt ${attempt}/${MAX_RETRIES} failed: ${err.message}`);
+            if (!isRetryableLoginError(err)) {
+                ExtentTestManager.logInfo(`Login failed with non-retryable error: ${err.message}`);
+                break;
+            }
+            ExtentTestManager.logInfo(`Login attempt ${attempt}/${MAX_RETRIES} failed (retryable): ${err.message}`);
             if (attempt < MAX_RETRIES) {
                 await new Promise(r => setTimeout(r, RETRY_DELAY_MS));
             }

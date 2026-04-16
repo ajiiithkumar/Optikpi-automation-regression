@@ -382,7 +382,7 @@ Feature: Campaign module
     Then Verify Draft tab should load successfully
     Then Enter the Campaign Name in the search bar
     Then Verify the campaign is visible in the Draft tab
-    Then Click on the draft campaign
+    Then Enter into the campaign Edit page
     Then Verify the campaign navigates to the Edit Campaign page
     Then Verify the Open Goal is still set and retained
 

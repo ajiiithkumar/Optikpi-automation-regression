@@ -54,9 +54,7 @@ Before(async function (this: any, scenario: any) {
             headless,
             args: [
                 '--start-maximized',
-                '--window-size=1920,1080',
-                '--disable-gpu',
-                '--disable-software-rasterizer'
+                '--window-size=1920,1080'
             ]
         });
     }

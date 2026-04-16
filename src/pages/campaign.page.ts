@@ -70,10 +70,12 @@ export class CampaignPage extends BasePage {
         totalAllocation:      "//*[contains(@data-testid,'total-allocation')]",
         addCriteriaBtn:       "//button[contains(@data-testid,'add-criteria') or contains(normalize-space(),'Add Criteria')]",
 
-        // Publish
+        // Publish / Draft
         publishBtn:        "//button[@data-testid='campaign-publish-button']",
         publishConfirm:    "//button[@data-testid='modal-submit-button']",
         saveDraftBtn:      "//button[@data-testid='campaign-save-draft-button']",
+        saveDraftConfirm:  "//button[@data-testid='modal-submit-button']",
+        headlessModal:     "//*[@id='headlessui-portal-root']//form",
 
         // Search
         searchBar:  "//input[@id='campaign-listView-table-search-icon']",
@@ -86,8 +88,10 @@ export class CampaignPage extends BasePage {
         backToListBtn:        "//button[contains(@data-testid,'back-to-list') or contains(@aria-label,'Back')] | //a[contains(@href,'/campaign')]",
 
         // Campaign row / list
-        campaignRow:      "//tr[contains(@class,'campaign-row')] | //div[contains(@class,'campaign-card')]",
-        threeDotMenu:     "//button[contains(@data-testid,'campaign-action-menu') or contains(@aria-label,'Actions') or contains(@class,'action-menu')]",
+        campaignRow:          "//tr[contains(@class,'campaign-row')] | //div[contains(@class,'campaign-card')]",
+        dropdownIcon:         "//button[@data-testid='campaign-list-view-table-dropdown-icon']",
+        dropdownEditSettings: "//button[@data-testid='campaign-list-view-table-dropdown-icon-edit-settings']",
+        threeDotMenu:         "//button[contains(@data-testid,'campaign-action-menu') or contains(@aria-label,'Actions') or contains(@class,'action-menu')]",
         duplicateOption:  "//button[contains(normalize-space(),'Duplicate')] | //li[contains(normalize-space(),'Duplicate')]",
         deleteOption:     "//button[contains(normalize-space(),'Delete')] | //li[contains(normalize-space(),'Delete')]",
         duplicateConfirm: "//button[@data-testid='modal-submit-button' or contains(normalize-space(),'Confirm')]",
@@ -95,12 +99,12 @@ export class CampaignPage extends BasePage {
         successToast:     "//*[contains(@class,'toast') or contains(@class,'notification') or contains(@class,'Toastify')][string-length(normalize-space()) > 0]",
 
         // Pagination
-        nextPageBtn:     "//button[contains(@data-testid,'next-page') or contains(@aria-label,'Next') or contains(normalize-space(),'>')]",
-        prevPageBtn:     "//button[contains(@data-testid,'prev-page') or contains(@aria-label,'Previous') or contains(normalize-space(),'<')]",
+        nextPageBtn:     "//button[@data-testid='campaign-pagination-next-btn']",
+        prevPageBtn:     "//button[@data-testid='campaign-pagination-previous-btn']",
 
         // Filter
-        filterBtn:       "//button[contains(@data-testid,'filter') or contains(normalize-space(),'Filter')]",
-        clearFilterBtn:  "//button[contains(@data-testid,'clear-filter') or contains(normalize-space(),'Clear')]",
+        filterBtn:       "//button[@data-testid='campaign-listView-table-filter-icon']",
+        clearFilterBtn:  "//button[@data-testid='campaign-filters-reset-button']",
 
         // History Log
         historyLogBtn:   "//button[contains(@data-testid,'history-log') or contains(normalize-space(),'History')] | //tab[contains(normalize-space(),'History')]",
@@ -167,6 +171,16 @@ export class CampaignPage extends BasePage {
         const row = this.page.locator(`//*[contains(normalize-space(),'${name}')]`).first();
         await row.waitFor({ state: 'visible', timeout: 15000 });
         await row.click();
+        await this.pause(2000);
+    }
+
+    async enterCampaignEditPage(name: string) {
+        const row = this.page.locator(`//*[contains(normalize-space(),'${name}')]`).first();
+        await row.waitFor({ state: 'visible', timeout: 15000 });
+        await row.hover();
+        await this.click(this.sel.dropdownIcon);
+        await this.pause(500);
+        await this.click(this.sel.dropdownEditSettings);
         await this.pause(2000);
     }
 
@@ -451,7 +465,20 @@ export class CampaignPage extends BasePage {
 
     async saveDraft() {
         await this.click(this.sel.saveDraftBtn);
-        await this.pause(2000);
+        await this.pause(1000);
+
+        // If a confirmation modal appears, confirm it
+        const confirmBtn = this.page.locator(this.sel.saveDraftConfirm).first();
+        const confirmVisible = await confirmBtn.isVisible({ timeout: 5000 }).catch(() => false);
+        if (confirmVisible) {
+            await confirmBtn.click().catch(() => {});
+            await this.pause(1000);
+        }
+
+        // Wait for any HeadlessUI modal to fully close before returning
+        const modal = this.page.locator(this.sel.headlessModal).first();
+        await modal.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+        await this.pause(1000);
     }
 
     // ─── Search ──────────────────────────────────────────────────────────────
@@ -495,7 +522,7 @@ export class CampaignPage extends BasePage {
     // ─── Three-dot menu / Actions ────────────────────────────────────────────
 
     async clickThreeDotMenu() {
-        await this.click(this.sel.threeDotMenu);
+        await this.click(this.sel.dropdownIcon);
         await this.pause(500);
     }
 

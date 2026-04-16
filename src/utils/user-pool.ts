@@ -49,11 +49,45 @@ function ensureLocksDir(): string {
     return locksDir;
 }
 
+const MAX_LOCK_AGE_MS = 15 * 60 * 1000; // 15 minutes — well above longest scenario runtime
+
+function isProcessAlive(pid: number): boolean {
+    try {
+        process.kill(pid, 0);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+function isLockStale(lockFile: string): boolean {
+    try {
+        const content = fs.readFileSync(lockFile, 'utf8').trim();
+        const [pidStr, timestamp] = content.split('\n');
+        const pid = parseInt(pidStr, 10);
+
+        if (!isNaN(pid) && !isProcessAlive(pid)) return true;
+
+        if (timestamp) {
+            const lockAge = Date.now() - new Date(timestamp).getTime();
+            if (lockAge > MAX_LOCK_AGE_MS) return true;
+        }
+
+        return false;
+    } catch {
+        return true;
+    }
+}
+
 function tryAcquireLock(username: string): { lockFile: string } | null {
     const locksDir = ensureLocksDir();
     const lockFile = path.join(locksDir, `${sanitizeFileName(username)}.lock`);
+
+    if (fs.existsSync(lockFile) && isLockStale(lockFile)) {
+        try { fs.unlinkSync(lockFile); } catch { /* another worker may have grabbed it */ }
+    }
+
     try {
-        // 'wx' => fail if exists (atomic on Windows & POSIX)
         const fd = fs.openSync(lockFile, 'wx');
         fs.writeFileSync(fd, `${process.pid}\n${new Date().toISOString()}\n`, 'utf8');
         fs.closeSync(fd);

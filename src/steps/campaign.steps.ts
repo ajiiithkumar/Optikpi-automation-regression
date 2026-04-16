@@ -1,6 +1,7 @@
 
 import { Given, When, Then } from '@cucumber/cucumber';
 import { CampaignPage } from '../pages/campaign.page';
+import { NavigationBar } from '../pages/components/navigation-bar.component';
 import { ExtentTestManager } from '../utils/extent-test-manager';
 import { PlaywrightWorld } from '../support/world';
 import { uniqueId, readNameJson, saveNameEntry } from '../utils/helper';
@@ -603,15 +604,22 @@ Then('Click the Save as Draft button', async function (this: PlaywrightWorld) {
 });
 
 Then('Verify the campaign is saved as Draft successfully', async function (this: PlaywrightWorld) {
-    await getCampaignPage(this).pause(2000);
     ExtentTestManager.logPass('Campaign saved as Draft successfully');
+    // Navigate back to the Campaign list — modal is already closed by saveDraft()
+    await new NavigationBar(this.page!).navigateTo('Campaign');
+    await getCampaignPage(this).pause(1500);
 });
 
 // ─── Search & Verify Steps ───────────────────────────────────────────────────
 
 Then('Enter the Campaign Name in the search bar', async function (this: PlaywrightWorld) {
-    const campaignName = this['currentCampaignName'];
-    if (!campaignName) throw new Error('currentCampaignName is not set. Ensure "Enter the Campaign Name and Campaign Tag" step ran first.');
+    let campaignName = this['currentCampaignName'];
+    if (!campaignName) {
+        const data = await readNameJson();
+        campaignName = data?.campaign?.title;
+    }
+    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign.title entry.');
+    this['currentCampaignName'] = campaignName;
 
     const page = getCampaignPage(this);
     const maxRetries = 3;
@@ -674,8 +682,13 @@ Then('Verify the campaign is visible in the list with the updated name', async f
 // ─── Campaign Details / Edit Name (TC-CAMP-02) ──────────────────────────────
 
 Then('Click on the campaign from the list', async function (this: PlaywrightWorld) {
-    const campaignName = this['currentCampaignName'];
-    if (!campaignName) throw new Error('currentCampaignName is not set.');
+    let campaignName = this['currentCampaignName'];
+    if (!campaignName) {
+        const data = await readNameJson();
+        campaignName = data?.campaign?.title;
+    }
+    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign.title entry.');
+    this['currentCampaignName'] = campaignName;
     await getCampaignPage(this).clickCampaignFromList(campaignName);
     ExtentTestManager.logPass(`Clicked on campaign "${campaignName}" from the list`);
 });
@@ -737,6 +750,13 @@ Then('Click on the draft campaign', async function (this: PlaywrightWorld) {
     ExtentTestManager.logPass(`Clicked on draft campaign "${campaignName}"`);
 });
 
+Then('Enter into the campaign Edit page', async function (this: PlaywrightWorld) {
+    const campaignName = this['currentCampaignName'];
+    if (!campaignName) throw new Error('currentCampaignName is not set.');
+    await getCampaignPage(this).enterCampaignEditPage(campaignName);
+    ExtentTestManager.logPass(`Opened edit page for campaign "${campaignName}"`);
+});
+
 Then('Verify the campaign navigates to the Edit Campaign page', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).waitForEditPage();
     ExtentTestManager.logPass('Campaign navigated to Edit Campaign page');
@@ -748,8 +768,13 @@ Then('Verify the Open Goal is still set and retained', async function (this: Pla
 });
 
 Then('Click on the published active campaign from the list', async function (this: PlaywrightWorld) {
-    const campaignName = this['currentCampaignName'];
-    if (!campaignName) throw new Error('currentCampaignName is not set.');
+    let campaignName = this['currentCampaignName'];
+    if (!campaignName) {
+        const data = await readNameJson();
+        campaignName = data?.campaign?.title;
+    }
+    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign.title entry.');
+    this['currentCampaignName'] = campaignName;
     await getCampaignPage(this).clickCampaignFromList(campaignName);
     ExtentTestManager.logPass(`Clicked on published active campaign "${campaignName}"`);
 });
