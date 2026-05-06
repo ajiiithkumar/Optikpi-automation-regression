@@ -9,6 +9,10 @@ export class LoginPage extends BasePage {
         emailInput:    "//input[@name='email']",
         passwordInput: "//input[@name='password']",
         submitButton:  "//button[@type='submit']",
+        // Headless UI modal overlay that can block the nav on first login
+        headlessOverlay: "//*[@id='headlessui-portal-root']//div[contains(@class,'fixed') and contains(@class,'inset-0')]",
+        // "Got it" / "OK" / "Close" / "Dismiss" dismiss buttons for first-login modals
+        firstLoginDismiss: "//button[contains(normalize-space(),'Got it') or contains(normalize-space(),'OK') or contains(normalize-space(),'Dismiss') or contains(normalize-space(),'Close') or contains(normalize-space(),'Continue')]",
     };
 
     readonly baseUrl = 'https://demo.optikpi.com/en';
@@ -25,9 +29,11 @@ export class LoginPage extends BasePage {
 
     /** Fill in credentials and submit the login form. */
     async login(username: string, password: string) {
+        await this.waitForVisible(this.sel.emailInput, 30000);
         await this.pause(1000);
         await this.fill(this.sel.emailInput, username);
 
+        await this.waitForVisible(this.sel.passwordInput, 10000);
         await this.pause(1000);
         await this.fill(this.sel.passwordInput, password);
 
@@ -48,5 +54,10 @@ export class LoginPage extends BasePage {
                 await this.page.keyboard.press('Enter');
             }),
         ]);
+
+        await this.page.waitForURL(
+            url => !url.toString().endsWith('/en') && !url.toString().endsWith('/en/'),
+            { timeout: 30000 }
+        ).catch(() => {});
     }
 }

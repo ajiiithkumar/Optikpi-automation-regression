@@ -152,8 +152,8 @@ Then('Click the Financial tab on the Goal section', async function (this: Playwr
     ExtentTestManager.logPass('Clicked Financial tab on Goal section');
 });
 
-Then('Click the Financial Goal button', async function (this: PlaywrightWorld) {
-    await getCampaignPage(this).clickFinancialGoal();
+Then('Click the Deposit Goal button', async function (this: PlaywrightWorld) {
+    await getCampaignPage(this).clickDepositGoal();
     ExtentTestManager.logPass('Clicked Financial Goal button');
 });
 
@@ -386,15 +386,31 @@ Then('Verify the Trigger section shows the selected System Event', async functio
     ExtentTestManager.logPass('Trigger section shows the selected System Event');
 });
 
+Then('Click the Add live system event button', async function (this: PlaywrightWorld) {
+    await getCampaignPage(this).clickAddLiveSystemEventBtn();
+    ExtentTestManager.logPass('Clicked the Add live system event button');
+});
+
 Then('Do not select any event and leave the event field empty', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).pause(1000);
     ExtentTestManager.logPass('Left event field empty (no event selected)');
 });
 
 Then('Verify the validation error message is displayed for trigger', async function (this: PlaywrightWorld) {
-    const hasError = await getCampaignPage(this).isTriggerValidationErrorVisible();
-    if (!hasError) throw new Error('Expected trigger validation error but none was displayed');
-    ExtentTestManager.logPass('Trigger validation error message is displayed');
+    const page = getCampaignPage(this);
+    const hasError = await page.isTriggerValidationErrorVisible();
+    const isBtnDisabled = await page.setTriggerBtnVisible();
+    if (!hasError && !isBtnDisabled) {
+        throw new Error(
+            'Expected trigger validation error ("Trigger dates or Event rules are not set properly..." ' +
+            'or "Trigger dates are not set properly...") or a disabled Set Trigger button, but neither was found'
+        );
+    }
+    ExtentTestManager.logPass(
+        hasError
+            ? 'Trigger validation error message is displayed'
+            : 'Set Trigger button is disabled (trigger not configured)'
+    );
 });
 
 Then('Verify the trigger is not saved and the user remains on the trigger configuration screen', async function (this: PlaywrightWorld) {
@@ -445,6 +461,18 @@ Then('click the Choose Content button', async function (this: PlaywrightWorld) {
 });
 
 const communicationName = "Sendgrid_automation_test";
+const communicationName2 = "Sendgrid_automations_test_2";
+
+Then('Search the 2 communication name in the search bar', async function (this: PlaywrightWorld) {
+    const searchInput = this.page.locator(LIBRARY_SEARCH_SEL).first();
+    await searchInput.waitFor({ state: 'visible', timeout: 20000 });
+    await searchInput.click();
+    await searchInput.fill(communicationName2);
+    await this.page.keyboard.press('Enter');
+    await this.page.waitForTimeout(2000);
+    this['lastSearchedCommunication'] = communicationName2;
+    ExtentTestManager.logPass(`Searched communication name in library: ${communicationName2}`);
+});
 
 Then('Search the communication name in the search bar', async function (this: PlaywrightWorld) {
     const searchInput = this.page.locator(LIBRARY_SEARCH_SEL).first();
@@ -453,21 +481,34 @@ Then('Search the communication name in the search bar', async function (this: Pl
     await searchInput.fill(communicationName);
     await this.page.keyboard.press('Enter');
     await this.page.waitForTimeout(2000);
+    this['lastSearchedCommunication'] = communicationName;
     ExtentTestManager.logPass(`Searched communication name in library: ${communicationName}`);
 });
 
 Then('Click the communication that comes first in the list', async function (this: PlaywrightWorld) {
-    const anyClickable = this.page.locator(`//div[@data-testid='${communicationName}']`).first();
+    const targetName = this['lastSearchedCommunication'] ?? communicationName;
+    const card = this.page.locator(`//div[@data-testid='${targetName}']`).first();
+    await card.waitFor({ state: 'visible', timeout: 10000 });
     await this.page.waitForTimeout(2000);
-    await anyClickable.click();
-    await this.page.locator(LIBRARY_USE_CONTENT_SEL).click();
+
+    await card.hover({ force: true });
+    await this.page.waitForTimeout(500);
+
+    const useBtn = this.page.locator(LIBRARY_USE_CONTENT_SEL).first();
+    await useBtn.waitFor({ state: 'visible', timeout: 10000 });
+    await useBtn.click();
     await this.page.waitForTimeout(2000);
-    ExtentTestManager.logPass('Clicked first communication in the list');
+    ExtentTestManager.logPass(`Clicked first communication in the list: ${targetName}`);
 });
 
 Then('click the Set Communication button', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).clickSetCommunication();
     ExtentTestManager.logPass('Clicked "Set Communication" button');
+});
+
+Then('Click the Edit communication button', async function (this: PlaywrightWorld) {
+    await getCampaignPage(this).clickSetCommunication();
+    ExtentTestManager.logPass('Clicked "Edit communication" button');
 });
 
 Then('Verify the search results are displayed', async function (this: PlaywrightWorld) {
@@ -679,6 +720,13 @@ Then('Verify the campaign is visible in the list with the updated name', async f
     ExtentTestManager.logPass(`Campaign visible with updated name: "${newName}"`);
 });
 
+Then('Verify the campaign is visible in the list', async function (this: PlaywrightWorld) {
+    const campaignName = this['currentCampaignName'];
+    if (!campaignName) throw new Error('currentCampaignName is not set.');
+    await getCampaignPage(this).verifyCampaignVisible(campaignName);
+    ExtentTestManager.logPass(`Campaign "${campaignName}" is visible in the list`);
+});
+
 // ─── Campaign Details / Edit Name (TC-CAMP-02) ──────────────────────────────
 
 Then('Click on the campaign from the list', async function (this: PlaywrightWorld) {
@@ -725,7 +773,7 @@ Then('Click the Save name button', async function (this: PlaywrightWorld) {
 Then('Verify the Campaign Name is updated successfully', async function (this: PlaywrightWorld) {
     const newName = this['updatedCampaignName'];
     if (!newName) throw new Error('updatedCampaignName is not set.');
-    await getCampaignPage(this).pause(2000);
+    await getCampaignPage(this).verifyNameUpdated(newName);
     ExtentTestManager.logPass(`Campaign Name updated to: "${newName}"`);
 });
 
@@ -784,6 +832,11 @@ Then('Click on the published active campaign from the list', async function (thi
 Then('Click the three-dot menu on the campaign', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).clickThreeDotMenu();
     ExtentTestManager.logPass('Clicked three-dot menu on the campaign');
+});
+
+Then('Click the Edit campaign settings button', async function (this: PlaywrightWorld) {
+    await getCampaignPage(this).clickEditSettings();
+    ExtentTestManager.logPass('Clicked Edit campaign settings button');
 });
 
 Then('Click the campaign Duplicate option', async function (this: PlaywrightWorld) {

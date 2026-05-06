@@ -25,9 +25,9 @@ export class CampaignPage extends BasePage {
         goalOpen:        "//div[@data-testid='campaign-goal-Engagement-Open-undefined']",
         setGoalBtn:      "//button[@data-testid='campaign-stepper-set-goal-button']",
         editGoal:        "//span[text()='Edit goal']",
-        financialTab:    "//button[@data-test-id='campaign-tab-financial')]",
-        goalFinancial:   "//div[contains(@data-testid,'campaign-goal-Financial-Deposit-Click')]",
-        goalSummary:     "//button[@data-testid,'campaign-goal-preview-click')]",
+        financialTab:    "//button[@data-test-id='campaign-tab-financial']",
+        goalDeposit_not_selected:   "//div[contains(@data-testid,'campaign-goal-Financial-Deposit-undefined')]",
+        goalSummary:     "//button[@data-testid='campaign-goal-preview-click']",
 
         // Audience
         newAudienceTab:       "//button[@data-test-id='campaign-tab-new-audience']",
@@ -45,12 +45,14 @@ export class CampaignPage extends BasePage {
         triggerStartDate:  "//button[@data-testid='campaign-timer-trigger-startDate-select']",
         setTriggerBtn:     "//button[@data-testid='campaign-stepper-set-trigger-button']",
         triggerSummary:    "//div[@class='flex items-center flex-wrap justify-start p-2.5 rounded text-tertiary border border-warningDark bg-warning gap-1 text-sm whitespace-pre']",
-        eventBasedOption:  "//button[@data-testid='campaign-tab-event-trigger']",
-        systemEventOption: "//button[@data-testid='campaign-tab-systemevent']",
+        eventBasedOption:  "//button[@data-test-id='campaign-tab-event-trigger']",
+        systemEventOption: "//button[@data-test-id='campaign-tab-systemevent']",
         eventList:         "//div[contains(@data-testid,'trigger-event-list') or contains(@class,'event-list')]",
-        loginEvent:        "//*[@data-testid='trigger-event-login' or contains(normalize-space(),'Login')]",
+        loginEvent:        "//input[@data-testid='login']",
+        addSimpleEvent:    "//button[@title='Add event' and contains(normalize-space(),'simple event')]",
+        Add_live_event_Btn: "//button[@data-testid='add-system-event-btn']",
         applyTriggerBtn:   "//button[@data-testid='trigger-apply-btn' or contains(normalize-space(),'Apply')]",
-        triggerValidationError: "//*[contains(@class,'bg-warning') or contains(@class,'error') or contains(@class,'text-red')][string-length(normalize-space()) > 0]",
+        triggerValidationError: "//*[contains(normalize-space(),'Trigger dates or Event rules are not set properly. Please update the dates or rules to finish campaign setup.') or contains(normalize-space(),'Trigger dates are not set properly. Please update the dates to finish campaign setup.')]",
         editTriggerBtn:    "//button[contains(@data-testid,'edit-trigger') or (contains(@class,'edit') and ancestor::*[contains(@class,'trigger')])]",
         reenrollToggle:    "//button[contains(@data-testid,'reenroll-toggle') or contains(@aria-label,'Re-enroll')]",
         reenrollDaysInput: "//input[contains(@data-testid,'reenroll-days') or contains(@placeholder,'days')]",
@@ -58,13 +60,13 @@ export class CampaignPage extends BasePage {
         // Communication
         chooseContentBtn:     "//button[@data-testid='campaign-choose-content-btn']",
         setCommunicationBtn:  "//button[@data-testid='campaign-stepper-set-communication-button']",
-        contentSummary:       "//*[contains(@data-testid,'communication-summary') or contains(@class,'communication-summary')]",
-        addVariantBtn:        "//button[contains(@data-testid,'add-variant') or contains(normalize-space(),'Add Variant')]",
+        contentSummary:       "//div[contains(@class,'bg-disabledBackground') and contains(@class,'items-center') and contains(@class,'flex-wrap')]",
+        addVariantBtn:        "//button[@data-testid='campaign-add-content-variant-button']",
         chooseContentVariant: "//button[contains(@data-testid,'choose-content-variant') or contains(@data-testid,'campaign-choose-content-btn')]",
-        variantA:             "//*[contains(@data-testid,'variant-a') or contains(normalize-space(),'Variant A')]",
-        variantB:             "//*[contains(@data-testid,'variant-b') or contains(normalize-space(),'Variant B')]",
-        staticAllocation:     "//button[contains(@data-testid,'allocation-static') or contains(normalize-space(),'Static')]",
-        criteriaAllocation:   "//button[contains(@data-testid,'allocation-criteria') or contains(normalize-space(),'Criteria')]",
+        variantA:             "//button[contains(normalize-space(),'Version A') or contains(normalize-space(),'Variant A')]",
+        variantB:             "//button[contains(normalize-space(),'Version B') or contains(normalize-space(),'Variant B')]",
+        staticAllocation:     "//button[contains(@data-test-id,'campaign-tab-a-b-testing-with-static-allocation') or contains(normalize-space(),'Static')]",
+        criteriaAllocation:   "//button[contains(@data-test-id,'campaign-tab-criteriabasedallocation') or contains(normalize-space(),'Criteria')]",
         variantAInput:        "//input[contains(@data-testid,'variant-a-percentage')]",
         variantBInput:        "//input[contains(@data-testid,'variant-b-percentage')]",
         totalAllocation:      "//*[contains(@data-testid,'total-allocation')]",
@@ -81,10 +83,10 @@ export class CampaignPage extends BasePage {
         searchBar:  "//input[@id='campaign-listView-table-search-icon']",
 
         // Campaign Details / Edit Name
-        campaignDetailsTitle: "//h1[contains(@data-testid,'campaign-detail-title') or contains(@class,'campaign-title')] | //h2[@title]",
+        campaignDetailsTitle: "//h2[@title] | //button[@data-testid='campaign-edit-settings-btn'] | //*[contains(@data-testid,'campaign-performance-report')]",
         editNameBtn:          "//button[contains(@data-testid,'edit-name') or contains(@aria-label,'Edit name') or contains(normalize-space(),'Edit name')]",
         nameEditInput:        "//input[@data-testid='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
-        saveNameBtn:          "//button[contains(@data-testid,'save-name') or contains(normalize-space(),'Save')]",
+        saveNameBtn:          "//button[@data-testid='create-campaign-button' and contains(normalize-space(),'Update campaign')]",
         backToListBtn:        "//button[contains(@data-testid,'back-to-list') or contains(@aria-label,'Back')] | //a[contains(@href,'/campaign')]",
 
         // Campaign row / list
@@ -92,10 +94,10 @@ export class CampaignPage extends BasePage {
         dropdownIcon:         "//button[@data-testid='campaign-list-view-table-dropdown-icon']",
         dropdownEditSettings: "//button[@data-testid='campaign-list-view-table-dropdown-icon-edit-settings']",
         threeDotMenu:         "//button[contains(@data-testid,'campaign-action-menu') or contains(@aria-label,'Actions') or contains(@class,'action-menu')]",
-        duplicateOption:  "//button[contains(normalize-space(),'Duplicate')] | //li[contains(normalize-space(),'Duplicate')]",
+        duplicateOption:  "//button[@data-testid='campaign-list-view-table-dropdown-icon-duplicate']",
         deleteOption:     "//button[contains(normalize-space(),'Delete')] | //li[contains(normalize-space(),'Delete')]",
-        duplicateConfirm: "//button[@data-testid='modal-submit-button' or contains(normalize-space(),'Confirm')]",
-        deleteConfirm:    "//button[@data-testid='modal-submit-button' or contains(normalize-space(),'Confirm') or contains(normalize-space(),'Delete')]",
+        duplicateConfirm: "//button[@data-testid='workflow-action-button']",
+        deleteConfirm:    "//button[@data-testid='workflow-action-button']",
         successToast:     "//*[contains(@class,'toast') or contains(@class,'notification') or contains(@class,'Toastify')][string-length(normalize-space()) > 0]",
 
         // Pagination
@@ -105,14 +107,15 @@ export class CampaignPage extends BasePage {
         // Filter
         filterBtn:       "//button[@data-testid='campaign-listView-table-filter-icon']",
         clearFilterBtn:  "//button[@data-testid='campaign-filters-reset-button']",
+        clearFilterChip: "//*[contains(@data-testid,'-clear-button')]",
 
-        // History Log
-        historyLogBtn:   "//button[contains(@data-testid,'history-log') or contains(normalize-space(),'History')] | //tab[contains(normalize-space(),'History')]",
-        historyLogEntry: "//div[contains(@data-testid,'history-entry') or contains(@class,'history-log-entry') or contains(@class,'activity')]",
+        // History Log — option in the 3-dot dropdown on the campaign list row
+        historyLogBtn:   "//button[@data-testid='campaign-list-view-table-dropdown-icon-view-history-log']",
+        historyLogEntry: "//form//tbody//tr",
 
-        // Report
-        viewReportBtn:   "//button[contains(@data-testid,'view-report') or contains(normalize-space(),'View Report')]",
-        reportPage:      "//*[contains(@data-testid,'campaign-report') or contains(@class,'report')]",
+        // Report — option in the 3-dot dropdown on the campaign list row
+        viewReportBtn:   "//button[@data-testid='campaign-list-view-table-dropdown-icon-view-full-report']",
+        reportPage:      "//*[contains(@data-testid,'campaign-performance-report')]",
     };
 
     // ─── Tab Actions ─────────────────────────────────────────────────────────
@@ -165,17 +168,52 @@ export class CampaignPage extends BasePage {
         return this.page.locator(this.sel.editTitle).first().innerText();
     }
 
+    async verifyNameUpdated(expectedName: string, timeout = 20000) {
+        // Wait for the edit-name input to disappear (panel closed after save)
+        await this.page.locator(this.sel.nameEditInput)
+            .first().waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+        await this.pause(1000);
+        // Read whatever title the h2 currently has — useful for diagnostics
+        const currentTitle = await this.page.locator('//h2[@title]').first()
+            .getAttribute('title').catch(() => '<no h2 found>');
+        // The <h2 title> in the page header should now reflect the new name
+        const h2 = this.page.locator(`//h2[contains(@title, '${expectedName.trim()}')]`);
+        await h2.first().waitFor({ state: 'visible', timeout }).catch(() => {
+            throw new Error(
+                `Campaign name NOT updated in DOM.\n` +
+                `  Expected h2 title to contain: "${expectedName}"\n` +
+                `  Actual h2 title found:        "${currentTitle}"\n` +
+                `  → The Save button likely clicked the wrong element or save API failed.`
+            );
+        });
+    }
+
     // ─── Campaign Details / Edit Name ────────────────────────────────────────
 
     async clickCampaignFromList(name: string) {
-        const row = this.page.locator(`//*[contains(normalize-space(),'${name}')]`).first();
-        await row.waitFor({ state: 'visible', timeout: 15000 });
-        await row.click();
+        // Target the campaign name cell in the table body to avoid matching nav/sidebar text
+        const nameCell = this.page.locator(
+            `//tbody[contains(@class,'divide-y')]//tr//td//span[normalize-space()='${name}']`
+        ).first();
+        const nameCellVisible = await nameCell.isVisible({ timeout: 10000 }).catch(() => false);
+
+        if (nameCellVisible) {
+            await nameCell.click();
+        } else {
+            // Fallback: broader match within tbody rows only
+            const row = this.page.locator(
+                `//tbody[contains(@class,'divide-y')]//tr[.//*[normalize-space()='${name}']]`
+            ).first();
+            await row.waitFor({ state: 'visible', timeout: 10000 });
+            await row.click();
+        }
         await this.pause(2000);
     }
 
     async enterCampaignEditPage(name: string) {
-        const row = this.page.locator(`//*[contains(normalize-space(),'${name}')]`).first();
+        const row = this.page.locator(
+            `//tbody[contains(@class,'divide-y')]//tr[.//*[normalize-space()='${name}']]`
+        ).first();
         await row.waitFor({ state: 'visible', timeout: 15000 });
         await row.hover();
         await this.click(this.sel.dropdownIcon);
@@ -200,8 +238,11 @@ export class CampaignPage extends BasePage {
     }
 
     async clickSaveName() {
-        await this.click(this.sel.saveNameBtn);
-        await this.pause(1000);
+        await this.pause(500);
+        const btn = this.page.locator(this.sel.saveNameBtn).first();
+        await btn.waitFor({ state: 'visible', timeout: 10000 });
+        await btn.click();
+        await this.pause(1500);
     }
 
     async navigateBackToList() {
@@ -223,8 +264,8 @@ export class CampaignPage extends BasePage {
         await this.click(this.sel.financialTab);
     }
 
-    async clickFinancialGoal() {
-        await this.click(this.sel.goalFinancial);
+    async clickDepositGoal() {
+        await this.click(this.sel.goalDeposit_not_selected);
     }
 
     async clickSetGoal() {
@@ -278,7 +319,8 @@ export class CampaignPage extends BasePage {
     }
 
     async isAudienceSummaryVisible(): Promise<boolean> {
-        return this.isVisible(this.sel.audienceSummary, 10000);
+        const el = this.page.locator(this.sel.contentSummary).nth(1);
+        return el.isVisible({ timeout: 10000 }).catch(() => false);
     }
 
     async isEstimatedReachVisible(): Promise<boolean> {
@@ -319,20 +361,35 @@ export class CampaignPage extends BasePage {
     }
 
     async isTriggerSummaryVisible(): Promise<boolean> {
-        return this.isVisible(this.sel.triggerSummary, 10000);
+        const el = this.page.locator(this.sel.contentSummary).nth(2);
+        return el.isVisible({ timeout: 10000 }).catch(() => false);
     }
 
     async clickEventBasedOption() {
+        if (await this.isVisible(this.sel.setTriggerBtn)) {
         await this.click(this.sel.eventBasedOption);
         await this.pause(1000);
+        }else{
+            await this.clickSetTrigger();
+            await this.click(this.sel.eventBasedOption);
+            await this.pause(1000);
+        }
     }
 
     async clickSystemEventOption() {
         await this.click(this.sel.systemEventOption);
         await this.pause(1000);
     }
-
+    async clickAddLiveSystemEventBtn() {
+        await this.click(this.sel.Add_live_event_Btn);
+        await this.pause(500);
+    }
     async selectLoginEvent() {
+        if (await this.isVisible(this.sel.Add_live_event_Btn, 5000)) {
+            await this.click(this.sel.Add_live_event_Btn);
+            await this.pause(500);
+        }
+        await this.click(this.sel.addSimpleEvent);
         await this.click(this.sel.loginEvent);
         await this.pause(500);
     }
@@ -381,6 +438,14 @@ export class CampaignPage extends BasePage {
         await input.fill(days);
     }
 
+
+
+    async setTriggerBtnVisible(): Promise<boolean> {
+        const btn = this.page.locator(this.sel.setTriggerBtn).first();
+        const visible = await btn.isVisible({ timeout: 5000 }).catch(() => false);
+        if (!visible) return true;
+        return btn.isDisabled();
+    }
     // ─── Communication ───────────────────────────────────────────────────────
 
     async clickChooseContent() {
@@ -394,7 +459,8 @@ export class CampaignPage extends BasePage {
     }
 
     async isContentSummaryVisible(): Promise<boolean> {
-        return this.isVisible(this.sel.contentSummary, 10000);
+        const el = this.page.locator(this.sel.contentSummary).last();
+        return el.isVisible({ timeout: 10000 }).catch(() => false);
     }
 
     async clickAddVariant() {
@@ -524,6 +590,11 @@ export class CampaignPage extends BasePage {
     async clickThreeDotMenu() {
         await this.click(this.sel.dropdownIcon);
         await this.pause(500);
+    }
+
+    async clickEditSettings() {
+        await this.click(this.sel.dropdownEditSettings);
+        await this.pause(2000);
     }
 
     async clickDuplicateOption() {

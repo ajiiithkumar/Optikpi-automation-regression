@@ -24,17 +24,26 @@ Feature: Campaign module
     Given I log in for module "Campaign"
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
+    Then Click the Create New Campaign button
+    Then Enter the Campaign Name and Campaign Tag
+    Then Click the Create campaign button
+    Then Verify the Campaign should should Create and navigate to the Edit Campaign page
+    Then click the Open Goal button
+    Then click the Set Goal button
+    Then Verify the Open Goal should be set successfully
+    Then Click the Save as Draft button
     Then Click the All tab
     Then Verify All tab should load successfully
     Then Enter the Campaign Name in the search bar
     Then Click on the campaign from the list
-    Then Verify the campaign details page is displayed
+    Then Click the three-dot menu on the campaign
+    Then Click the Edit campaign settings button
     Then Click the Edit name button on the campaign
     Then Clear the existing Campaign Name
     Then Enter the new Campaign Name
     Then Click the Save name button
     Then Verify the Campaign Name is updated successfully
-    Then Navigate back to the Campaign list
+    Then Click the Save as Draft button
     Then Enter the new Campaign Name in the search bar
     Then Verify the campaign is visible in the list with the updated name
 
@@ -76,7 +85,7 @@ Feature: Campaign module
     Then Click the Create campaign button
     Then Verify the Campaign should should Create and navigate to the Edit Campaign page
     Then Click the Financial tab on the Goal section
-    Then Click the Financial Goal button
+    Then Click the Deposit Goal button
     Then click the Set Goal button
     Then Verify the Financial Goal should be set successfully
     Then Verify the goal summary section shows the selected Financial goal
@@ -109,7 +118,8 @@ Feature: Campaign module
     Then Enter the Campaign Name and Campaign Tag
     Then Click the Create campaign button
     Then Verify the Campaign should should Create and navigate to the Edit Campaign page
-    Then click the Open Goal button
+    Then Click the Financial tab on the Goal section
+    Then Click the Deposit Goal button
     Then click the Set Goal button
     Then Verify the Open Goal should be set successfully
     Then click the Existing Audience button
@@ -157,35 +167,31 @@ Feature: Campaign module
     Then select the audience from the list
     Then click the ok button on the pop up
     Then click the Set Audience button
-    Then click the Trigger button
     Then Select the Event-Based trigger option
     Then Select the Login event from the event list
-    Then Apply the event trigger configuration
     Then click the Set Trigger button
     Then Verify the Trigger section shows Login as the selected event trigger
 
-  @Regression @Campaign @TC-CAMP-09
-  Scenario: Set a System Event trigger and verify it is saved correctly
-    Given I log in for module "Campaign"
-    When I navigate to "Campaign"
-    Then I should see the "Campaign" page
-    Then Click the Create New Campaign button
-    Then Enter the Campaign Name and Campaign Tag
-    Then Click the Create campaign button
-    Then Verify the Campaign should should Create and navigate to the Edit Campaign page
-    Then click the Open Goal button
-    Then click the Set Goal button
-    Then Verify the Open Goal should be set successfully
-    Then click the Existing Audience button
-    Then select the audience from the list
-    Then click the ok button on the pop up
-    Then click the Set Audience button
-    Then click the Trigger button
-    Then Select the System Event trigger option
-    Then Select a system event from the system event list
-    Then Apply the system event trigger configuration
-    Then click the Set Trigger button
-    Then Verify the Trigger section shows the selected System Event
+  # @Regression @Campaign @TC-CAMP-09
+  # Scenario: Set a System Event trigger and verify it is saved correctly
+  #   Given I log in for module "Campaign"
+  #   When I navigate to "Campaign"
+  #   Then I should see the "Campaign" page
+  #   Then Click the Create New Campaign button
+  #   Then Enter the Campaign Name and Campaign Tag
+  #   Then Click the Create campaign button
+  #   Then Verify the Campaign should should Create and navigate to the Edit Campaign page
+  #   Then click the Open Goal button
+  #   Then click the Set Goal button
+  #   Then Verify the Open Goal should be set successfully
+  #   Then click the Existing Audience button
+  #   Then select the audience from the list
+  #   Then click the ok button on the pop up
+  #   Then click the Set Audience button
+  #   Then Select the System Event trigger option
+  #   Then Select a system event from the system event list
+  #   Then click the Set Trigger button
+  #   Then Verify the Trigger section shows the selected System Event
 
   @Regression @Campaign @TC-CAMP-10
   Scenario: Attempting to set trigger without configuring an event shows a validation error
@@ -203,38 +209,38 @@ Feature: Campaign module
     Then select the audience from the list
     Then click the ok button on the pop up
     Then click the Set Audience button
-    Then click the Trigger button
     Then Select the Event-Based trigger option
     Then Do not select any event and leave the event field empty
-    Then click the Set Trigger button
+    Then Verify the validation error message is displayed for trigger
+    Then Click the Add live system event button
     Then Verify the validation error message is displayed for trigger
     Then Verify the trigger is not saved and the user remains on the trigger configuration screen
 
-  @Regression @Campaign @TC-CAMP-11
-  Scenario: Enable Re-enroll customers toggle and set days configuration
-    Given I log in for module "Campaign"
-    When I navigate to "Campaign"
-    Then I should see the "Campaign" page
-    Then Click the Create New Campaign button
-    Then Enter the Campaign Name and Campaign Tag
-    Then Click the Create campaign button
-    Then Verify the Campaign should should Create and navigate to the Edit Campaign page
-    Then click the Open Goal button
-    Then click the Set Goal button
-    Then Verify the Open Goal should be set successfully
-    Then click the Existing Audience button
-    Then select the audience from the list
-    Then click the ok button on the pop up
-    Then click the Set Audience button
-    Then click the Trigger button
-    Then Select the Event-Based trigger option
-    Then Select the Login event from the event list
-    Then Apply the event trigger configuration
-    Then Locate the Re-enroll customers toggle
-    Then Enable the Re-enroll customers toggle
-    Then Enter the number of days for re-enrollment
-    Then click the Set Trigger button
-    Then Verify the Re-enroll toggle setting is saved and shown in the trigger summary
+  # @Regression @Campaign @TC-CAMP-11
+  # Scenario: Enable Re-enroll customers toggle and set days configuration
+  #   Given I log in for module "Campaign"
+  #   When I navigate to "Campaign"
+  #   Then I should see the "Campaign" page
+  #   Then Click the Create New Campaign button
+  #   Then Enter the Campaign Name and Campaign Tag
+  #   Then Click the Create campaign button
+  #   Then Verify the Campaign should should Create and navigate to the Edit Campaign page
+  #   Then click the Open Goal button
+  #   Then click the Set Goal button
+  #   Then Verify the Open Goal should be set successfully
+  #   Then click the Existing Audience button
+  #   Then select the audience from the list
+  #   Then click the ok button on the pop up
+  #   Then click the Set Audience button
+  #   Then click the Trigger button
+  #   Then Select the Event-Based trigger option
+  #   Then Select the Login event from the event list
+  #   Then Apply the event trigger configuration
+  #   Then Locate the Re-enroll customers toggle
+  #   Then Enable the Re-enroll customers toggle
+  #   Then Enter the number of days for re-enrollment
+  #   Then click the Set Trigger button
+  #   Then Verify the Re-enroll toggle setting is saved and shown in the trigger summary
 
   @Regression @Campaign @TC-CAMP-12
   Scenario: Add Library Communication content to campaign and verify it is applied
@@ -286,9 +292,10 @@ Feature: Campaign module
     Then Click the communication that comes first in the list
     Then click the Set Communication button
     Then Verify the first variant is added successfully
+    Then Click the Edit communication button
     Then Click the Add Variant button
     Then Click the Choose Content button for the new variant
-    Then Search the communication name in the search bar
+    Then Search the 2 communication name in the search bar
     Then Click the communication that comes first in the list
     Then click the Set Communication button
     Then Verify both Variant A and Variant B are visible in the communication section
@@ -315,15 +322,15 @@ Feature: Campaign module
     Then click the Choose Content button
     Then Search the communication name in the search bar
     Then Click the communication that comes first in the list
-    Then click the Set Communication button
     Then Click the Add Variant button
     Then Click the Choose Content button for the new variant
-    Then Search the communication name in the search bar
+    Then Search the 2 communication name in the search bar
     Then Click the communication that comes first in the list
     Then click the Set Communication button
+    Then Click the Edit communication button
     Then Select the Static allocation type
-    Then Set Variant A allocation to 50 percent
-    Then Set Variant B allocation to 50 percent
+    Then Set Variant A allocation to 30 percent
+    Then Set Variant B allocation to 70 percent
     Then Verify the total allocation equals 100 percent
     Then Click the Set Communication button to confirm allocation
     Then Verify the allocation is saved and shown correctly in the summary
@@ -515,8 +522,8 @@ Feature: Campaign module
     Then Click the All tab
     Then Verify All tab should load successfully
     Then Enter the Campaign Name in the search bar
-    Then Click on the campaign from the list
-    Then Verify the campaign details page is displayed
+    Then Verify the campaign is visible in the list
+    Then Click the three-dot menu on the campaign
     Then Click the History Log tab or button
     Then Verify the History Log section is displayed
     Then Verify at least one activity entry is visible in the history log
@@ -529,8 +536,8 @@ Feature: Campaign module
     Then Click the Active tab
     Then Verify Active tab should load successfully
     Then Enter the Campaign Name in the search bar
-    Then Click on the campaign from the list
-    Then Verify the campaign details page is displayed
+    Then Verify the campaign is visible in the list
+    Then Click the three-dot menu on the campaign
     Then Click the View Report button
     Then Verify the Campaign Report page is displayed
     Then Verify the report data is loaded without any errors

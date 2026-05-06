@@ -762,11 +762,16 @@ const main = () => {
 
       // ── Dry-run ──
       if (isDryRun) {
+        const dryBaseTag = config.baseTag || '@SmokeTest';
+        const dryNotParts = prerequisites.map(p => `not ${p.tag}`).join(' and ');
+        const dryMainTag = prerequisites.length > 0
+          ? `(${dryBaseTag}) and ${dryNotParts}`
+          : dryBaseTag;
         console.log('\n[Runner] DRY-RUN — Ordered execution plan:\n');
         prerequisites.forEach((p, i) => {
           console.log(`  Prerequisite ${i + 1}: ${p.name || p.tag}  (tag: ${p.tag}, serial)`);
         });
-        console.log(`\n  Main run: all @SmokeTest  (parallel=${parallelCount})`);
+        console.log(`\n  Main run: ${dryMainTag}  (parallel=${parallelCount})`);
         console.log(`  failFast: ${failFast}\n`);
         process.exit(0);
       }
@@ -823,13 +828,14 @@ const main = () => {
         process.exit(1);
       }
 
-      // ── Phase 2: Run @SmokeTest scenarios in one process ──
+      // ── Phase 2: Run scenarios in one process ──
       // If excludeFromMainRun is set, exclude prerequisite tags from the main run
       const excludePrereqs = config.excludeFromMainRun !== false;
-      let mainTagExpr = '@SmokeTest';
+      const baseTag = config.baseTag || '@SmokeTest';
+      let mainTagExpr = baseTag;
       if (excludePrereqs && prerequisites.length > 0) {
         const notParts = prerequisites.map(p => `not ${p.tag}`).join(' and ');
-        mainTagExpr = `@SmokeTest and ${notParts}`;
+        mainTagExpr = `(${baseTag}) and ${notParts}`;
       }
 
       console.log('\n' + '─'.repeat(50));
