@@ -10,6 +10,8 @@ export class PlaywrightWorld extends World {
     page: Page | null = null;
     user: any = null;
     userLockFile: string | null = null;
+    scenarioTag: string = '';
+    scenarioTags: string[] = [];
     [key: string]: any;
 
     constructor(options: IWorldOptions) {

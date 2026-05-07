@@ -5,7 +5,7 @@ import { AudiencePage } from '../pages/audience.page';
 import { DateTimePicker } from '../pages/components/date-time-picker.component';
 import { ExtentTestManager } from '../utils/extent-test-manager';
 import { PlaywrightWorld } from '../support/world';
-import { generateAudienceTitle, saveNameEntry, readNameJson } from '../utils/helper';
+import { generateAudienceTitle } from '../utils/helper';
 
 const getWorkflowPage = (world: PlaywrightWorld) => new WorkflowPage(world.page);
 const getAudiencePage = (world: PlaywrightWorld) => new AudiencePage(world.page);
@@ -86,7 +86,6 @@ Then('Click the workflow create from scratch button', async function (this: Play
 
 Then('enter the Workflow name and Tag', async function (this: PlaywrightWorld) {
     const workflowTitle = generateAudienceTitle();
-    await saveNameEntry('workflow', workflowTitle, 'Test');
     this['currentWorkflowTitle'] = workflowTitle;
 
     const workflow = getWorkflowPage(this);
@@ -312,10 +311,9 @@ Then('Click the workflow filter apply button', async function (this: PlaywrightW
 });
 
 Then('Enter the workflow name in the search bar', async function (this: PlaywrightWorld) {
-    const data = await readNameJson();
-    const workflowName = data.workflow?.title || '';
+    const workflowName = this['currentWorkflowTitle'] || '';
     if (!workflowName) {
-        ExtentTestManager.logFail('No workflow name found in saved data');
+        ExtentTestManager.logFail('No workflow name set on World. Ensure "enter the Workflow name and Tag" ran first.');
         return;
     }
 
@@ -352,11 +350,10 @@ Then('Enter the workflow name in the search bar', async function (this: Playwrig
 });
 
 Then('Verify the workflow name is shown in the list', async function (this: PlaywrightWorld) {
-    const data = await readNameJson();
-    const workflowName = data.workflow?.title || '';
+    const workflowName = this['currentWorkflowTitle'] || '';
     if (!workflowName) {
-        ExtentTestManager.logFail('No workflow name found in saved data');
-        throw new Error('No workflow name found in saved data');
+        ExtentTestManager.logFail('No workflow name set on World. Ensure "enter the Workflow name and Tag" ran first.');
+        throw new Error('No workflow name set on World');
     }
 
     // Verification already done in search step with retry

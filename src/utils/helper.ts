@@ -1,5 +1,5 @@
 
-import fs from 'fs';
+import fs, { openSync, closeSync, unlinkSync } from 'fs';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 import { Buffer } from 'buffer';
@@ -269,32 +269,88 @@ export const logFail = (world: any, message: string, opts: any) => log(world, 'F
 
 // ─── Name.json helpers (campaign / audience / workflow) ──────────────────────
 
-export const readNameJson = async (filePath = NAME_JSON_PATH): Promise<any> => {
+const NAMES_LOCK = NAME_JSON_PATH + '.lock';
+
+const withFileLock = async <T>(fn: () => Promise<T>): Promise<T> => {
+    let fd: number | null = null;
+    const maxRetries = 20;
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            fd = openSync(NAMES_LOCK, 'wx');
+            break;
+        } catch {
+            await new Promise(r => setTimeout(r, 100));
+        }
+    }
+    if (fd === null) throw new Error('Could not acquire names.json lock');
     try {
-        const content = await fsPromises.readFile(filePath, 'utf8');
-        const data = JSON.parse(content);
-        return data && typeof data === 'object' ? data : {};
-    } catch (err: any) {
-        if (err?.code === 'ENOENT') return {};
-        throw err;
+        return await fn();
+    } finally {
+        closeSync(fd);
+        try { unlinkSync(NAMES_LOCK); } catch {}
     }
 };
 
+export const resetNamesJson = async (): Promise<void> => {
+    await fsPromises.mkdir(path.dirname(NAME_JSON_PATH), { recursive: true });
+    await fsPromises.writeFile(NAME_JSON_PATH, '{}', 'utf8');
+};
+
+export const readNameJson = async (filePath = NAME_JSON_PATH): Promise<any> => {
+    return withFileLock(async () => {
+        try {
+            const content = await fsPromises.readFile(filePath, 'utf8');
+            const data = JSON.parse(content || '{}');
+            return data && typeof data === 'object' ? data : {};
+        } catch (err: any) {
+            if (err?.code === 'ENOENT' || err instanceof SyntaxError) return {};
+            throw err;
+        }
+    });
+};
+
+const readNamesFileSafe = async (): Promise<Record<string, any>> => {
+    for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+            const raw = await fsPromises.readFile(NAME_JSON_PATH, 'utf8');
+            const parsed = JSON.parse(raw || '{}');
+            if (parsed && typeof parsed === 'object') return parsed;
+        } catch (err: any) {
+            if (err?.code === 'ENOENT') return {};
+            if (attempt < 2) await new Promise(r => setTimeout(r, 50));
+        }
+    }
+    return {};
+};
+
 export const saveNameEntry = async (
-    type: 'campaign' | 'audience' | 'workflow' | 'existingAudience',
+    type: 'campaign' | 'audience' | 'workflow' | 'existingAudience' | string,
     title: string,
     brand?: string
 ): Promise<void> => {
     if (!title) return;
-    const data = await readNameJson();
-    data[type] = {
-        title: String(title),
-        timestamp: new Date().toISOString(),
-        ...(brand !== undefined ? { brand: String(brand) } : {})
-    };
-    const dir = path.dirname(NAME_JSON_PATH);
-    await fsPromises.mkdir(dir, { recursive: true });
-    await fsPromises.writeFile(NAME_JSON_PATH, JSON.stringify(data, null, 2), 'utf8');
+    await saveNameEntries([{ type, title, brand }]);
+};
+
+export const saveNameEntries = async (
+    entries: Array<{ type: string; title: string; brand?: string }>
+): Promise<void> => {
+    const valid = entries.filter(e => e.title);
+    if (valid.length === 0) return;
+    await withFileLock(async () => {
+        const data = await readNamesFileSafe();
+        const now = new Date().toISOString();
+        for (const { type, title, brand } of valid) {
+            data[type] = {
+                title: String(title),
+                timestamp: now,
+                ...(brand !== undefined ? { brand: String(brand) } : {})
+            };
+        }
+        const dir = path.dirname(NAME_JSON_PATH);
+        await fsPromises.mkdir(dir, { recursive: true });
+        await fsPromises.writeFile(NAME_JSON_PATH, JSON.stringify(data, null, 2), 'utf8');
+    });
 };
 
 export const getNameEntry = async (

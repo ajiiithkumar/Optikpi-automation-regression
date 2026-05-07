@@ -1,10 +1,11 @@
 {
     "failFast": false,
     "parallel": 4,
+    "baseTag": "@SmokeTest or @Regression",
     "prerequisites": [
         {
-            "tag": "@TestPreparation",
-            "name": "Audience Creation"
+            "tag": "@ExistingAudience",
+            "name": "Existing Audience Setup"
         }
     ]
 }
