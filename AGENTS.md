@@ -1,10 +1,13 @@
-# CLAUDE.md — OptiKPI V2.0 Smoke Test Automation
+# AGENTS.md — OptiKPI V2.0 Smoke Test Automation
 
 This file provides context for AI assistants working on this codebase.
 
 ## Project Overview
 
-End-to-end smoke and regression test suite for the OptiKPI V2.0 platform. Tests are written in Gherkin (BDD) and executed with Cucumber.js + Playwright against a Chromium browser.
+End-to-end smoke and regression test suite for the **OptiKPI V2.0** customer-engagement platform.
+Tests are written in Gherkin (BDD) and executed with Cucumber.js + Playwright against a headless
+Chromium browser. The suite covers the five core modules: **Audience**, **Campaign**, **Dashboard**,
+**Settings**, and **Workflow**.
 
 ## Tech Stack
 
@@ -16,6 +19,7 @@ End-to-end smoke and regression test suite for the OptiKPI V2.0 platform. Tests 
 | Extent Reports    | HTML test reporting with screenshots         |
 | ts-node           | TypeScript execution without precompilation  |
 | Node.js >= 20.17  | Runtime                                      |
+| runner.js         | Orchestrates grouped parallel test execution |
 
 ## Directory Structure
 
@@ -29,6 +33,7 @@ features/               # Gherkin feature files (one per module)
 config/
   cucumber.js           # Cucumber runner configuration
   parallel-run-config.json
+runner.js               # Parallel execution orchestrator (spawns Cucumber workers)
 src/
   pages/                # Page Object Model classes
     base.page.ts        # Base class — all pages extend this
@@ -45,13 +50,14 @@ src/
     campaign.steps.ts
     common.steps.ts
     dashboard.steps.ts
+    settings.steps.ts
     workflow.steps.ts
   support/
     hooks.ts            # Before/After hooks (browser lifecycle, screenshots)
     world.ts            # PlaywrightWorld — custom Cucumber World class
-    reporting/          # Extent report adapter and templates
+  reporting/            # Extent report adapter and templates
   utils/
-    helper.ts           # Shared utilities (saveNameEntry, readNameJson, etc.)
+    helper.ts           # Shared utilities (saveNameEntry, readNameJson, withFileLock, etc.)
     extent-test-manager.ts
     extent-manager.ts
     user-pool.ts        # Parallel user allocation with file locks
@@ -68,12 +74,16 @@ reports/                # Generated reports and screenshots (gitignored)
 npm install                        # Install dependencies
 npm test                           # Run all features serially (cleans reports first)
 npm run test:tag -- "@SmokeTest"   # Run scenarios matching a tag expression
+npm run test:tag -- "@TC-AUD-01"   # Run a single scenario by its ID tag
 npm run test:parallel              # Run grouped parallel execution via runner.js
 npm run test:parallel:continue     # Parallel run — continue on failures
 npm run clean                      # Delete reports, screenshots, lock files
 npm run cleanup                    # Clean up test data created during runs
 npm run cleanup:dry-run            # Preview cleanup without deleting
 ```
+
+> **Tip:** You can also invoke `node runner.js` directly to bypass npm scripts and pass raw
+> arguments to the parallel orchestrator.
 
 ## Architecture Rules
 
@@ -83,7 +93,9 @@ Every browser interaction MUST go through a Page Object class.
 
 - All page classes extend `BasePage` (`src/pages/base.page.ts`).
 - Selectors live in a single `private readonly sel` object — never exposed publicly.
-- Use `BasePage` helpers (`click`, `fill`, `getText`, `isVisible`, `waitForVisible`) — do not call `page.locator(...)` directly unless the helpers are insufficient.
+- Use `BasePage` helpers (`click`, `fill`, `getText`, `isVisible`, `waitForVisible`). These helpers
+  wrap Playwright's raw locator API with built-in waits and error normalisation — do not call
+  `page.locator(...)` directly unless a helper is genuinely insufficient for the use case.
 - Step definitions instantiate page objects via a helper function: `const getPage = (world) => new PageClass(world.page)`.
 
 Page class template:
@@ -125,11 +137,14 @@ This project standardises on **XPath**, not CSS selectors.
 - Always call `ExtentTestManager.logPass(...)` at the end of a passing step.
 - Use `throw new Error(...)` for failures — the hook captures screenshots automatically.
 - Store shared state on `this['key']` (the Cucumber World) — not in module-level variables.
+- Import the appropriate Cucumber keyword binding (`Given`, `When`, `Then`, `And`) that matches the
+  Gherkin keyword used in the feature file; do not use a mismatched binding (e.g. `Then` for a
+  `Given` step).
 
 Step template:
 
 ```typescript
-import { Then } from '@cucumber/cucumber';
+import { Given, When, Then } from '@cucumber/cucumber';
 import { ModulePage } from '../pages/module.page';
 import { ExtentTestManager } from '../utils/extent-test-manager';
 import { PlaywrightWorld } from '../support/world';
@@ -148,6 +163,7 @@ Then('Step description here', async function (this: PlaywrightWorld) {
 |---------------------------|--------------------------|-----------------------------------|
 | `currentAudienceTitle`    | Audience creation steps  | Filter/search/verify steps        |
 | `currentCampaignName`     | Campaign creation steps  | Search/verify steps               |
+| `currentWorkflowName`     | Workflow creation steps  | Search/verify steps               |
 | `existingAudienceTitle`   | Precondition steps       | Part-of-audience, campaign steps  |
 | `selectedAudienceName`    | Audience selection steps | Verification steps                |
 | `duplicatedAudienceTitle` | Duplicate steps          | Filter steps                      |
@@ -196,13 +212,15 @@ Feature: Module name
 
 - Use `saveNameEntry(type, title)` or `saveNameEntries([...])` to persist test data.
 - Use `readNameJson()` or `getNameEntry(type)` to retrieve.
-- Built-in file locking via `withFileLock` for concurrent access.
+- Built-in file locking via `withFileLock` (exported from `src/utils/helper.ts`) for safe concurrent access in parallel runs.
 - Reset to `{}` at startup — do not rely on data persisting across runs.
 - Valid keys: `'audience'`, `'campaign'`, `'workflow'`, `'existingAudience'`, or scenario tag strings like `'TC-AUD-REG-05'`.
 
 ## Coding Standards
 
-- **TypeScript**: Target ES2019, module CommonJS, `strict: false`.
+- **TypeScript**: Target ES2019, module CommonJS, `strict: false`. Even though strict mode is off,
+  all function parameters and return types must still be annotated explicitly — do not rely on
+  implicit `any`.
 - **Async/await** for all Playwright interactions — never `.then()` chains.
 - **`const`** over `let`; never `var`.
 - **Error handling**: use `catch(() => false)` for optional checks; retry loops for flaky actions; never swallow errors silently.
@@ -228,6 +246,7 @@ try { await action(); } catch {}
 
 Every bug fix must:
 
+0. Identify the root cause — understand *why* the test fails before writing any code.
 1. Reproduce the bug (the test would have failed before the fix).
 2. Confirm the fix works as expected.
 3. Not break existing passing tests.
@@ -245,3 +264,5 @@ Every bug fix must:
 - Do not add `console.log` for normal flow — use `ExtentTestManager.logPass/logInfo` so it appears in the report.
 - Do not create new feature files for existing modules — add scenarios to the existing module feature file.
 - Do not skip `@SmokeTest` or `@Regression` tags on scenarios — the runner uses them for execution grouping.
+- Do not use a mismatched Cucumber keyword binding (e.g. importing `Then` for a step that is written as `Given` in the feature file).
+- Do not add `pause()` calls longer than 2 000 ms without an inline comment explaining why no reliable wait signal exists.

@@ -571,7 +571,7 @@ Then('Set Variant B allocation to {int} percent', async function (this: Playwrig
 Then('Verify the total allocation equals {int} percent', async function (this: PlaywrightWorld, expected: number) {
     const text = await getCampaignPage(this).getTotalAllocationText();
     if (!text.includes(String(expected))) {
-        ExtentTestManager.logPass(`Total allocation text: "${text}" (checking for ${expected}%)`);
+        throw new Error(`Total allocation mismatch. Expected ${expected}%, got "${text}"`);
     }
     ExtentTestManager.logPass(`Total allocation verified: ${text}`);
 });
@@ -588,18 +588,23 @@ Then('Verify the allocation is saved and shown correctly in the summary', async 
 });
 
 Then('Click the Add Criteria button for Variant A', async function (this: PlaywrightWorld) {
-    await getCampaignPage(this).clickAddCriteria();
-    ExtentTestManager.logPass('Clicked Add Criteria for Variant A');
+    await getCampaignPage(this).clickAddCriteriaForVariantA();
+    ExtentTestManager.logPass('Clicked Add Criteria dropdown for Variant A');
 });
 
 Then('Select the customer property criteria', async function (this: PlaywrightWorld) {
-    await getCampaignPage(this).pause(1000);
+    await getCampaignPage(this).selectCustomerPropertyCriteria();
     ExtentTestManager.logPass('Selected customer property criteria');
 });
 
 Then('Set the criteria condition and value', async function (this: PlaywrightWorld) {
-    await getCampaignPage(this).pause(1000);
-    ExtentTestManager.logPass('Set criteria condition and value');
+    await getCampaignPage(this).setCriteriaConditionAndValue();
+    ExtentTestManager.logPass('Set criteria condition (Is One Of) and value');
+});
+
+Then('Select the Variant B as Default Variant', async function (this: PlaywrightWorld) {
+    await getCampaignPage(this).selectDefaultVariantB();
+    ExtentTestManager.logPass('Selected Variant B as the default variant');
 });
 
 Then('Apply the criteria', async function (this: PlaywrightWorld) {
@@ -608,8 +613,8 @@ Then('Apply the criteria', async function (this: PlaywrightWorld) {
 });
 
 Then('Verify the criteria is saved and shown correctly in the allocation summary', async function (this: PlaywrightWorld) {
-    const visible = await getCampaignPage(this).isContentSummaryVisible();
-    if (!visible) throw new Error('Criteria allocation summary is not visible');
+    const visible = await getCampaignPage(this).isCriteriaSummaryVisible();
+    if (!visible) throw new Error('Criteria-based allocation summary is not visible after confirmation');
     ExtentTestManager.logPass('Criteria is saved and shown correctly in the allocation summary');
 });
 

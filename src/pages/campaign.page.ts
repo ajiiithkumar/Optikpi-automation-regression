@@ -65,12 +65,23 @@ export class CampaignPage extends BasePage {
         chooseContentVariant: "//button[contains(@data-testid,'choose-content-variant') or contains(@data-testid,'campaign-choose-content-btn')]",
         variantA:             "//button[contains(normalize-space(),'Version A') or contains(normalize-space(),'Variant A')]",
         variantB:             "//button[contains(normalize-space(),'Version B') or contains(normalize-space(),'Variant B')]",
-        staticAllocation:     "//button[contains(@data-test-id,'campaign-tab-a-b-testing-with-static-allocation') or contains(normalize-space(),'Static')]",
-        criteriaAllocation:   "//button[contains(@data-test-id,'campaign-tab-criteriabasedallocation') or contains(normalize-space(),'Criteria')]",
-        variantAInput:        "//input[contains(@data-testid,'variant-a-percentage')]",
-        variantBInput:        "//input[contains(@data-testid,'variant-b-percentage')]",
-        totalAllocation:      "//*[contains(@data-testid,'total-allocation')]",
+        staticAllocation:     "//button[contains(@data-test-id,'campaign-tab-a-b-testing-with-static-allocation') or contains(normalize-space(),'A/B testing with Static Allocation')]",
+        criteriaAllocation:   "//button[contains(@data-test-id,'campaign-tab-criteriabasedallocation') or contains(normalize-space(),'Criteria-based Allocation')]",
+        variantAInput:        "//input[@data-testid='campaign-version-percentage']",
+        variantBInput:        "//input[@data-testid='campaign-version-percentage']",
+        totalAllocationSummary: "//div[contains(@class,'bg-disabledBackground') and .//button[normalize-space()='Static allocation'] and .//button[contains(normalize-space(),'Version A')] and .//button[contains(normalize-space(),'Version B')]]",
         addCriteriaBtn:       "//button[contains(@data-testid,'add-criteria') or contains(normalize-space(),'Add Criteria')]",
+        addCriteriaBtnVariantA:       "//button[@data-testid='add-criteria-dropdown-A']",
+        addCriteriaCustomerProperties: "//button[@data-testid='add-criteria-dropdown-A-customer-properties']",
+        criteriaCustomerPropertyBtn:   "//button[@data-testid='audience-ruleBuilder-customer-properties--customer property-btn-1']",
+        criteriaConditionBtn:          "//button[@data-testid='audience-ruleBuilder-customer-properties--condition-btn-1']",
+        criteriaValuesBtn:             "//button[@data-testid='audience-ruleBuilder-customer-properties--values-btn-1-1']",
+        criteriaUserIdInput:           "//input[@data-testid='user_id']",
+        criteriaIsOneOfBtn:            "//input[@data-testid='is-one-of']",
+        criteriaSearchField:           "//input[@id='search-data']",
+        criteriaAddValuesBtn:          "//button[@data-testid='commonProfile-add-values-btn']",
+        defaultVariantRadioB:          "//input[@data-testid='default-variant-radio-B']",
+        criteriaSummary:               "//div[contains(@class,'bg-disabledBackground') and .//button[normalize-space()='Criteria-based Allocation']]",
 
         // Publish / Draft
         publishBtn:        "//button[@data-testid='campaign-publish-button']",
@@ -80,7 +91,9 @@ export class CampaignPage extends BasePage {
         headlessModal:     "//*[@id='headlessui-portal-root']//form",
 
         // Search
+        searchIcon: "//button[@data-testid='campaign-listView-table-search-icon']",
         searchBar:  "//input[@id='campaign-listView-table-search-icon']",
+        
 
         // Campaign Details / Edit Name
         campaignDetailsTitle: "//h2[@title] | //button[@data-testid='campaign-edit-settings-btn'] | //*[contains(@data-testid,'campaign-performance-report')]",
@@ -95,7 +108,7 @@ export class CampaignPage extends BasePage {
         dropdownEditSettings: "//button[@data-testid='campaign-list-view-table-dropdown-icon-edit-settings']",
         threeDotMenu:         "//button[contains(@data-testid,'campaign-action-menu') or contains(@aria-label,'Actions') or contains(@class,'action-menu')]",
         duplicateOption:  "//button[@data-testid='campaign-list-view-table-dropdown-icon-duplicate']",
-        deleteOption:     "//button[contains(normalize-space(),'Delete')] | //li[contains(normalize-space(),'Delete')]",
+        deleteOption:     "//button[@data-testid='campaign-list-view-table-dropdown-icon-delete-campaign']",
         duplicateConfirm: "//button[@data-testid='workflow-action-button']",
         deleteConfirm:    "//button[@data-testid='workflow-action-button']",
         successToast:     "//*[contains(@class,'toast') or contains(@class,'notification') or contains(@class,'Toastify')][string-length(normalize-space()) > 0]",
@@ -487,9 +500,13 @@ export class CampaignPage extends BasePage {
         return this.isVisible(this.sel.variantB, 5000);
     }
 
-    async selectStaticAllocation() {
+    async selectStaticAllocation(): Promise<boolean> {
+        const btn = this.page.locator(this.sel.staticAllocation).first();
+        const visible = await btn.isVisible({ timeout: 5000 }).catch(() => false);
+        if (!visible) return true;
         await this.click(this.sel.staticAllocation);
         await this.pause(500);
+        return true;
     }
 
     async selectCriteriaAllocation() {
@@ -498,24 +515,100 @@ export class CampaignPage extends BasePage {
     }
 
     async setVariantAPercentage(value: string) {
-        const input = this.page.locator(this.sel.variantAInput).first();
+        const input = this.page.locator(this.sel.variantAInput).nth(0);
         await input.waitFor({ state: 'visible', timeout: 10000 });
         await input.fill(value);
     }
 
     async setVariantBPercentage(value: string) {
-        const input = this.page.locator(this.sel.variantBInput).first();
+        const input = this.page.locator(this.sel.variantBInput).nth(1);
         await input.waitFor({ state: 'visible', timeout: 10000 });
         await input.fill(value);
     }
 
     async getTotalAllocationText(): Promise<string> {
-        return this.getText(this.sel.totalAllocation);
+        const inputValues = await this.getVisibleAllocationInputValues();
+        if (inputValues.length > 0) {
+            const total = inputValues.reduce((sum, value) => sum + value, 0);
+            return `${total}%`;
+        }
+
+        const summary = this.page.locator(this.sel.totalAllocationSummary).last();
+        await summary.waitFor({ state: 'visible', timeout: 10000 });
+        const summaryText = await summary.innerText();
+        const values = Array.from(summaryText.matchAll(/(\d+(?:\.\d+)?)%/g), match => Number(match[1]));
+        const total = values.reduce((sum, value) => sum + value, 0);
+        return `${total}%`;
+    }
+
+    private async getVisibleAllocationInputValues(): Promise<number[]> {
+        const inputs = this.page.locator(this.sel.variantAInput);
+        const count = await inputs.count();
+        const values: number[] = [];
+
+        for (let i = 0; i < count; i++) {
+            const input = inputs.nth(i);
+            const visible = await input.isVisible().catch(() => false);
+            if (!visible) continue;
+
+            const rawValue = await input.inputValue().catch(() => '');
+            const parsedValue = Number(rawValue.replace('%', '').trim());
+            if (!Number.isNaN(parsedValue)) values.push(parsedValue);
+        }
+
+        return values;
     }
 
     async clickAddCriteria() {
         await this.click(this.sel.addCriteriaBtn);
         await this.pause(1000);
+    }
+
+    async clickAddCriteriaForVariantA() {
+        await this.click(this.sel.addCriteriaBtnVariantA);
+        await this.pause(1000);
+    }
+
+    async selectCustomerPropertyCriteria() {
+        await this.click(this.sel.addCriteriaCustomerProperties);
+        await this.pause(1000);
+        await this.click(this.sel.criteriaCustomerPropertyBtn);
+        await this.pause(500);
+    }
+
+    async setCriteriaConditionAndValue() {
+        await this.click(this.sel.criteriaConditionBtn);
+        await this.pause(500);
+        await this.click(this.sel.criteriaIsOneOfBtn);
+        await this.pause(500);
+        await this.click(this.sel.criteriaValuesBtn);
+        await this.pause(1000);
+        const searchField = this.page.locator(this.sel.criteriaSearchField).first();
+        if (await searchField.isVisible({ timeout: 5000 }).catch(() => false)) {
+            await searchField.fill('test');
+            await this.page.keyboard.press('Enter').catch(() => {});
+            await this.pause(500);
+        }
+        const addValuesBtn = this.page.locator(this.sel.criteriaAddValuesBtn).first();
+        if (await addValuesBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+            await addValuesBtn.click();
+            await this.pause(500);
+        }
+    }
+
+    async selectDefaultVariantB() {
+        const radio = this.page.locator(this.sel.defaultVariantRadioB).first();
+        await radio.waitFor({ state: 'visible', timeout: 10000 });
+        await radio.click();
+        await this.pause(500);
+    }
+
+    async isCriteriaSummaryVisible(): Promise<boolean> {
+        const criteriaSummary = this.page.locator(this.sel.criteriaSummary).first();
+        const genericSummary = this.page.locator(this.sel.contentSummary).last();
+        const criteriaVisible = await criteriaSummary.isVisible({ timeout: 10000 }).catch(() => false);
+        if (criteriaVisible) return true;
+        return genericSummary.isVisible({ timeout: 5000 }).catch(() => false);
     }
 
     // ─── Publish ─────────────────────────────────────────────────────────────
@@ -550,7 +643,10 @@ export class CampaignPage extends BasePage {
     // ─── Search ──────────────────────────────────────────────────────────────
 
     async searchCampaign(name: string) {
-        await this.click(this.sel.searchBar);
+        const searchIconVisible = await this.isVisible(this.sel.searchIcon, 5000);
+        if (searchIconVisible) {
+            await this.click(this.sel.searchIcon);
+        }
         await this.fill(this.sel.searchBar, name);
         await this.page.keyboard.press('Enter').catch(() => {});
         await this.pause(2000);

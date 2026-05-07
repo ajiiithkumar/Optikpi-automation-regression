@@ -331,8 +331,8 @@ Feature: Campaign module
     Then Select the Static allocation type
     Then Set Variant A allocation to 30 percent
     Then Set Variant B allocation to 70 percent
-    Then Verify the total allocation equals 100 percent
     Then Click the Set Communication button to confirm allocation
+    Then Verify the total allocation equals 100 percent
     Then Verify the allocation is saved and shown correctly in the summary
 
   @Regression @Campaign @TC-CAMP-15
@@ -357,17 +357,15 @@ Feature: Campaign module
     Then click the Choose Content button
     Then Search the communication name in the search bar
     Then Click the communication that comes first in the list
-    Then click the Set Communication button
     Then Click the Add Variant button
     Then Click the Choose Content button for the new variant
     Then Search the communication name in the search bar
-    Then Click the communication that comes first in the list
-    Then click the Set Communication button
+    Then Search the 2 communication name in the search bar
     Then Select the Criteria-Based allocation type
     Then Click the Add Criteria button for Variant A
     Then Select the customer property criteria
     Then Set the criteria condition and value
-    Then Apply the criteria
+    Then Select the Variant B as Default Variant
     Then Click the Set Communication button to confirm allocation
     Then Verify the criteria is saved and shown correctly in the allocation summary
 
