@@ -41,9 +41,6 @@ jobs:
         run: echo '${{ secrets.USERS_CONFIG_JSON }}' > data/users-config/users.json
 
       - name: Run tests (parallel — continue on fail)
-        env:
-          TS_NODE_TRANSPILE_ONLY: "true"
-          NODE_OPTIONS: "--require ts-node/register"
         run: npm run test:parallel:continue
 
       - name: Upload test reports
