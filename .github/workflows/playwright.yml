@@ -14,15 +14,13 @@ jobs:
       PARALLEL_THREADS: "4"
       CI: "true"
       TZ: Asia/Kolkata
-      TS_NODE_TRANSPILE_ONLY: "true"
-      NODE_OPTIONS: "--require ts-node/register"
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: Set up Node.js 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.4.0
         with:
           node-version: "20"
           cache: "npm"
@@ -43,11 +41,14 @@ jobs:
         run: echo '${{ secrets.USERS_CONFIG_JSON }}' > data/users-config/users.json
 
       - name: Run tests (parallel — continue on fail)
+        env:
+          TS_NODE_TRANSPILE_ONLY: "true"
+          NODE_OPTIONS: "--require ts-node/register"
         run: npm run test:parallel:continue
 
       - name: Upload test reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: test-reports
           path: reports/
