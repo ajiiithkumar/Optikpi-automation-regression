@@ -95,7 +95,7 @@ const retryFailedScenarios = (reportPath, parallelCount, extraArgs = []) => {
     '--require', 'src/support/**/*.ts',
     '--require', 'src/utils/**/*.ts',
     '--format', 'progress',
-    `--format`, `./src/support/reporting/extent-adapter-wrapper.ts:${reportPath}`,
+    `--format`, `./src/support/reporting/extent-adapter-wrapper.js:${reportPath}`,
     `--format`, `rerun:${RERUN_FILE}`,
     '--parallel', '1',
     ...extraArgs,

@@ -14,7 +14,7 @@ module.exports = {
     ],
     format: [
       PARALLEL_THREAD_COUNT > 1 ? 'progress' : 'pretty',
-      `./src/support/reporting/extent-adapter-wrapper.ts:${EXTENT_REPORT_PATH}`
+      `./src/support/reporting/extent-adapter-wrapper.js:${EXTENT_REPORT_PATH}`
     ],
     publishQuiet: true,
     parallel: PARALLEL_THREAD_COUNT,

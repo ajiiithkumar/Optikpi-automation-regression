@@ -1,16 +1,12 @@
 
-// Wrapper for the existing Extent Adapter logic, adapted for TS.
-// We are re-implementing the logic from src/support/extent_adapter.js to be TS compatible.
+// Plain JS version of extent-adapter-wrapper — used as the Cucumber formatter.
+// Cucumber loads formatters via ESM import() which cannot handle .ts files without ts-node.
+// This .js file is identical in logic but has all TypeScript-specific syntax removed.
 
 const { Formatter, formatterHelpers } = require('@cucumber/cucumber');
-const messages = require('@cucumber/messages');
-// @ts-ignore
 const ExtentTest = require('cucumber-js-extent/extent/report/extent_test.js');
-// @ts-ignore
 const ExtentReport = require('cucumber-js-extent/extent/report/extent_report.js');
-// @ts-ignore
 const NunjuckRender = require('cucumber-js-extent/extent/view/nunjuck_render.js');
-// @ts-ignore
 const {
     updateTestTimesAndStatus,
     convertStatus,
@@ -18,22 +14,20 @@ const {
 } = require('cucumber-js-extent/extent/report/status_times_util.js');
 
 const { ExtentManager } = require('../../utils/extent-manager');
-const path = require('path');
 
 module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
-    private testRunStartTimestamp: any;
-    private testCaseStartIdToTestCaseId: Map<string, string> = new Map();
-    private testCaseIdToTiming: Map<string, any> = new Map();
-    private testRunFinishTimestamp: any;
-    private attachmentsByTestStep: Map<string, any[]> = new Map(); // Track attachments by test step
-
-    constructor(options: any) {
+    constructor(options) {
         super(options);
 
-        // Ensure report directory exists
+        this.testRunStartTimestamp = null;
+        this.testCaseStartIdToTestCaseId = new Map();
+        this.testCaseIdToTiming = new Map();
+        this.testRunFinishTimestamp = null;
+        this.attachmentsByTestStep = new Map();
+
         ExtentManager.ensureReportDirectory();
 
-        options.eventBroadcaster.on('envelope', (envelope: any) => {
+        options.eventBroadcaster.on('envelope', (envelope) => {
             if (envelope.testRunStarted) this.testRunStarted(envelope);
             if (envelope.testCaseStarted) this.testCaseStarted(envelope);
             if (envelope.attachment) this.handleAttachment(envelope);
@@ -42,41 +36,38 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
         });
     }
 
-    testRunStarted(envelope: any) {
-        this.testRunStartTimestamp = envelope.testRunStarted!.timestamp;
+    testRunStarted(envelope) {
+        this.testRunStartTimestamp = envelope.testRunStarted.timestamp;
         this.testCaseStartIdToTestCaseId = new Map();
         this.testCaseIdToTiming = new Map();
         this.attachmentsByTestStep = new Map();
     }
 
-    testCaseStarted(envelope: any) {
-        const testCaseStarted = envelope.testCaseStarted!;
+    testCaseStarted(envelope) {
+        const testCaseStarted = envelope.testCaseStarted;
         this.testCaseStartIdToTestCaseId.set(
             testCaseStarted.id,
             testCaseStarted.testCaseId
         );
-
         this.testCaseIdToTiming.set(testCaseStarted.testCaseId, {
             start: testCaseStarted.timestamp
         });
     }
 
-    private handleAttachment(envelope: any) {
+    handleAttachment(envelope) {
         const attachment = envelope.attachment;
         if (!attachment) return;
-
         const testStepId = attachment.testStepId;
         if (!testStepId) return;
-
         const normalized = this.normalizeAttachment(attachment);
         if (!this.attachmentsByTestStep.has(testStepId)) {
             this.attachmentsByTestStep.set(testStepId, []);
         }
-        this.attachmentsByTestStep.get(testStepId)!.push(normalized);
+        this.attachmentsByTestStep.get(testStepId).push(normalized);
     }
 
-    testCaseFinished(envelope: any) {
-        const testCaseFinished = envelope.testCaseFinished!;
+    testCaseFinished(envelope) {
+        const testCaseFinished = envelope.testCaseFinished;
         const testCaseId = this.testCaseStartIdToTestCaseId.get(
             testCaseFinished.testCaseStartedId
         );
@@ -86,17 +77,17 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
         }
     }
 
-    testRunFinished(envelope: any) {
-        this.testRunFinishTimestamp = envelope.testRunFinished!.timestamp;
+    testRunFinished(envelope) {
+        this.testRunFinishTimestamp = envelope.testRunFinished.timestamp;
 
-        const featureExtentTests: any[] = [];
-        const featureUriToTest = new Map<string, any>();
-        const scenariOutlineIdToTest = new Map<string, any>();
+        const featureExtentTests = [];
+        const featureUriToTest = new Map();
+        const scenariOutlineIdToTest = new Map();
 
         this.eventDataCollector
             .getTestCaseAttempts()
-            .filter((t: any) => !t.attempt)
-            .forEach((testCaseAttempt: any) => {
+            .filter((t) => !t.attempt)
+            .forEach((testCaseAttempt) => {
                 const { gherkinDocument, pickle } = testCaseAttempt;
                 const testCaseId = pickle.astNodeIds[0];
                 const featureUri = gherkinDocument.uri;
@@ -109,7 +100,6 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
                         feature.name,
                         feature.description
                     );
-
                     featureUriToTest.set(featureUri, featureTest);
                     featureExtentTests.push(featureTest);
                 }
@@ -121,7 +111,6 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
 
                 if (scenarioNode) {
                     const { id, name, description, examples } = scenarioNode;
-
                     if (examples && examples.length > 0) {
                         if (!scenariOutlineIdToTest.has(id)) {
                             const scenarioOutlineTest = new ExtentTest(
@@ -136,16 +125,12 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
                     }
                 }
 
-                const scenarioTest = new ExtentTest(
-                    'Scenario',
-                    pickle.name,
-                    ''
-                );
+                const scenarioTest = new ExtentTest('Scenario', pickle.name, '');
                 scenarioTest.addTimeStamp(
                     this.testCaseIdToTiming.get(testCaseAttempt.testCase.id)
                 );
 
-                pickle.tags.forEach((t: any) => {
+                pickle.tags.forEach((t) => {
                     scenarioTest.categories.push(t.name);
                     if (!featureTest.categories.includes(t.name))
                         featureTest.categories.push(t.name);
@@ -165,16 +150,18 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
                     testCaseAttempt
                 });
 
-                let lastRealStepTest: any = null;
+                let lastRealStepTest = null;
 
-                parsed.testSteps.forEach((testStep: any, idx: number) => {
+                parsed.testSteps.forEach((testStep, idx) => {
                     const stepStatus = convertStatus(testStep.result.status);
                     scenarioTest.status = compareStatus(scenarioTest.status, stepStatus);
 
-                    const isHookStep = !testStep.text; // Simplistic check (real check involves source location)
+                    const isHookStep = !testStep.text;
 
-                    const rawTestStep = testCaseAttempt.testCase?.testSteps?.[idx];
-                    const rawTestStepId = rawTestStep?.id;
+                    const rawTestStep = testCaseAttempt.testCase && testCaseAttempt.testCase.testSteps
+                        ? testCaseAttempt.testCase.testSteps[idx]
+                        : null;
+                    const rawTestStepId = rawTestStep ? rawTestStep.id : null;
                     const trackedAttachments = rawTestStepId
                         ? (this.attachmentsByTestStep.get(rawTestStepId) || [])
                         : [];
@@ -183,7 +170,6 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
                         : this.normalizeAttachments(testStep.attachments || []);
 
                     if (isHookStep) {
-                        // Handle attachments in hooks (Screenshots)
                         if (stepAttachments.length) {
                             const targetTest = lastRealStepTest || scenarioTest;
                             this.processAttachments(stepAttachments, targetTest);
@@ -228,17 +214,6 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
                 updateTestTimesAndStatus(scenarioTest);
             });
 
-        const reportName = 'Automation Test Report'; // Could make dynamic from ExtentManager
-
-        // We can inject our ExtentManager.getReportLocation() here?
-        // cucumber-js-extent's ExtentReport constructor doesn't seem to take path, 
-        // it likely returns HTML string which we then log.
-        // The previous adapter used `this.log(rep)`.
-
-        // Check previous adapter:
-        // const rep = new NunjuckRender().render(extentReport);
-        // this.log(rep);
-
         const extentReport = new ExtentReport(featureExtentTests, {
             start: this.testRunStartTimestamp,
             end: this.testRunFinishTimestamp
@@ -248,7 +223,7 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
         this.log(rep);
     }
 
-    private normalizeAttachment(attachment: any): any {
+    normalizeAttachment(attachment) {
         if (!attachment || !attachment.mediaType) return attachment;
         const normalized = { ...attachment };
         if (!normalized.body && normalized.data) {
@@ -261,14 +236,14 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
         return normalized;
     }
 
-    private normalizeAttachments(attachments: any[]): any[] {
+    normalizeAttachments(attachments) {
         return (attachments || []).map((attachment) => this.normalizeAttachment(attachment));
     }
 
-    private processAttachments(attachments: any[], targetTest: any): void {
+    processAttachments(attachments, targetTest) {
         if (!attachments || attachments.length === 0) return;
         const normalized = this.normalizeAttachments(attachments);
         if (normalized.length === 0) return;
         targetTest.addLogs(normalized);
     }
-}
+};
