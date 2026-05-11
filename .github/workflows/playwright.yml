@@ -41,6 +41,8 @@ jobs:
         run: echo '${{ secrets.USERS_CONFIG_JSON }}' > data/users-config/users.json
 
       - name: Run tests (parallel — continue on fail)
+        id: run-tests
+        continue-on-error: true
         run: npm run test:parallel:continue
 
       - name: Upload test reports
@@ -57,3 +59,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
         run: npm run slack:report
+
+      - name: Fail job if tests failed
+        if: steps.run-tests.outcome == 'failure'
+        run: exit 1
