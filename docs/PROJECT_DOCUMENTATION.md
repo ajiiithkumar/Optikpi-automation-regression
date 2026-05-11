@@ -1,18 +1,21 @@
 # OptiKPI V2.0 Smoke Test Automation — Project Documentation
 
+End-to-end smoke and regression tests for the **OptiKPI V2.0** platform, using Gherkin, Cucumber.js, and Playwright. For day-to-day contribution rules (POM, steps, tags, test data), see [`AGENTS.md`](../AGENTS.md) in the repository root.
+
 ## Technologies Used
 
 | Technology | Purpose |
 |-----------|---------|
-| **TypeScript** | Primary language for all page objects, step definitions, hooks, and utilities |
-| **Playwright** | Browser automation (Chromium) |
-| **Cucumber.js** (`@cucumber/cucumber` v12) | BDD-style feature execution with Gherkin syntax |
-| **Extent Reports** (`cucumber-js-extent`) | HTML test reporting with screenshots and step logs |
+| **TypeScript** | Page objects, step definitions, hooks, and utilities |
+| **Playwright** (1.58+ in dev; Docker image may pin an older baseline) | Browser automation (Chromium) |
+| **Cucumber.js** (`@cucumber/cucumber` v12) | BDD execution with Gherkin |
+| **Extent Reports** (`cucumber-js-extent`) | HTML reporting with screenshots and step logs |
 | **ts-node** | TypeScript execution without precompilation |
-| **Docker** | Containerised headless test execution |
-| **cross-env** | Cross-platform environment variable injection |
+| **dotenv** | Loads `.env` for local and runner scripts |
+| **Docker** | Optional containerised headless runs |
+| **cross-env** | Cross-platform environment variables |
 | **rimraf** | Cross-platform directory cleanup |
-| **Node.js** ≥ 20.17 | JavaScript runtime |
+| **Node.js** ≥ 20.17 | Runtime |
 
 ---
 
@@ -21,77 +24,90 @@
 ```
 OptiKPI_V2.0_SmokeTest_Automation/
 ├── config/
-│   ├── cucumber.js                  # Cucumber configuration (paths, formats, parallel)
-│   └── parallel-run-config.json     # Group-based parallel runner settings
+│   ├── cucumber.js                  # Cucumber paths, formats, parallel workers
+│   └── parallel-run-config.json     # Group runner: tags, prerequisites, thread count
 ├── data/
 │   ├── users-config/users.json      # User pool credentials
-│   ├── users.csv                    # Raw user credentials CSV
-│   ├── names.json                   # Shared test-data names (audience/campaign/workflow)
-│   ├── auth/                        # Cached auth storage state per user (generated)
-│   └── .user-locks/                 # File-based locks for concurrency (generated)
+│   ├── users.csv                    # Optional CSV helpers / IDs
+│   ├── names.json                   # Shared names (audience/campaign/workflow); reset per run
+│   ├── auth/                        # Cached storage state per user (generated)
+│   └── .user-locks/                 # Concurrency locks (generated)
 ├── features/
-│   ├── audience.feature             # Audience module scenarios (5 scenarios)
-│   ├── campaign.feature             # Campaign module scenarios (3 scenarios)
-│   ├── dashboard.feature            # Dashboard module scenarios (2 scenarios)
-│   ├── settings.feature             # Settings module scenarios (1 scenario)
-│   └── workflow.feature             # Workflow module scenarios (2 scenarios)
+│   ├── audience.feature             # Audience regression (criteria, lifecycle, UI)
+│   ├── campaign.feature             # Campaign regression (goals, triggers, variants, etc.)
+│   ├── dashboard.feature            # Dashboard smoke scenarios
+│   ├── settings.feature             # Settings smoke scenarios
+│   └── workflow.feature             # Workflow smoke scenarios
 ├── src/
-│   ├── pages/                       # Page Object Model classes
-│   │   ├── base.page.ts             # BasePage — shared Playwright helpers
-│   │   ├── login.page.ts            # Login page selectors & actions
-│   │   ├── dashboard.page.ts        # Dashboard page selectors & actions
-│   │   ├── audience.page.ts         # Audience page selectors & actions
-│   │   ├── campaign.page.ts         # Campaign page selectors & actions
-│   │   ├── workflow.page.ts         # Workflow page selectors & actions
-│   │   └── components/              # Reusable UI component page objects
+│   ├── pages/                       # Page Object Model
+│   │   ├── base.page.ts
+│   │   ├── login.page.ts
+│   │   ├── dashboard.page.ts
+│   │   ├── audience.page.ts
+│   │   ├── campaign.page.ts
+│   │   ├── workflow.page.ts
+│   │   └── components/
 │   │       ├── navigation-bar.component.ts
 │   │       └── date-time-picker.component.ts
-│   ├── steps/                       # Cucumber step definitions (TypeScript)
-│   │   ├── common.steps.ts          # Login, navigation, shared steps
-│   │   ├── audience.steps.ts        # Audience-specific steps
-│   │   ├── campaign.steps.ts        # Campaign-specific steps
-│   │   ├── dashboard.steps.ts       # Dashboard-specific steps
-│   │   └── workflow.steps.ts        # Workflow-specific steps
+│   ├── steps/
+│   │   ├── common.steps.ts
+│   │   ├── audience.steps.ts
+│   │   ├── campaign.steps.ts
+│   │   ├── dashboard.steps.ts
+│   │   ├── settings.steps.ts
+│   │   └── workflow.steps.ts
 │   ├── support/
-│   │   ├── world.ts                 # PlaywrightWorld — custom Cucumber World class
-│   │   ├── hooks.ts                 # Before/After/AfterStep hooks
-│   │   └── reporting/               # Extent report adapter & templates
+│   │   ├── world.ts                 # PlaywrightWorld
+│   │   ├── hooks.ts                 # Browser lifecycle, screenshots, locks
+│   │   └── reporting/               # Extent adapter (JS wrapper + TS adapter)
+│   │       ├── extent-adapter-wrapper.js
 │   │       ├── extent-adapter.ts
-│   │       ├── extent-adapter-wrapper.ts
-│   │       └── templates/           # Custom Nunjucks templates for Extent
+│   │       └── templates/           # Nunjucks macros (e.g. step_logs_macro.njk)
 │   ├── utils/
-│   │   ├── helper.ts                # Screenshot capture, logging, test-data helpers
-│   │   ├── user-pool.ts             # Concurrency-safe user pool with file locking
-│   │   ├── extent-manager.ts        # Extent Report manager singleton
-│   │   └── extent-test-manager.ts   # Per-scenario Extent test context
+│   │   ├── helper.ts                # names.json, screenshots, logging helpers
+│   │   ├── user-pool.ts
+│   │   ├── extent-manager.ts
+│   │   ├── extent-test-manager.ts
+│   │   ├── casino-site-api.ts       # Optional casino API client for test data
+│   │   └── run-casino-api.ts        # CLI entry for casino helpers
 │   └── runner/
-│       └── runner.js                # Smart parallel group runner with Extent merging
+│       └── runner.js                # Group parallel runner, merge, optional retry & Slack
 ├── scripts/
-│   ├── slack-report.js              # Post test summary + report to Slack
-│   ├── open-extent-report.js        # Open generated Extent report in browser
-│   └── docker-diag.js               # Docker environment diagnostics
-├── reports/
-│   ├── extent/                      # Generated Extent HTML report
-│   ├── screenshots/                 # Step & scenario screenshots (generated)
-│   └── json/                        # Cucumber JSON output (generated)
-├── Dockerfile                       # Containerised test runner image
-├── docker-compose.yml               # Docker Compose service definition
-├── extent-config.json               # Extent report theme & metadata
-├── tsconfig.json                    # TypeScript compiler configuration
-└── package.json                     # Dependencies & npm scripts
+│   └── slack-report.js              # Post summary / report to Slack (optional)
+├── reports/                         # Generated (gitignored): extent, screenshots, json
+├── AGENTS.md                        # Maintainer conventions
+├── Dockerfile
+├── docker-compose.yml
+├── extent-config.json
+├── playwright.config.ts             # Playwright tooling config (e.g. example spec)
+├── tsconfig.json
+└── package.json
 ```
 
 ---
 
-## Smoke Test Coverage
+## Test Coverage Overview
 
-| Module | Scenarios | What's Validated |
-|--------|:---------:|-----------------|
-| **Dashboard** | 2 | KPI widgets load, date filters update data, Business Performance / Marketing / Notification tabs |
-| **Audience** | 5 | Page load, tab switching (Live, On Schedule, Static), card/list views, full CRUD (create → criteria → preview → draft → re-enter → publish), tooltip verification, and test preparation |
-| **Campaign** | 3 | Page load & tab switching (Active, Completed, Draft, All), create campaign with new audience, and create campaign with existing audience |
-| **Workflow** | 2 | Page load & tab switching (Active, Inactive, Draft, All), full workflow creation (enrollment → action node → exit node → publish) |
-| **Settings** | 1 | Page load verification |
+### Smoke (`@SmokeTest`)
+
+Runs in the default parallel groups with other scenarios selected by `baseTag` in `config/parallel-run-config.json`.
+
+| Module | Scenarios (approx.) | Focus |
+|--------|:-------------------:|-------|
+| **Dashboard** | 2 | Page load, KPI widgets, tabs, date filter |
+| **Settings** | 1 | Page load |
+| **Workflow** | 2 | Tabs, create/activate workflow with validation |
+
+**Total smoke scenarios:** 5.
+
+### Regression (`@Regression`)
+
+| Module | Scenarios (approx.) | Focus |
+|--------|:-------------------:|-------|
+| **Audience** | 15 | Criteria types (event, metric, engagement, part-of-audience), AND/OR groups, draft/publish, duplicate, preview, validation, UI |
+| **Campaign** | 25 | Tabs, goals, audiences, triggers, variants, A/B allocation, draft/publish, duplicate, delete, pagination, search, filters, history, report |
+
+Parallel execution includes regression when `baseTag` is `@SmokeTest or @Regression` (current default in `parallel-run-config.json`).
 
 ---
 
@@ -99,10 +115,10 @@ OptiKPI_V2.0_SmokeTest_Automation/
 
 ### Page Object Model (POM)
 
-All browser interactions follow the **Page Object Model** pattern:
+All browser interactions go through page classes that extend **`BasePage`** (`src/pages/base.page.ts`).
 
 ```
-BasePage  (src/pages/base.page.ts)
+BasePage
   ├── LoginPage
   ├── DashboardPage
   ├── AudiencePage
@@ -113,66 +129,49 @@ BasePage  (src/pages/base.page.ts)
       └── DateTimePickerComponent
 ```
 
-`BasePage` provides common Playwright helpers used by every page class:
+Common **`BasePage`** helpers:
 
 | Method | Purpose |
 |--------|---------|
-| `click(selector)` | Wait → click → 3 s settle |
-| `forceClick(selector)` | Wait → force-click (overlapping elements) |
+| `click(selector)` | Wait → click → short settle |
+| `forceClick(selector)` | Force click when overlapping |
 | `fill(selector, value)` | Wait → clear → type |
-| `getText(selector)` | Wait → return `innerText` |
-| `getInputValue(selector)` | Wait → return input value |
-| `isVisible(selector)` | Returns `true`/`false` within timeout |
+| `getText(selector)` | `innerText` |
+| `getInputValue(selector)` | Input value |
+| `isVisible(selector)` | Boolean within timeout |
 | `waitForVisible(selector)` | Wait until visible |
 | `pause(ms)` | Fixed delay (use sparingly) |
-| `waitForNetworkIdle()` | Wait for network to settle |
+| `waitForNetworkIdle()` | Network idle |
 
-Each page class extends `BasePage`:
-```typescript
-export class AudiencePage extends BasePage {
-    // Selectors (private static readonly)
-    // Action methods that compose BasePage helpers
-}
-```
+Selectors are defined in a **`private readonly sel`** object per page (see [`AGENTS.md`](../AGENTS.md)).
 
 ---
 
 ### Custom World — `PlaywrightWorld`
 
-Defined in `src/support/world.ts`. Extends Cucumber's `World` with:
+Defined in `src/support/world.ts`. Extends Cucumber’s `World` with:
 
-| Property | Type | Purpose |
-|----------|------|---------|
-| `browser` | `Browser` | Shared Chromium instance |
-| `context` | `BrowserContext` | Per-scenario browser context |
-| `page` | `Page` | Active page instance |
-| `user` | `any` | Acquired user credentials |
-| `userLockFile` | `string` | Path to current user lock file |
+| Property | Purpose |
+|----------|---------|
+| `browser` | Shared Chromium instance |
+| `context` | Per-scenario context |
+| `page` | Active page |
+| `user` | Credentials from the pool |
+| `userLockFile` | Lock file path for the current user |
+| `scenarioTag` / `scenarioTags` | Set in `Before` for tag-based data and logic |
 
 Default step timeout: **120 seconds**.
 
 ---
 
-### Cucumber Hooks Lifecycle
+### Cucumber Hooks (summary)
 
 ```
-Before  →  Each scenario
-├── Set Extent test context
-├── Launch shared browser (once)
-└── Assign browser reference
-
-AfterStep  →  After each step
-├── FAILED  → Capture screenshot (disk + report)
-└── PASSED  → Capture screenshot (report only)
-
-After  →  After each scenario
-├── Capture final scenario screenshot
-├── Close page & context
-├── Release user lock
-└── Clear Extent test context
-
-AfterAll  →  After all scenarios
-└── Close shared browser
+Before      → scenario: Extent context, tags, shared browser
+BeforeStep  → optional skip when “limit reached” is set on the world
+AfterStep   → screenshot: failures to disk + report; passes attached to report only (unless configured)
+After       → scenario screenshot (per SCENARIO_SCREENSHOTS), close page/context, release user lock, clear Extent context
+AfterAll    → close shared browser
 ```
 
 ---
@@ -183,308 +182,218 @@ AfterAll  →  After all scenarios
 
 | Script | Description |
 |--------|-------------|
-| `npm test` | Clean → run tests serially (1 worker) with Extent report |
-| `npm run test:serial` | Explicitly serial execution (`PARALLEL_THREADS=1`) |
-| `npm run test:screenshots` | Run with all step & scenario screenshots enabled |
-| `npm run test:parallel` | Group-based parallel runner with prerequisite support |
-| `npm run test:parallel:continue` | Parallel groups, continue on group failure |
-| `npm run test:parallel:dry-run` | Parallel groups, dry-run mode |
-| `npm run test:extent` | Alias for serial test run |
-| `npm run clean` | Remove reports, screenshots, user locks, and auth cache |
-| `npm run slack:report` | Send test summary + report link to Slack |
+| `npm test` | `pretest` clean → Cucumber with `config/cucumber.js` (parallelism from `PARALLEL_THREADS`, default 1) |
+| `npm run test:tag -- "<expression>"` | Cucumber with `--tags` (clears user locks/auth first via `pretest:tag`) |
+| `npm run test:serial` | Same as `npm test` with `PARALLEL_THREADS=1` |
+| `npm run test:screenshots` | `STEP_SCREENSHOTS` + `SCENARIO_SCREENSHOTS` set to capture more |
+| `npm run test:extent` | Alias for serial run |
+| `npm run test:parallel` | Group runner: `node src/runner/runner.js --groups` |
+| `npm run test:parallel:continue` | Group runner, continue on group failure |
+| `npm run test:parallel:dry-run` | Group runner dry-run |
+| `npm run clean` | Remove reports, screenshots, JSON output, locks, auth cache |
+| `npm run cleanup` / `cleanup:dry-run` | `node scripts/cleanup-test-data.js` (script must exist in `scripts/`) |
+| `npm run slack:report` | Run Slack reporter standalone |
+| `casino:*` | Optional casino API utilities (`register`, `login`, …) via `run-casino-api.ts` |
 
-### Basic Execution
+Examples:
 
 ```powershell
-# Run all tests (serial, single worker)
 npm test
-
-# Run serially (explicit)
-npm run test:serial
-```
-
-### Parallel Execution (Group Runner)
-
-The smart group runner (`src/runner/runner.js`) supports **prerequisite-aware parallel execution**:
-
-```powershell
-# Run groups in parallel (default: 3 threads)
+npm run test:tag -- "@SmokeTest"
+npm run test:tag -- "@TC-AUD-REG-01"
 npm run test:parallel
-
-# Continue even if a group fails
-npm run test:parallel:continue
-
-# Dry run (validate without executing)
-npm run test:parallel:dry-run
 ```
 
-Configured in `config/parallel-run-config.json`:
+You can also run `node src/runner/runner.js` with the same flags as in `package.json` for custom orchestration.
+
+### Parallel group runner
+
+Configured in **`config/parallel-run-config.json`**. Example (align with repo):
+
 ```json
 {
     "failFast": false,
-    "parallel": 3,
+    "parallel": 4,
+    "baseTag": "@SmokeTest or @Regression",
     "prerequisites": [
         {
-            "tag": "@TestPreparation",
-            "name": "Audience Creation"
+            "tag": "@ExistingAudience",
+            "name": "Existing Audience Setup"
         }
     ]
 }
 ```
 
-**How it works:**
-1. **Clean** — removes reports, screenshots, locks, and auth cache
-2. **Prerequisites** — runs scenarios tagged `@TestPreparation` first (serially)
-3. **Parallel groups** — runs remaining `@SmokeTest` scenarios in parallel batches
-4. **Report merge** — merges per-group Extent HTML reports into a single report
-5. **Slack notification** — optionally sends results to Slack
+**Typical flow**
+
+1. **Clean** — runner removes prior report artifacts, locks, and auth cache targets.
+2. **Prerequisites** — scenarios tagged per `prerequisites` (e.g. `@ExistingAudience`) run first.
+3. **Groups** — remaining scenarios matching `baseTag` run in parallel batches (`parallel` workers).
+4. **Merge** — per-worker Extent HTML output is merged into `reports/extent/OptiKPI_V2.0_Smoke_Test.html`.
+5. **Slack** — if `SLACK_WEBHOOK_URL` or `SLACK_BOT_TOKEN` is set, `scripts/slack-report.js` may run after the run.
+
+The runner may also retry failed scenarios (see `MAX_RETRIES` in `src/runner/runner.js`).
 
 ---
 
 ## Reporting — Extent Reports
 
-The project uses **Extent Reports** via the `cucumber-js-extent` adapter.
+1. Cucumber uses the adapter referenced from **`config/cucumber.js`** (`extent-adapter-wrapper.js` + report path).
+2. Steps attach logs and screenshots through hooks and helpers.
+3. Default report path: `reports/extent/OptiKPI_V2.0_Smoke_Test.html` (overridable via `EXTENT_REPORT_PATH`).
+4. **`postinstall`** (and Docker build) copy `step_logs_macro.njk` into `cucumber-js-extent` for inline popups.
 
-### Report Generation Flow
-1. Cucumber runs scenarios using the custom Extent adapter wrapper (`src/support/reporting/extent-adapter-wrapper.ts`)
-2. Step results, screenshots, and logs are attached in real time
-3. A single HTML report is generated at `reports/extent/OptiKPI_V2.0_Smoke_Test.html`
-4. The `postinstall` script patches the Extent template for inline text + image popups
+### `extent-config.json`
 
-### Report Configuration (`extent-config.json`)
-```json
-{
-  "documentTitle": "Optikpi V2.0 Smoke Test",
-  "reportName": "Optikpi V2.0 Smoke Test",
-  "theme": "standard",
-  "encoding": "utf-8",
-  "timelineEnabled": true
-}
-```
+Theme, title, and options (e.g. `timelineEnabled`) live in `extent-config.json`.
 
-### Screenshots
+### Screenshot environment variables
 
-| Trigger | Saved to Disk | Attached to Report |
-|---------|:---:|:---:|
-| Step failure | ✅ | ✅ |
-| Step pass | ❌ | ✅ |
-| Scenario end (configurable) | ❌ | ✅ |
-
-Screenshot behaviour is controlled via environment variables:
-
-| Variable | Values | Default |
-|----------|--------|---------|
-| `STEP_SCREENSHOTS` | `always`, `never` | Failed only |
-| `SCENARIO_SCREENSHOTS` | `always`, `failed`, `never` | `always` |
+| Variable | Values | Typical behaviour |
+|----------|--------|-------------------|
+| `STEP_SCREENSHOTS` | `always`, `never`, or unset | Hooks control pass/fail captures |
+| `SCENARIO_SCREENSHOTS` | `always`, `failed`, `never` | End-of-scenario capture |
+| `HEADLESS` | `true` / `false` | Browser launch (also world parameters) |
 
 ---
 
 ## User Pool (Concurrency-Safe Logins)
 
-Because multiple workers may run in parallel, the project uses a **file-lock-based user pool** (`src/utils/user-pool.ts`).
+1. Users in **`data/users-config/users.json`**.
+2. **`acquireUser()`** in `src/utils/user-pool.ts` creates a lock under **`data/.user-locks/`**.
+3. **`After`** hook releases the lock.
+4. Auth state may be cached under **`data/auth/`** to avoid redundant logins.
 
-### How It Works
-1. Users are defined in `data/users-config/users.json`
-2. Each scenario calls `acquireUser()` which polls for an unlocked user
-3. A `.lock` file is created atomically (`wx` flag) in `data/.user-locks/`
-4. After the scenario, `releaseLock()` deletes the lock file in the `After` hook
-5. Auth state is cached per user in `data/auth/<username>.json` to skip repeated logins
-
-### User Configuration (`data/users-config/users.json`)
-```json
-{
-  "users": [
-    { "username": "user1@example.com", "password": "secret1" },
-    { "username": "user2@example.com", "password": "secret2" }
-  ]
-}
-```
-
-> [!IMPORTANT]
-> Add at least as many users as your parallel worker count for optimal parallel execution.
-
-### Usage in Steps
-```typescript
-import { acquireUser, releaseLock } from '../utils/user-pool';
-
-// In a step definition:
-const { user, lockFile } = await acquireUser({ timeoutMs: 60000 });
-// ... use user.username, user.password, user.authFile
-// Lock is released automatically in the After hook
-```
+Provide at least as many users as parallel workers.
 
 ---
 
-## Test Data Management
+## Test Data (`data/names.json`)
 
-Shared test data lives in `data/names.json` and is managed via helpers in `src/utils/helper.ts`:
+Managed from **`src/utils/helper.ts`** (file locking inside helpers for safe parallel writes):
 
 | Function | Purpose |
 |----------|---------|
-| `saveNameEntry(type, title)` | Persist an audience/campaign/workflow name |
-| `getNameEntry(type)` | Retrieve the saved name for a type |
-| `generateAudienceTitle()` | Generate a unique audience title |
-| `readUsersCsv()` | Read user IDs from `data/users.csv` |
-| `captureScreenshot(world, opts)` | Capture and attach a screenshot |
-| `logInfo / logPass / logFail` | Attach labelled log entries to Extent report |
+| `saveNameEntry` / `saveNameEntries` | Persist titles / names by type or tag key |
+| `getNameEntry` / `readNameJson` | Read back entries |
+| `resetNamesJson` | Reset store (used appropriately at run start) |
+| `generateAudienceTitle` | Unique audience title |
+| `readUsersCsv` | Read `data/users.csv` if used |
+| `captureScreenshot` | Screenshots for hooks / steps |
+
+Valid key types include `'audience'`, `'campaign'`, `'workflow'`, `'existingAudience'`, and scenario tag keys such as `'TC-AUD-REG-05'` (see [`AGENTS.md`](../AGENTS.md)).
 
 ---
 
 ## Feature Files & Tags
 
-| Feature | Tag Prefix | Scenarios | Description |
-|---------|-----------|:---------:|-------------|
-| `audience.feature` | `@ST-AUD-` | 5 | Page load, views, static/schedule audience CRUD |
-| `campaign.feature` | `@ST-CAMP-` | 3 | Page load, create campaigns with new/existing audiences |
-| `dashboard.feature` | `@ST-DASH-` | 2 | Page load, KPI widgets, filter interaction |
-| `settings.feature` | `@ST-SET-` | 1 | Page load verification |
-| `workflow.feature` | `@ST-Workflow-` | 2 | Page load, full workflow creation & publish |
+| Feature file | Primary tags | Role |
+|--------------|--------------|------|
+| `audience.feature` | `@Regression`, `@TC-AUD-REG-NN` (+ `@Negative`, `@UI`, `@ExistingAudience` where used) | Audience regression |
+| `campaign.feature` | `@Regression`, `@Campaign`, `@TC-CAMP-NN` | Campaign regression |
+| `dashboard.feature` | `@SmokeTest`, `@ST-DASH-NN` | Smoke |
+| `settings.feature` | `@SmokeTest`, `@ST-SET-NN` | Smoke |
+| `workflow.feature` | `@SmokeTest`, `@ST-Workflow-NN` | Smoke |
 
-**Special tag:** `@TestPreparation` — marks prerequisite scenarios that must run before parallel groups.
+**Special tags**
+
+| Tag | Purpose |
+|-----|---------|
+| `@SmokeTest` | Core smoke — included in default `baseTag` |
+| `@Regression` | Extended suite — included when `baseTag` allows it |
+| `@TestPreparation` | Reserved for prerequisite-style flows (see hooks/tag conventions in AGENTS) |
+| `@ExistingAudience` | Prerequisite audience setup (see `parallel-run-config.json`) |
+| `@ST-*` / `@TC-*` | Reporting and data keys |
 
 ---
 
 ## Slack Integration
 
-The Slack notification script (`scripts/slack-report.js`) supports two modes:
+Script: **`scripts/slack-report.js`**.
 
-| Mode | Token/URL | Sends Message | Uploads Report |
-|------|-----------|:---:|:---:|
-| **Web API** | `SLACK_BOT_TOKEN` | ✅ | ✅ |
-| **Webhook** | `SLACK_WEBHOOK_URL` | ✅ | ❌ |
+| Mode | Env | Behaviour |
+|------|-----|-----------|
+| Web API | `SLACK_BOT_TOKEN`, `SLACK_CHANNEL_ID` | Rich posting + optional file upload |
+| Webhook | `SLACK_WEBHOOK_URL` | Incoming webhook message |
 
-### Environment Variables
-| Variable | Required | Description |
-|----------|:---:|-------------|
-| `SLACK_BOT_TOKEN` | One of these | Bot OAuth token (Web API mode) |
-| `SLACK_WEBHOOK_URL` | is required | Incoming webhook URL |
-| `SLACK_CHANNEL_ID` | For Web API | Channel to post to |
-| `REPORT_URL` | No | Public URL to the hosted report |
-| `RUN_LABEL` | No | Custom label for the test run |
+Optional: `REPORT_URL`, `RUN_LABEL`. See [slack-report.md](slack-report.md).
 
 ```powershell
 npm run slack:report
 ```
 
-The script parses the Extent HTML report for pass/fail metrics and sends a formatted Slack Block Kit message.
-
-For detailed setup instructions, see [slack-report.md](slack-report.md).
-
 ---
 
-## Docker Support
+## Docker
 
-### Dockerfile
-- Base image: `mcr.microsoft.com/playwright:v1.52.0-noble`
-- Installs Chromium via Playwright
-- Forces headless mode (`HEADLESS=true`)
-- Timezone: `Asia/Kolkata`
-
-### Running in Docker
+- **Dockerfile**: `mcr.microsoft.com/playwright:v1.52.0-noble`, Chromium, `HEADLESS=true`, `TZ=Asia/Kolkata`, default **`CMD`** `npm run test:parallel`.
+- **docker-compose.yml**: Mounts `reports/` and `data/`; typical env `PARALLEL_THREADS=4`.
 
 ```powershell
-# Build and run with Docker Compose
 docker compose up --build
-
-# Run serially
 docker compose run tests npm run test:serial
-
-# Override parallel thread count
-docker compose run -e PARALLEL_THREADS=4 tests npm test
-
-# Run with dry-run
-docker compose run tests npm test -- --dry-run
 ```
-
-### Docker Compose (`docker-compose.yml`)
-- Mounts `./reports` to extract test reports to the host
-- Mounts `./data` to share credentials and user data
-- Default: `PARALLEL_THREADS=4`, `HEADLESS=true`
 
 ---
 
-## Cucumber Configuration (`config/cucumber.js`)
+## Cucumber configuration (`config/cucumber.js`)
 
-```js
-module.exports = {
-  default: {
-    paths: ['features/**/*.feature'],
-    requireModule: ['ts-node/register'],
-    require: [
-      'src/steps/**/*.ts',
-      'src/support/**/*.ts',
-      'src/utils/**/*.ts'
-    ],
-    format: [
-      'progress',
-      './src/support/reporting/extent-adapter-wrapper.ts:<report-path>'
-    ],
-    publishQuiet: true,
-    parallel: PARALLEL_THREAD_COUNT,  // Default: 1, overridden via PARALLEL_THREADS env
-    worldParameters: { headless: false }
-  }
-};
-```
+- **`paths`**: `features/**/*.feature`
+- **`require`**: steps, `src/support/**/*.ts`, `src/utils/**/*.ts`
+- **`format`**: `pretty` or `progress` depending on `PARALLEL_THREADS`, plus Extent adapter:
+  - `./src/support/reporting/extent-adapter-wrapper.js:<report-path>`
+- **`parallel`**: from `PARALLEL_THREADS` (default single worker)
 
 ---
 
 ## Setup Guide
 
 ### Prerequisites
-- **Node.js** ≥ 20.17.0 (or 22.9.0+)
-- **npm** (comes with Node.js)
 
-### Step 1: Clone & Install
+- **Node.js** ≥ 20.17  
+- **npm**
+
+### Install & browsers
+
 ```powershell
 git clone <repository-url>
 cd OptiKPI_V2.0_SmokeTest_Automation
 npm install
-```
-
-### Step 2: Install Playwright Browsers
-```powershell
 npx playwright install
 ```
 
-### Step 3: Configure User Pool
-Create or update `data/users-config/users.json`:
-```json
-{
-  "users": [
-    { "username": "testuser1@example.com", "password": "password1" },
-    { "username": "testuser2@example.com", "password": "password2" }
-  ]
-}
-```
+### User pool
 
-### Step 4: Run Tests
+Create **`data/users-config/users.json`** with one object per parallel user (`username` / `password`).
+
+### Run & open report
+
 ```powershell
-# Serial (default)
 npm test
-
-# Parallel with group runner
+# or
 npm run test:parallel
-
-# With all screenshots
-npm run test:screenshots
 ```
 
-### Step 5: View Reports
-After test execution, open the Extent report:
-```powershell
-reports/extent/OptiKPI_V2.0_Smoke_Test.html
-```
+Report: **`reports/extent/OptiKPI_V2.0_Smoke_Test.html`**
 
 ---
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Tests fail to acquire user | Add more users to `data/users-config/users.json` or reduce parallel count |
-| Browser not launching | Run `npx playwright install` to install browsers |
-| Stale auth cache | Delete `data/auth/` to clear cached login state |
-| Lock files not cleaned up | Run `npm run clean` or delete `data/.user-locks/` manually |
-| Extent report not generated | Ensure `cucumber-js-extent` is installed and `postinstall` script ran |
-| Docker: browser crash | Ensure `HEADLESS=true` and sufficient container memory |
-| Parallel group runner hangs | Check `config/parallel-run-config.json` for correct tag names |
+| Issue | What to try |
+|-------|-------------|
+| Cannot acquire user | Add users or lower `PARALLEL_THREADS` / group `parallel` count |
+| Browser missing | `npx playwright install` |
+| Stale login | Delete `data/auth/` |
+| Stale locks | `npm run clean` or remove `data/.user-locks/` |
+| No Extent HTML | Confirm adapter path in `config/cucumber.js` and that `npm install` / template patch ran |
+| Docker crashes | `HEADLESS=true`, sufficient memory |
+| Wrong scenarios in parallel | Check `baseTag` and `prerequisites` in `parallel-run-config.json` |
+| `npm run cleanup` fails | Ensure `scripts/cleanup-test-data.js` is present (defined in `package.json`) |
+
+---
+
+## Related documentation
+
+- **[AGENTS.md](../AGENTS.md)** — Architecture rules, tagging, and coding standards for this repo.
+- **[slack-report.md](slack-report.md)** — Slack setup details.
