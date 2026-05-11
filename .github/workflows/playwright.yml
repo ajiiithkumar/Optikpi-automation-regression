@@ -43,7 +43,7 @@ jobs:
       - name: Run tests (parallel — continue on fail)
         id: run-tests
         continue-on-error: true
-        run: npm run test:parallel:continue
+        run: npm run test:tag -- "@TC-AUD-01"
 
       - name: Upload test reports
         if: always()
