@@ -84,6 +84,13 @@ reports/                    # Generated reports and screenshots (gitignored)
 
 ```bash
 npm install
+npx playwright install chromium
+```
+
+This suite runs against **Chromium** only. On Linux CI or Docker you may need system dependencies as well:
+
+```bash
+npx playwright install --with-deps chromium
 ```
 
 ---
