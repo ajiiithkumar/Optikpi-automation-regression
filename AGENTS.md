@@ -74,7 +74,7 @@ reports/                # Generated reports and screenshots (gitignored)
 npm install                        # Install dependencies
 npm test                           # Run all features serially (cleans reports first)
 npm run test:tag -- "@SmokeTest"   # Run scenarios matching a tag expression
-npm run test:tag -- "@TC-AUD-01"   # Run a single scenario by its ID tag
+npm run test:tag -- "@TC-AUD-REG-01"   # Run a single scenario by its ID tag (Audience uses TC-AUD-REG-*)
 npm run test:parallel              # Run grouped parallel execution via runner.js
 npm run test:parallel:continue     # Parallel run — continue on failures
 npm run clean                      # Delete reports, screenshots, lock files

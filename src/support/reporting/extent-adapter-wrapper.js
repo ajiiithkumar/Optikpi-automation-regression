@@ -14,6 +14,80 @@ const {
 } = require('cucumber-js-extent/extent/report/status_times_util.js');
 
 const { ExtentManager } = require('../../utils/extent-manager');
+const timestampToMs = require('cucumber-js-extent/extent/report/timestamp_util.js');
+const fs = require('fs');
+const path = require('path');
+
+// ── Run-summary helpers ───────────────────────────────────────────────────────
+
+const SCREENSHOT_DIR = path.join(process.cwd(), 'reports', 'screenshots');
+const SUMMARY_PATH   = path.join(process.cwd(), 'reports', 'run-summary.json');
+
+const formatDuration = (ms) => {
+    if (ms == null || !Number.isFinite(ms) || ms < 0) return 'N/A';
+    const rounded = Math.round(ms);
+    if (rounded < 1000) return `${rounded}ms`;
+    const secs = (rounded / 1000).toFixed(1);
+    if (+secs < 60) return `${secs}s`;
+    const mins = Math.floor(rounded / 60000);
+    const remSecs = ((rounded % 60000) / 1000).toFixed(0);
+    return `${mins}m ${remSecs}s`;
+};
+
+const collectFailedScreenshots = () => {
+    const list = [];
+    if (!fs.existsSync(SCREENSHOT_DIR)) return list;
+    for (const file of fs.readdirSync(SCREENSHOT_DIR)) {
+        if (file.includes('FAILED')) list.push(path.join(SCREENSHOT_DIR, file));
+    }
+    return list;
+};
+
+const countScenarioStats = (featureExtentTests) => {
+    let passed = 0, failed = 0, skipped = 0;
+    const walk = (node) => {
+        if (!node || !node.childTests) return;
+        for (const c of node.childTests) {
+            if (c.type === 'Scenario') {
+                const st = String(c.status || '');
+                if (st === 'Pass') passed += 1;
+                else if (st === 'Fail') failed += 1;
+                else skipped += 1;
+            }
+            walk(c);
+        }
+    };
+    for (const ft of featureExtentTests || []) walk(ft);
+    return { totalScenarios: passed + failed + skipped, passed, failed };
+};
+
+const writeRunSummary = (opts) => {
+    const featureExtentTests   = opts.featureExtentTests  || [];
+    const failedScenarioDetails = opts.failedScenarios    || [];
+    const { totalScenarios, passed, failed } = countScenarioStats(featureExtentTests);
+    const durationRounded = (opts.durationMs != null && Number.isFinite(opts.durationMs))
+        ? Math.round(opts.durationMs) : 0;
+
+    const summary = {
+        status:           failed === 0 && passed > 0 ? 'passed' : 'failed',
+        totalScenarios,
+        passed,
+        failed,
+        duration:         formatDuration(durationRounded),
+        durationMs:       durationRounded,
+        timestamp:        new Date().toLocaleString(),
+        failedScenarios:  failedScenarioDetails,
+        failedScreenshots: collectFailedScreenshots(),
+    };
+
+    try {
+        const dir = path.dirname(SUMMARY_PATH);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(SUMMARY_PATH, JSON.stringify(summary, null, 2), 'utf8');
+    } catch (err) {
+        console.warn('[extent-adapter-wrapper] Warning: failed to write run-summary.json:', err.message);
+    }
+};
 
 module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
     constructor(options) {
@@ -81,6 +155,8 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
         this.testRunFinishTimestamp = envelope.testRunFinished.timestamp;
 
         const featureExtentTests = [];
+        /** @type {{ feature: string, line: number, name: string, tags: string[] }[]} */
+        const failedScenarioDetailsForSummary = [];
         const featureUriToTest = new Map();
         const scenariOutlineIdToTest = new Map();
 
@@ -212,6 +288,23 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
                 });
 
                 updateTestTimesAndStatus(scenarioTest);
+
+                if (scenarioTest.status === 'Fail') {
+                    let line = 0;
+                    if (
+                        scenarioNode &&
+                        scenarioNode.location &&
+                        typeof scenarioNode.location.line === 'number'
+                    ) {
+                        line = scenarioNode.location.line;
+                    }
+                    failedScenarioDetailsForSummary.push({
+                        feature: (gherkinDocument.uri || '').replace(/\\/g, '/'),
+                        line,
+                        name: pickle.name,
+                        tags: (pickle.tags || []).map((t) => t.name),
+                    });
+                }
             });
 
         const extentReport = new ExtentReport(featureExtentTests, {
@@ -221,6 +314,15 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
 
         const rep = new NunjuckRender().render(extentReport);
         this.log(rep);
+
+        const durationMs =
+            timestampToMs(this.testRunFinishTimestamp) -
+            timestampToMs(this.testRunStartTimestamp);
+        writeRunSummary({
+            featureExtentTests,
+            failedScenarios: failedScenarioDetailsForSummary,
+            durationMs,
+        });
     }
 
     normalizeAttachment(attachment) {

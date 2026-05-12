@@ -107,14 +107,20 @@ SLACK_BOT_TOKEN=xoxb-...
 SLACK_CHANNEL_ID=C0XXXXXXXX
 ```
 
-Create `data/users-config/users.json` with test account credentials:
+Create `data/users-config/users.json` with test account credentials.
+
+**Shape must match what `user-pool.ts` reads:** a **`users` array**, not a bare list.
 
 ```json
-[
-  { "username": "user1@example.com", "password": "password1" },
-  { "username": "user2@example.com", "password": "password2" }
-]
+{
+  "users": [
+    { "username": "user1@example.com", "password": "password1" },
+    { "username": "user2@example.com", "password": "password2" }
+  ]
+}
 ```
+
+If the file is a top-level array `[ ... ]`, you will see: *No users found … (expected `{ "users": [ ... ] }`.)*
 
 ---
 
@@ -136,9 +142,17 @@ npm run test:parallel
 
 ### Run a single tag or scenario
 
+Audience regression IDs use **`@TC-AUD-REG-NN`** (not `@TC-AUD-01`). Campaign uses **`@TC-CAMP-NN`**, smoke uses **`@ST-...`**.
+
 ```bash
-npm run test:tag -- "@TC-AUD-01"
+npm run test:tag -- "@TC-AUD-REG-01"
 npm run test:tag -- "@SmokeTest"
+```
+
+**No browser window?** If the tag matches **zero** scenarios, Cucumber exits immediately and the Playwright `Before` hook never runs — so nothing launches. Check the console for `0 scenarios`; fix the tag or list scenarios with:
+
+```bash
+npx cucumber-js -c config/cucumber.js --dry-run
 ```
 
 ### Serial run (single thread)
