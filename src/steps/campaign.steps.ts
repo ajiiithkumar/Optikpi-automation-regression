@@ -133,7 +133,7 @@ Then('click the Open Goal button', async function (this: PlaywrightWorld) {
 });
 //3
 Then('Verify the Open Goal should be set successfully', async function (this: PlaywrightWorld) {
-    await getCampaignPage(this).verifyGoalIsSet();
+    await getCampaignPage(this).verifyOpenGoalSet();
     ExtentTestManager.logPass('Verified Open Goal is set successfully');
 });
 
@@ -620,6 +620,12 @@ Then('Verify the criteria is saved and shown correctly in the allocation summary
 
 // ─── Publish Steps ───────────────────────────────────────────────────────────
 
+Then('Verify the Publish button is Visible', async function (this: PlaywrightWorld) {
+    const visible = await getCampaignPage(this).isPublishButtonVisible();
+    if (!visible) throw new Error('Publish button is not visible');
+    ExtentTestManager.logPass('Publish button is visible');
+});
+
 Then('click the Publish button', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).clickPublish();
     ExtentTestManager.logPass('Clicked "Publish" button');
@@ -816,7 +822,7 @@ Then('Verify the campaign navigates to the Edit Campaign page', async function (
 });
 
 Then('Verify the Open Goal is still set and retained', async function (this: PlaywrightWorld) {
-    await getCampaignPage(this).verifyGoalIsSet();
+    await getCampaignPage(this).verifyOpenGoalSet();
     ExtentTestManager.logPass('Open Goal is still set and retained after re-opening');
 });
 

@@ -361,6 +361,7 @@ Feature: Campaign module
     Then Click the Choose Content button for the new variant
     Then Search the communication name in the search bar
     Then Search the 2 communication name in the search bar
+    Then Click the communication that comes first in the list
     Then Select the Criteria-Based allocation type
     Then Click the Add Criteria button for Variant A
     Then Select the customer property criteria
@@ -368,6 +369,9 @@ Feature: Campaign module
     Then Select the Variant B as Default Variant
     Then Click the Set Communication button to confirm allocation
     Then Verify the criteria is saved and shown correctly in the allocation summary
+    Then Verify the Publish button is Visible
+    Then Click the Save as Draft button
+    Then Verify the campaign is saved as Draft successfully
 
   @Regression @Campaign @TC-CAMP-16
   Scenario: Save Campaign as Draft preserves the goal setting on re-opening

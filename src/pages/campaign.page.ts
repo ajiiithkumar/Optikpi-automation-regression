@@ -28,6 +28,9 @@ export class CampaignPage extends BasePage {
         financialTab:    "//button[@data-test-id='campaign-tab-financial']",
         goalDeposit_not_selected:   "//div[contains(@data-testid,'campaign-goal-Financial-Deposit-undefined')]",
         goalSummary:     "//button[@data-testid='campaign-goal-preview-click']",
+        /** Goal set — Engagement Open shows inline preview (post–goal-picker UI). */
+        goalPreviewOpen: "//button[@data-testid='campaign-goal-preview-open']",
+        goalPreviewOpenSummary: "//div[contains(@class,'bg-disabledBackground')][.//span[contains(normalize-space(),'Your campaign goal is')] and .//button[@data-testid='campaign-goal-preview-open']]",
 
         // Audience
         newAudienceTab:       "//button[@data-test-id='campaign-tab-new-audience']",
@@ -290,7 +293,38 @@ export class CampaignPage extends BasePage {
         await this.waitForVisible(this.sel.editGoal);
     }
 
+    /**
+     * After choosing Engagement → Open and Set Goal, the stepper shows an inline summary
+     * (“Your campaign goal is” … Open) instead of the legacy “Edit goal” chip alone.
+     */
+    async verifyOpenGoalSet(): Promise<void> {
+        await this.waitForVisible(this.sel.goalPreviewOpen, 20000);
+        const summary = this.page.locator(this.sel.goalPreviewOpenSummary).first();
+        await summary.waitFor({ state: 'visible', timeout: 10000 });
+        const text = (await summary.innerText().catch(() => '')).trim();
+        if (!/Your campaign goal is/i.test(text)) {
+            throw new Error(`Open goal summary missing expected copy. Got: "${text}"`);
+        }
+        // innerText() often concatenates span + button with no space → "Your campaign goal isOpen."
+        const hasOpenLabel =
+            /\bis\s+Open\b/i.test(text) ||
+            /\bisOpen\b/i.test(text);
+        if (!hasOpenLabel) {
+            throw new Error(`Open goal summary does not show Open goal. Got: "${text}"`);
+        }
+    }
+
     async getGoalSummaryText(): Promise<string> {
+        const previewOpen = this.page.locator(this.sel.goalPreviewOpenSummary).first();
+        if (await previewOpen.isVisible({ timeout: 3000 }).catch(() => false)) {
+            return (await previewOpen.innerText().catch(() => '')).trim();
+        }
+        const previewClick = this.page.locator(
+            "//div[contains(@class,'bg-disabledBackground')][.//span[contains(normalize-space(),'Your campaign goal is')] and .//button[@data-testid='campaign-goal-preview-click']]"
+        ).first();
+        if (await previewClick.isVisible({ timeout: 2000 }).catch(() => false)) {
+            return (await previewClick.innerText().catch(() => '')).trim();
+        }
         const el = this.page.locator(this.sel.editGoal).first();
         const visible = await el.isVisible().catch(() => false);
         if (visible) {
@@ -577,6 +611,8 @@ export class CampaignPage extends BasePage {
     }
 
     async setCriteriaConditionAndValue() {
+        await this.click(this.sel.criteriaUserIdInput);
+        await this.pause(500);
         await this.click(this.sel.criteriaConditionBtn);
         await this.pause(500);
         await this.click(this.sel.criteriaIsOneOfBtn);
@@ -612,6 +648,10 @@ export class CampaignPage extends BasePage {
     }
 
     // ─── Publish ─────────────────────────────────────────────────────────────
+
+    async isPublishButtonVisible(): Promise<boolean> {
+        return this.isVisible(this.sel.publishBtn, 15000);
+    }
 
     async clickPublish() {
         await this.click(this.sel.publishBtn);
