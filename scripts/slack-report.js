@@ -1,27 +1,28 @@
 'use strict';
 
 /**
- * Slack report script — posts a pass/fail summary to Slack after a test run.
+ * Slack report script — posts a rich pass/fail summary and uploads the
+ * Extent HTML report as a file attachment to Slack after a test run.
  *
- * Reads:  reports/run-summary.json  (written by runner.js)
- * Posts:  a Slack Block Kit message via Bot token + channel ID
+ * Reads:  reports/run-summary.json               (written by extent-adapter-wrapper.js)
+ *         reports/extent/OptiKPI_V2.0_Smoke_Test.html  (Extent HTML report)
  *
  * Required env vars:
- *   SLACK_BOT_TOKEN   — xoxb-... bot token with chat:write permission
+ *   SLACK_BOT_TOKEN   — xoxb-... bot token with chat:write + files:write permissions
  *   SLACK_CHANNEL_ID  — channel ID (e.g. C0AC6AV2LEM)
  *
  * Optional env vars:
- *   REPORT_URL   — link to the published HTML report artifact
- *   RUN_LABEL    — label for this run (e.g. "CI #42", "Nightly")
+ *   RUN_LABEL    — label for this run (e.g. "OptiKPI V2.0 Smoke Test")
  */
 
 try { require('dotenv').config(); } catch (_) {}
 
 const fs   = require('fs');
 const path = require('path');
-const https = require('https');
+const { WebClient } = require('@slack/web-api');
 
 const SUMMARY_FILE = path.join(process.cwd(), 'reports', 'run-summary.json');
+const HTML_REPORT  = path.join(process.cwd(), 'reports', 'extent', 'OptiKPI_V2.0_Smoke_Test.html');
 
 // ── Read run summary ──────────────────────────────────────────────────────────
 let summary;
@@ -45,40 +46,68 @@ if (!summary) {
   };
 }
 
-// ── Build message ─────────────────────────────────────────────────────────────
-const token      = process.env.SLACK_BOT_TOKEN;
-const channelId  = process.env.SLACK_CHANNEL_ID;
-const reportUrl  = process.env.REPORT_URL  || '';
-const runLabel   = process.env.RUN_LABEL   || 'CI Run';
+// ── Config ────────────────────────────────────────────────────────────────────
+const token     = process.env.SLACK_BOT_TOKEN;
+const channelId = process.env.SLACK_CHANNEL_ID;
+const runLabel  = process.env.RUN_LABEL || 'OptiKPI V2.0 Smoke Test';
 
 if (!token || !channelId) {
   console.log('[slack-report] SLACK_BOT_TOKEN or SLACK_CHANNEL_ID not set — skipping.');
   process.exit(0);
 }
 
-const isPassed  = summary.status === 'passed';
-const statusEmoji = isPassed ? ':white_check_mark:' : ':x:';
-const statusText  = isPassed ? 'PASSED' : 'FAILED';
+const client = new WebClient(token);
 
-const headerText = `${statusEmoji} *${runLabel}* — ${statusText}`;
+const isPassed    = summary.status === 'passed';
+const statusLabel = isPassed ? 'ALL TESTS PASSED' : 'SOME TESTS FAILED';
+const passedEmoji = ':white_check_mark:';
+const failedEmoji = ':x:';
+const clockEmoji  = ':clock3:';
+const reportedAt  = `Report generated at ${summary.timestamp}`;
 
-const statsText = [
-  `*Total:* ${summary.totalScenarios}`,
-  `*Passed:* ${summary.passed}`,
-  `*Failed:* ${summary.failed}`,
-  `*Duration:* ${summary.duration}`,
-  `*Time:* ${summary.timestamp}`,
-].join('   |   ');
-
+// ── Build Block Kit message ───────────────────────────────────────────────────
 const blocks = [
+  // Header
+  {
+    type: 'header',
+    text: {
+      type: 'plain_text',
+      text: `${isPassed ? '✅' : '❌'} ${runLabel}`,
+      emoji: true,
+    },
+  },
+  // Status + Total
   {
     type: 'section',
-    text: { type: 'mrkdwn', text: headerText },
+    fields: [
+      { type: 'mrkdwn', text: `*Status:*\n${statusLabel}` },
+      { type: 'mrkdwn', text: `*Total Scenarios:*\n${summary.totalScenarios}` },
+    ],
   },
+  // Passed + Failed
   {
     type: 'section',
-    text: { type: 'mrkdwn', text: statsText },
+    fields: [
+      { type: 'mrkdwn', text: `*Passed:*\n${passedEmoji} ${summary.passed}` },
+      { type: 'mrkdwn', text: `*Failed:*\n${failedEmoji} ${summary.failed}` },
+    ],
   },
+  // Duration + Run Time
+  {
+    type: 'section',
+    fields: [
+      { type: 'mrkdwn', text: `*Duration:*\n${clockEmoji} ${summary.duration}` },
+      { type: 'mrkdwn', text: `*Run Time:*\n${clockEmoji} ${summary.timestamp}` },
+    ],
+  },
+  // Report generated at
+  {
+    type: 'context',
+    elements: [
+      { type: 'mrkdwn', text: `${clockEmoji} ${reportedAt}` },
+    ],
+  },
+  { type: 'divider' },
 ];
 
 // Failed scenario list (up to 10)
@@ -86,72 +115,49 @@ if (summary.failedScenarios && summary.failedScenarios.length > 0) {
   const shown = summary.failedScenarios.slice(0, 10);
   const lines = shown.map(s => `• ${s.name || s.feature}`).join('\n');
   const extra = summary.failedScenarios.length > 10
-    ? `\n_…and ${summary.failedScenarios.length - 10} more. See report for details._`
+    ? `\n_…and ${summary.failedScenarios.length - 10} more. See attached report._`
     : '';
   blocks.push({
     type: 'section',
     text: { type: 'mrkdwn', text: `*Failed Scenarios:*\n${lines}${extra}` },
   });
+  blocks.push({ type: 'divider' });
 }
 
-// Report link button
-if (reportUrl) {
-  blocks.push({
-    type: 'actions',
-    elements: [
-      {
-        type: 'button',
-        text: { type: 'plain_text', text: 'View Report', emoji: true },
-        url: reportUrl,
-        style: isPassed ? 'primary' : 'danger',
-      },
-    ],
+// ── Main ──────────────────────────────────────────────────────────────────────
+(async () => {
+  // 1. Post the summary message
+  const msgResult = await client.chat.postMessage({
+    channel: channelId,
+    blocks,
+    text: `${runLabel} — ${statusLabel} | ${summary.passed}/${summary.totalScenarios} passed | ${summary.duration}`,
   });
-}
 
-blocks.push({ type: 'divider' });
+  if (!msgResult.ok) {
+    console.error('[slack-report] Slack API error (chat.postMessage):', msgResult.error);
+    process.exit(1);
+  }
+  console.log('[slack-report] Summary message posted successfully.');
 
-// ── Post to Slack ─────────────────────────────────────────────────────────────
-const payload = JSON.stringify({
-  channel: channelId,
-  blocks,
-  text: `${runLabel} ${statusText} — ${summary.passed}/${summary.totalScenarios} scenarios passed`,
-});
+  // 2. Upload the HTML report as a file attachment (if it exists)
+  if (fs.existsSync(HTML_REPORT)) {
+    const uploadResult = await client.filesUploadV2({
+      channel_id: channelId,
+      file: fs.createReadStream(HTML_REPORT),
+      filename: 'OptiKPI_V2.0_Smoke_Test.html',
+      title: 'OptiKPI V2.0 Smoke Test — Extent Report',
+      initial_comment: 'HTML Extent Report attached. Download and open in a browser to view.',
+    });
 
-const options = {
-  hostname: 'slack.com',
-  path: '/api/chat.postMessage',
-  method: 'POST',
-  headers: {
-    'Content-Type':  'application/json; charset=utf-8',
-    'Authorization': `Bearer ${token}`,
-    'Content-Length': Buffer.byteLength(payload),
-  },
-};
-
-const req = https.request(options, (res) => {
-  let body = '';
-  res.on('data', chunk => { body += chunk; });
-  res.on('end', () => {
-    try {
-      const json = JSON.parse(body);
-      if (json.ok) {
-        console.log('[slack-report] Message posted successfully.');
-      } else {
-        console.error('[slack-report] Slack API error:', json.error);
-        process.exit(1);
-      }
-    } catch (e) {
-      console.error('[slack-report] Failed to parse Slack response:', e.message);
-      process.exit(1);
+    if (!uploadResult.ok) {
+      console.warn('[slack-report] Warning: HTML report upload failed:', uploadResult.error);
+    } else {
+      console.log('[slack-report] HTML report uploaded successfully.');
     }
-  });
-});
-
-req.on('error', (err) => {
-  console.error('[slack-report] HTTP request failed:', err.message);
+  } else {
+    console.warn('[slack-report] HTML report not found at:', HTML_REPORT);
+  }
+})().catch(err => {
+  console.error('[slack-report] Fatal error:', err.message);
   process.exit(1);
 });
-
-req.write(payload);
-req.end();

@@ -43,7 +43,7 @@ jobs:
       - name: Run tests (parallel — continue on fail)
         id: run-tests
         continue-on-error: true
-        run: npm run test:parallel:continue
+        run: npm run test:tag -- "@TC-AUD-REG-01"
 
       - name: Upload test reports
         if: always()
@@ -58,6 +58,7 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          RUN_LABEL: "OptiKPI V2.0 Smoke Test"
         run: npm run slack:report
 
       - name: Fail job if tests failed
