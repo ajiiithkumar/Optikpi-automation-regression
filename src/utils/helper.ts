@@ -127,19 +127,17 @@ export const getNewAudienceTitle = async (filePath = NAME_JSON_PATH): Promise<an
     return getAudienceEntry(data, 'new');
 };
 
-export const saveDraftAudienceTitle = async (brandName: string, title: string): Promise<void> => {
-    if (!title) return;
-    await saveNameEntry('audience', title, brandName);
+export const saveDraftAudienceTitle = async (_brandName: string, _title: string): Promise<void> => {
+    // storing under generic 'audience' key removed; callers should save under the scenario tag key instead
 };
 
 export const getOrSetAudienceTitle = async (
-    brandName = '',
+    _brandName = '',
     minLength = AUDIENCE_TITLE_MIN_LENGTH,
     maxLength = AUDIENCE_TITLE_MAX_LENGTH
 ): Promise<string> => {
-    const title = generateAudienceTitle(minLength, maxLength);
-    await saveNameEntry('audience', title, brandName);
-    return title;
+    // storing under generic 'audience' key removed; callers should save under the scenario tag key instead
+    return generateAudienceTitle(minLength, maxLength);
 };
 
 export const readUsersCsv = async (csvPath = USERS_CSV_PATH): Promise<Array<Record<string, string>>> => {

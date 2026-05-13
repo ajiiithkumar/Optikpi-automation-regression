@@ -72,7 +72,8 @@ Then('Enter the Campaign Name and Campaign Tag', async function (this: Playwrigh
     const page = getCampaignPage(this);
     await page.enterCampaignName(campaignName);
     await page.enterCampaignTag('auto-tag');
-    await saveNameEntry('campaign', campaignName);
+    const campTagMatch = this.scenarioTag?.match(/TC-CAMP-\w+/);
+    if (campTagMatch) await saveNameEntry(campTagMatch[0], campaignName);
     ExtentTestManager.logPass(`Entered Campaign Name: ${campaignName}`);
 });
 
@@ -668,9 +669,10 @@ Then('Enter the Campaign Name in the search bar', async function (this: Playwrig
     let campaignName = this['currentCampaignName'];
     if (!campaignName) {
         const data = await readNameJson();
-        campaignName = data?.campaign?.title;
+        const campTagMatch = this.scenarioTag?.match(/TC-CAMP-\w+/);
+        campaignName = campTagMatch ? data?.[campTagMatch[0]]?.title : undefined;
     }
-    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign.title entry.');
+    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign entry for this scenario tag.');
     this['currentCampaignName'] = campaignName;
 
     const page = getCampaignPage(this);
@@ -744,9 +746,10 @@ Then('Click on the campaign from the list', async function (this: PlaywrightWorl
     let campaignName = this['currentCampaignName'];
     if (!campaignName) {
         const data = await readNameJson();
-        campaignName = data?.campaign?.title;
+        const campTagMatch = this.scenarioTag?.match(/TC-CAMP-\w+/);
+        campaignName = campTagMatch ? data?.[campTagMatch[0]]?.title : undefined;
     }
-    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign.title entry.');
+    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign entry for this scenario tag.');
     this['currentCampaignName'] = campaignName;
     await getCampaignPage(this).clickCampaignFromList(campaignName);
     ExtentTestManager.logPass(`Clicked on campaign "${campaignName}" from the list`);
@@ -830,9 +833,10 @@ Then('Click on the published active campaign from the list', async function (thi
     let campaignName = this['currentCampaignName'];
     if (!campaignName) {
         const data = await readNameJson();
-        campaignName = data?.campaign?.title;
+        const campTagMatch = this.scenarioTag?.match(/TC-CAMP-\w+/);
+        campaignName = campTagMatch ? data?.[campTagMatch[0]]?.title : undefined;
     }
-    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign.title entry.');
+    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign entry for this scenario tag.');
     this['currentCampaignName'] = campaignName;
     await getCampaignPage(this).clickCampaignFromList(campaignName);
     ExtentTestManager.logPass(`Clicked on published active campaign "${campaignName}"`);
@@ -955,7 +959,8 @@ Then('Verify the first page of campaigns is restored correctly', async function 
 
 Then('Enter a known Campaign Name in the search bar', async function (this: PlaywrightWorld) {
     const data = await readNameJson();
-    const campaignName = data?.campaign?.title || this['currentCampaignName'];
+    const campTagMatch = this.scenarioTag?.match(/TC-CAMP-\w+/);
+    const campaignName = (campTagMatch ? data?.[campTagMatch[0]]?.title : undefined) || this['currentCampaignName'];
     if (!campaignName) throw new Error('No campaign name available for search. Create a campaign first.');
     this['searchedCampaignName'] = campaignName;
     await getCampaignPage(this).searchCampaign(campaignName);

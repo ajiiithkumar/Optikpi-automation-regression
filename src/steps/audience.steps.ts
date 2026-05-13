@@ -101,7 +101,7 @@ Then('Fill in the Audience details and save', async function (this: PlaywrightWo
 
     const scenarioTag = this.scenarioTag || '';
     const tagMatch = scenarioTag.match(/TC-AUD-REG-\d+/);
-    const entries: Array<{ type: string; title: string }> = [{ type: 'audience', title: audienceTitle }];
+    const entries: Array<{ type: string; title: string }> = [];
     if (tagMatch) entries.push({ type: tagMatch[0], title: audienceTitle });
     if (this.scenarioTags?.includes('ExistingAudience')) {
         entries.push({ type: 'existingAudience', title: audienceTitle });
@@ -590,7 +590,7 @@ Given('a Published Audience exists', async function (this: PlaywrightWorld) {
 
 Given('an Audience exists in the list', async function (this: PlaywrightWorld) {
     const data = await readNameJson();
-    const existing = data?.existingAudience?.title || data?.audience?.title;
+    const existing = data?.existingAudience?.title;
     if (existing) {
         this['existingAudienceTitle'] = existing;
         ExtentTestManager.logInfo(`Using existing Audience: ${existing}`);
