@@ -45,8 +45,13 @@ Before(async function (this: any, scenario: any) {
     const tags: any[] = scenario?.pickle?.tags || [];
     const allTags = tags.map((t: any) => String(t.name || '').replace('@', ''));
     this.scenarioTags = allTags;
-    this.scenarioTag = allTags
-        .find((t: string) => /^TC-AUD-REG-\d+$/.test(t) || /^ST-/.test(t) || /^TestPreparation$/.test(t)) || '';
+    const campTags = allTags.filter((t: string) => /^REG-CAMP-\w+$/.test(t));
+    const audienceRegId = allTags.find((t: string) =>
+        /^REG-AUD-\d+$/.test(t) || /^TestPreparation$/.test(t));
+    const regModuleId = allTags.find((t: string) =>
+        /^REG-(DASH|SET|WORKFLOW)-\d+$/.test(t));
+    this.scenarioTag = audienceRegId || regModuleId || (campTags.length > 0 ? campTags[campTags.length - 1] : '');
+    this.campaignNamesJsonKey = campTags.length > 0 ? campTags[0] : '';
 
     if (!sharedBrowser) {
         const headless = process.env.HEADLESS === 'true' || this.parameters?.headless === true;
@@ -104,6 +109,16 @@ After(async function (this: any, scenario: any) {
                 });
             }
         }
+    }
+
+    if (status === Status.PASSED) {
+        const keysToMark: string[] = [];
+        if (this.scenarioTag) keysToMark.push(this.scenarioTag);
+        if (this.scenarioTags?.includes('ExistingAudience')) {
+            keysToMark.push('existingAudience', 'audience');
+        }
+        if (/^REG-CAMP-/.test(this.scenarioTag || '')) keysToMark.push('campaign');
+        if (keysToMark.length) await Helper.markNameEntryCompleted(keysToMark);
     }
 
     // Cleanup

@@ -296,9 +296,9 @@ const buildTagExpression = (group, allGroups) => {
       if (Array.isArray(g.tags)) usedTags.push(...g.tags);
       else if (typeof g.tags === 'string') usedTags.push(g.tags);
     }
-    if (usedTags.length === 0) return '@SmokeTest';
+    if (usedTags.length === 0) return '@Regression';
     const notParts = usedTags.map(t => `not ${t}`).join(' and ');
-    return `@SmokeTest and ${notParts}`;
+    return `@Regression and ${notParts}`;
   }
 
   // Array of tags → OR them together
@@ -565,7 +565,7 @@ const mergeOrderedReports = (prereqResults, allResults) => {
   if (fs.existsSync(mainFile)) {
     reportFiles.push({
       path: mainFile,
-      name: 'Main Run (@SmokeTest)',
+      name: 'Main Run (@Regression)',
       index: reportFiles.length + 1
     });
   }
@@ -762,7 +762,7 @@ const main = () => {
 
       // ── Dry-run ──
       if (isDryRun) {
-        const dryBaseTag = config.baseTag || '@SmokeTest';
+        const dryBaseTag = config.baseTag || '@Regression';
         const dryNotParts = prerequisites.map(p => `not ${p.tag}`).join(' and ');
         const dryMainTag = prerequisites.length > 0
           ? `(${dryBaseTag}) and ${dryNotParts}`
@@ -831,7 +831,7 @@ const main = () => {
       // ── Phase 2: Run scenarios in one process ──
       // If excludeFromMainRun is set, exclude prerequisite tags from the main run
       const excludePrereqs = config.excludeFromMainRun !== false;
-      const baseTag = config.baseTag || '@SmokeTest';
+      const baseTag = config.baseTag || '@Regression';
       let mainTagExpr = baseTag;
       if (excludePrereqs && prerequisites.length > 0) {
         const notParts = prerequisites.map(p => `not ${p.tag}`).join(' and ');
@@ -876,13 +876,13 @@ const main = () => {
         console.log(`  ${pad(i + 1, 4)} ${pad('[prereq] ' + r.name, 38)} ${pad(sl, 12)} ${pad(formatDuration(r.duration), 12)}`);
       });
       const mainLabel = mainStatus === 0 ? '✅ PASSED' : '❌ FAILED';
-      console.log(`  ${pad('→', 4)} ${pad('Main run (all @SmokeTest)', 38)} ${pad(mainLabel, 12)} ${pad(formatDuration(mainDuration), 12)}`);
+      console.log(`  ${pad('→', 4)} ${pad('Main run (all @Regression)', 38)} ${pad(mainLabel, 12)} ${pad(formatDuration(mainDuration), 12)}`);
       console.log('═'.repeat(70) + '\n');
 
       // Merge prerequisite + main reports into a single HTML
       const allResults = [
         ...prereqResults.map(r => ({ ...r, name: `[prereq] ${r.name}` })),
-        { name: 'Main run (@SmokeTest)', status: mainStatus, skipped: false, duration: mainDuration }
+        { name: 'Main run (@Regression)', status: mainStatus, skipped: false, duration: mainDuration }
       ];
       mergeOrderedReports(prereqResults, allResults);
 

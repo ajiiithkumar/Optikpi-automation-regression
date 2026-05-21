@@ -1,7 +1,7 @@
 {
     "failFast": false,
     "parallel": 4,
-    "baseTag": "@SmokeTest or @Regression",
+    "baseTag": "@Regression",
     "prerequisites": [
         {
             "tag": "@ExistingAudience",

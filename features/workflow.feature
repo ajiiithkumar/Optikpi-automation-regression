@@ -1,7 +1,7 @@
 Feature: Workflow module
   # Users are managed in config/users.json (kept out of the report).
 
-  @SmokeTest @ST-Workflow-01
+  @Regression @REG-WORKFLOW-01
   Scenario: Workflow page load
     Given I log in for module "Workflow"
     When I navigate to "Workflow"
@@ -15,7 +15,7 @@ Feature: Workflow module
     Then Click The All tab
     Then Verify Workflow All tab should load successfully
 
-  @SmokeTest @ST-Workflow-02
+  @Regression @REG-WORKFLOW-02
   Scenario: Workflow Activation with error validation
     Given I log in for module "Workflow"
     When I navigate to "Workflow"
