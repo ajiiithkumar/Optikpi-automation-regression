@@ -1,1 +1,17 @@
-{}
+{
+  "REG-CAMP-02": {
+    "title": "Campaign-1779360559287-23887063511600",
+    "timestamp": "2026-05-21T10:49:19.367Z",
+    "status": "in progress"
+  },
+  "REG-AUD-01": {
+    "title": "Audience-1779360480887-23808663580300",
+    "timestamp": "2026-05-21T10:48:00.893Z",
+    "status": "completed"
+  },
+  "existingAudience": {
+    "title": "Audience-1779360480887-23808663580300",
+    "timestamp": "2026-05-21T10:48:00.893Z",
+    "status": "completed"
+  }
+}

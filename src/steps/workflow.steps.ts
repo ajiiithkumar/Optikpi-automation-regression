@@ -5,7 +5,7 @@ import { AudiencePage } from '../pages/audience.page';
 import { DateTimePicker } from '../pages/components/date-time-picker.component';
 import { ExtentTestManager } from '../utils/extent-test-manager';
 import { PlaywrightWorld } from '../support/world';
-import { generateAudienceTitle } from '../utils/helper';
+import { uniqueId } from '../utils/helper';
 
 const getWorkflowPage = (world: PlaywrightWorld) => new WorkflowPage(world.page);
 const getAudiencePage = (world: PlaywrightWorld) => new AudiencePage(world.page);
@@ -85,7 +85,7 @@ Then('Click the workflow create from scratch button', async function (this: Play
 });
 
 Then('enter the Workflow name and Tag', async function (this: PlaywrightWorld) {
-    const workflowTitle = generateAudienceTitle();
+    const workflowTitle = `Workflow-${uniqueId()}`;
     this['currentWorkflowTitle'] = workflowTitle;
 
     const workflow = getWorkflowPage(this);
