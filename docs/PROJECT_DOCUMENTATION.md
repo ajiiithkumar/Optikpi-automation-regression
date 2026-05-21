@@ -64,7 +64,7 @@ OptiKPI_V2.0_SmokeTest_Automation/
 │   │       ├── extent-adapter.ts
 │   │       └── templates/           # Nunjucks macros (e.g. step_logs_macro.njk)
 │   ├── utils/
-│   │   ├── helper.ts                # names.json, screenshots, logging helpers
+│   │   ├── helper.ts                # names.json (save/wait/mark-completed), screenshots, logging helpers
 │   │   ├── user-pool.ts
 │   │   ├── extent-manager.ts
 │   │   ├── extent-test-manager.ts
@@ -88,26 +88,19 @@ OptiKPI_V2.0_SmokeTest_Automation/
 
 ## Test Coverage Overview
 
-### Smoke (`@SmokeTest`)
+### Regression (`@Regression`)
 
-Runs in the default parallel groups with other scenarios selected by `baseTag` in `config/parallel-run-config.json`.
+All scenarios use `@Regression` for execution. Scenario IDs use `@REG-<MODULE>-<NN>` (e.g. `@REG-DASH-01`, `@REG-AUD-01`, `@REG-CAMP-18`).
 
 | Module | Scenarios (approx.) | Focus |
 |--------|:-------------------:|-------|
 | **Dashboard** | 2 | Page load, KPI widgets, tabs, date filter |
 | **Settings** | 1 | Page load |
 | **Workflow** | 2 | Tabs, create/activate workflow with validation |
-
-**Total smoke scenarios:** 5.
-
-### Regression (`@Regression`)
-
-| Module | Scenarios (approx.) | Focus |
-|--------|:-------------------:|-------|
 | **Audience** | 15 | Criteria types (event, metric, engagement, part-of-audience), AND/OR groups, draft/publish, duplicate, preview, validation, UI |
 | **Campaign** | 25 | Tabs, goals, audiences, triggers, variants, A/B allocation, draft/publish, duplicate, delete, pagination, search, filters, history, report |
 
-Parallel execution includes regression when `baseTag` is `@SmokeTest or @Regression` (current default in `parallel-run-config.json`).
+Parallel execution uses `baseTag`: `@Regression` in `config/parallel-run-config.json`.
 
 ---
 
@@ -170,7 +163,7 @@ Default step timeout: **120 seconds**.
 Before      → scenario: Extent context, tags, shared browser
 BeforeStep  → optional skip when “limit reached” is set on the world
 AfterStep   → screenshot: failures to disk + report; passes attached to report only (unless configured)
-After       → scenario screenshot (per SCENARIO_SCREENSHOTS), close page/context, release user lock, clear Extent context
+After       → scenario screenshot (per SCENARIO_SCREENSHOTS); on PASSED: markNameEntryCompleted for scenario tag key + type keys; close page/context, release user lock, clear Extent context
 AfterAll    → close shared browser
 ```
 
@@ -199,8 +192,8 @@ Examples:
 
 ```powershell
 npm test
-npm run test:tag -- "@SmokeTest"
-npm run test:tag -- "@TC-AUD-REG-01"
+npm run test:tag -- "@Regression"
+npm run test:tag -- "@REG-AUD-01"
 npm run test:parallel
 ```
 
@@ -214,7 +207,7 @@ Configured in **`config/parallel-run-config.json`**. Example (align with repo):
 {
     "failFast": false,
     "parallel": 4,
-    "baseTag": "@SmokeTest or @Regression",
+    "baseTag": "@Regression",
     "prerequisites": [
         {
             "tag": "@ExistingAudience",
@@ -274,14 +267,28 @@ Managed from **`src/utils/helper.ts`** (file locking inside helpers for safe par
 
 | Function | Purpose |
 |----------|---------|
-| `saveNameEntry` / `saveNameEntries` | Persist titles / names by type or tag key |
-| `getNameEntry` / `readNameJson` | Read back entries |
-| `resetNamesJson` | Reset store (used appropriately at run start) |
+| `saveNameEntry` / `saveNameEntries` | Persist titles / names by type or tag key; sets `status: "in progress"` |
+| `markNameEntryCompleted(keys)` | Sets `status: "completed"` on the given keys (called by `After` hook on PASSED) |
+| `waitForNameEntryCompleted(key, timeoutMs?)` | Polls every 500 ms until an entry reaches `status: "completed"`, then returns `{ title, timestamp }`. Default timeout: 60 s |
+| `getNameEntry` / `readNameJson` | Read entries directly (use only when no parallel writer dependency exists) |
+| `resetNamesJson` | Reset store to `{}` at run start |
 | `generateAudienceTitle` | Unique audience title |
 | `readUsersCsv` | Read `data/users.csv` if used |
 | `captureScreenshot` | Screenshots for hooks / steps |
 
-Valid key types include `'audience'`, `'campaign'`, `'workflow'`, `'existingAudience'`, and scenario tag keys such as `'TC-AUD-REG-05'` (see [`AGENTS.md`](../AGENTS.md)).
+Valid key types include `'audience'`, `'campaign'`, `'workflow'`, `'existingAudience'`, and scenario tag keys such as `'REG-AUD-05'` (see [`AGENTS.md`](../AGENTS.md)).
+
+### Entry status lifecycle
+
+Each entry in `names.json` tracks a `status` field:
+
+```
+saveNameEntries / saveNameEntry  →  status: "in progress"
+After hook (PASSED)              →  status: "completed"    (markNameEntryCompleted)
+After hook (FAILED)              →  status stays "in progress"
+```
+
+Steps that read data produced by another parallel scenario (e.g. `select the audience from the list`, `a Published Audience exists`) use `waitForNameEntryCompleted` instead of `readNameJson`, ensuring they block until the producer scenario has passed and the UI entity is ready.
 
 ---
 
@@ -289,21 +296,20 @@ Valid key types include `'audience'`, `'campaign'`, `'workflow'`, `'existingAudi
 
 | Feature file | Primary tags | Role |
 |--------------|--------------|------|
-| `audience.feature` | `@Regression`, `@TC-AUD-REG-NN` (+ `@Negative`, `@UI`, `@ExistingAudience` where used) | Audience regression |
-| `campaign.feature` | `@Regression`, `@Campaign`, `@TC-CAMP-NN` | Campaign regression |
-| `dashboard.feature` | `@SmokeTest`, `@ST-DASH-NN` | Smoke |
-| `settings.feature` | `@SmokeTest`, `@ST-SET-NN` | Smoke |
-| `workflow.feature` | `@SmokeTest`, `@ST-Workflow-NN` | Smoke |
+| `audience.feature` | `@Regression`, `@REG-AUD-NN` (+ `@Negative`, `@UI`, `@ExistingAudience` where used) | Audience regression |
+| `campaign.feature` | `@Regression`, `@Campaign`, `@REG-CAMP-NN` | Campaign regression |
+| `dashboard.feature` | `@Regression`, `@REG-DASH-NN` | Dashboard regression |
+| `settings.feature` | `@Regression`, `@REG-SET-NN` | Settings regression |
+| `workflow.feature` | `@Regression`, `@REG-WORKFLOW-NN` | Workflow regression |
 
 **Special tags**
 
 | Tag | Purpose |
 |-----|---------|
-| `@SmokeTest` | Core smoke — included in default `baseTag` |
-| `@Regression` | Extended suite — included when `baseTag` allows it |
+| `@Regression` | All runnable scenarios — default `baseTag` |
 | `@TestPreparation` | Reserved for prerequisite-style flows (see hooks/tag conventions in AGENTS) |
 | `@ExistingAudience` | Prerequisite audience setup (see `parallel-run-config.json`) |
-| `@ST-*` / `@TC-*` | Reporting and data keys |
+| `@REG-<MODULE>-<NN>` | Scenario ID — reporting and `names.json` keys |
 
 ---
 

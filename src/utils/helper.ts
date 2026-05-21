@@ -342,6 +342,7 @@ export const saveNameEntries = async (
             data[type] = {
                 title: String(title),
                 timestamp: now,
+                status: 'in progress',
                 ...(brand !== undefined ? { brand: String(brand) } : {})
             };
         }
@@ -349,6 +350,35 @@ export const saveNameEntries = async (
         await fsPromises.mkdir(dir, { recursive: true });
         await fsPromises.writeFile(NAME_JSON_PATH, JSON.stringify(data, null, 2), 'utf8');
     });
+};
+
+export const markNameEntryCompleted = async (keys: string[]): Promise<void> => {
+    await withFileLock(async () => {
+        const data = await readNamesFileSafe();
+        for (const key of keys) {
+            if (data[key]) data[key].status = 'completed';
+        }
+        await fsPromises.writeFile(NAME_JSON_PATH, JSON.stringify(data, null, 2), 'utf8');
+    });
+};
+
+/** Poll until `names.json[key].status` is `"completed"` (parallel producer finished). Default 60s, 500ms interval. */
+export const waitForNameEntryCompleted = async (
+    key: string,
+    timeoutMs = 60000
+): Promise<{ title: string; timestamp: string }> => {
+    const deadline = Date.now() + timeoutMs;
+    while (Date.now() < deadline) {
+        const data = await readNameJson();
+        const entry = data?.[key];
+        if (entry?.title && entry.status === 'completed') {
+            return { title: String(entry.title), timestamp: String(entry.timestamp ?? '') };
+        }
+        await new Promise(r => setTimeout(r, 500));
+    }
+    throw new Error(
+        `Timeout waiting for names.json entry "${key}" to reach status "completed" (${timeoutMs}ms)`
+    );
 };
 
 export const getNameEntry = async (

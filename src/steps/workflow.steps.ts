@@ -11,7 +11,7 @@ const getWorkflowPage = (world: PlaywrightWorld) => new WorkflowPage(world.page)
 const getAudiencePage = (world: PlaywrightWorld) => new AudiencePage(world.page);
 const getDatePicker   = (world: PlaywrightWorld) => new DateTimePicker(world.page);
 
-// ─── Workflow Tab Steps (ST-Workflow-02) ─────────────────────────────────────
+// ─── Workflow Tab Steps (REG-WORKFLOW-02) ─────────────────────────────────────
 
 Then('Click The Active tab', async function (this: PlaywrightWorld) {
     await getWorkflowPage(this).clickActiveTab();
@@ -72,7 +72,7 @@ Then('Verify Workflow All tab should load successfully', async function (this: P
     throw lastError || new Error('Workflow All tab did not load after retries');
 });
 
-// ─── Workflow Creation Steps (ST-Workflow-03) ────────────────────────────────
+// ─── Workflow Creation Steps (REG-WORKFLOW-03) ────────────────────────────────
 
 Then('Click The Create New Workflow button', async function (this: PlaywrightWorld) {
     await getWorkflowPage(this).clickCreateNew();

@@ -99,7 +99,7 @@ export class CampaignPage extends BasePage {
         
 
         // Campaign Details / Edit Name
-        campaignDetailsTitle: "//h2[@title] | //button[@data-testid='campaign-edit-settings-btn'] | //*[contains(@data-testid,'campaign-performance-report')]",
+        campaignEditbtn: "//h2[@title] | //button[@data-testid='campaign-edit-settings-btn'] | //*[contains(@data-testid,'campaign-performance-report')]",
         editNameBtn:          "//button[contains(@data-testid,'edit-name') or contains(@aria-label,'Edit name') or contains(normalize-space(),'Edit name')]",
         nameEditInput:        "//input[@data-testid='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
         saveNameBtn:          "//button[@data-testid='create-campaign-button' and contains(normalize-space(),'Update campaign')]",
@@ -111,6 +111,8 @@ export class CampaignPage extends BasePage {
         dropdownEditSettings: "//button[@data-testid='campaign-list-view-table-dropdown-icon-edit-settings']",
         threeDotMenu:         "//button[contains(@data-testid,'campaign-action-menu') or contains(@aria-label,'Actions') or contains(@class,'action-menu')]",
         duplicateOption:  "//button[@data-testid='campaign-list-view-table-dropdown-icon-duplicate']",
+        /** Duplicate modal — campaign name field (portal / dialog). */
+        duplicateModalNameInput : "//input[@data-testid='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
         deleteOption:     "//button[@data-testid='campaign-list-view-table-dropdown-icon-delete-campaign']",
         duplicateConfirm: "//button[@data-testid='workflow-action-button']",
         deleteConfirm:    "//button[@data-testid='workflow-action-button']",
@@ -132,6 +134,7 @@ export class CampaignPage extends BasePage {
         // Report — option in the 3-dot dropdown on the campaign list row
         viewReportBtn:   "//button[@data-testid='campaign-list-view-table-dropdown-icon-view-full-report']",
         reportPage:      "//*[contains(@data-testid,'campaign-performance-report')]",
+        reportSummaryTab: "//button[@data-testid='campaign-performance-report-summary']",
     };
 
     // ─── Tab Actions ─────────────────────────────────────────────────────────
@@ -238,8 +241,8 @@ export class CampaignPage extends BasePage {
         await this.pause(2000);
     }
 
-    async waitForDetailsPage(timeout = 20000) {
-        await this.waitForVisible(this.sel.campaignDetailsTitle, timeout);
+    async campaignEditbtn(timeout = 20000) {
+        await this.waitForVisible(this.sel.campaignEditbtn, timeout);
     }
 
     async clickEditName() {
@@ -738,6 +741,12 @@ export class CampaignPage extends BasePage {
         await this.pause(1000);
     }
 
+    async enterDuplicateCampaignName(name: string) {
+        await this.waitForVisible(this.sel.duplicateModalNameInput, 15000);
+        await this.fill(this.sel.duplicateModalNameInput, name);
+        await this.pause(300);
+    }
+
     async clickDeleteOption() {
         await this.click(this.sel.deleteOption);
         await this.pause(500);
@@ -809,6 +818,11 @@ export class CampaignPage extends BasePage {
     async clickViewReport() {
         await this.click(this.sel.viewReportBtn);
         await this.pause(3000);
+    }
+
+    async clickPerformanceReportSummaryTab() {
+        await this.click(this.sel.reportSummaryTab);
+        await this.pause(1500);
     }
 
     async isReportPageVisible(): Promise<boolean> {

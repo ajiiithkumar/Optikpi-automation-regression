@@ -132,7 +132,7 @@ If the file is a top-level array `[ ... ]`, you will see: *No users found … (e
 npm run test:parallel:continue
 ```
 
-Runs all `@SmokeTest` and `@Regression` scenarios using the groups defined in `config/parallel-run-config.json`. Continues on failure.
+Runs all `@Regression` scenarios using the groups defined in `config/parallel-run-config.json`. Continues on failure.
 
 ### Parallel run — stop on first failure
 
@@ -142,11 +142,11 @@ npm run test:parallel
 
 ### Run a single tag or scenario
 
-Audience regression IDs use **`@TC-AUD-REG-NN`** (not `@TC-AUD-01`). Campaign uses **`@TC-CAMP-NN`**, smoke uses **`@ST-...`**.
+Scenario IDs use **`@REG-<MODULE>-<NN>`** (e.g. `@REG-AUD-01`, `@REG-CAMP-18`, `@REG-DASH-01`).
 
 ```bash
-npm run test:tag -- "@TC-AUD-REG-01"
-npm run test:tag -- "@SmokeTest"
+npm run test:tag -- "@REG-AUD-01"
+npm run test:tag -- "@Regression"
 ```
 
 **No browser window?** If the tag matches **zero** scenarios, Cucumber exits immediately and the Playwright `Before` hook never runs — so nothing launches. Check the console for `0 scenarios`; fix the tag or list scenarios with:
@@ -179,12 +179,10 @@ npm run clean
 
 | Tag | Purpose |
 |---|---|
-| `@SmokeTest` | Core smoke tests — included in the main parallel run |
-| `@Regression` | Extended regression tests |
+| `@Regression` | All runnable scenarios — included in the main parallel run |
 | `@TestPreparation` | Must run before parallel groups |
 | `@ExistingAudience` | Creates a reusable published audience (prerequisite step) |
-| `@ST-<MODULE>-<NN>` | Smoke test identifier |
-| `@TC-<MODULE>-<NN>` | Regression test identifier |
+| `@REG-<MODULE>-<NN>` | Scenario identifier (reporting, `names.json` keys) |
 
 ---
 
@@ -196,7 +194,7 @@ The runner uses `config/parallel-run-config.json`:
 {
   "failFast": false,
   "parallel": 4,
-  "baseTag": "@SmokeTest or @Regression",
+  "baseTag": "@Regression",
   "prerequisites": [
     {
       "tag": "@ExistingAudience",
@@ -208,7 +206,7 @@ The runner uses `config/parallel-run-config.json`:
 
 **Ordered mode** (current setup):
 1. Prerequisites run **serially** first (e.g. `@ExistingAudience`)
-2. Main run executes all `@SmokeTest or @Regression` scenarios in **parallel** (4 workers)
+2. Main run executes all `@Regression` scenarios in **parallel** (4 workers)
 
 ---
 
@@ -300,4 +298,32 @@ npm run cleanup
 - **BasePage** — shared Playwright helpers (`click`, `fill`, `getText`, `waitForVisible`, etc.)
 - **PlaywrightWorld** — custom Cucumber World holds the browser page and shared state between steps
 - **User pool** — `src/utils/user-pool.ts` allocates test accounts across parallel workers using file locks
-- **names.json** — runtime test data store, reset to `{}` at the start of every run
+- **names.json** — runtime test data store, reset to `{}` at the start of every run; each entry carries a `status` field (`"in progress"` → `"completed"`) so parallel readers can wait until the producing scenario has finished
+
+---
+
+## Test Data (`data/names.json`)
+
+`names.json` is the shared runtime store for audience names, campaign names, and other titles created during a run.
+
+### Status lifecycle
+
+Every entry written by `saveNameEntry` / `saveNameEntries` starts as `"in progress"`. When the owning scenario passes, the `After` hook calls `markNameEntryCompleted`, flipping the status to `"completed"`.
+
+```
+saveNameEntries()          →  { title, timestamp, status: "in progress" }
+After hook (PASSED)        →  { title, timestamp, status: "completed"   }
+After hook (FAILED)        →  status stays "in progress"
+```
+
+### Reading in parallel scenarios
+
+Steps that depend on data produced by a different parallel scenario use `waitForNameEntryCompleted(key)` from `src/utils/helper.ts`. It polls every 500 ms (up to 60 seconds) until the entry is `"completed"`, then returns the entry. This prevents race conditions where a reading step runs before the writing scenario has finished.
+
+```typescript
+// Instead of: const data = await readNameJson(); const title = data?.existingAudience?.title;
+const entry = await waitForNameEntryCompleted('existingAudience');
+// entry.title is guaranteed to belong to a fully-passed scenario
+```
+
+Steps affected: `select the audience from the list`, `a Published Audience exists`, `an Audience exists in the list`, `Enter the Campaign Name in the search bar`, and related campaign reading steps.

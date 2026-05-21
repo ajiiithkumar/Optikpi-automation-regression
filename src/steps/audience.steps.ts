@@ -2,7 +2,7 @@
 import { Given, Then } from '@cucumber/cucumber';
 import { AudiencePage } from '../pages/audience.page';
 import { DateTimePicker } from '../pages/components/date-time-picker.component';
-import { readUsersCsv, saveNameEntry, saveNameEntries, generateAudienceTitle, readNameJson } from '../utils/helper';
+import { readUsersCsv, saveNameEntry, saveNameEntries, generateAudienceTitle, readNameJson, waitForNameEntryCompleted } from '../utils/helper';
 import { ExtentTestManager } from '../utils/extent-test-manager';
 import { PlaywrightWorld } from '../support/world';
 
@@ -100,7 +100,7 @@ Then('Fill in the Audience details and save', async function (this: PlaywrightWo
     this['currentAudienceTitle'] = audienceTitle;
 
     const scenarioTag = this.scenarioTag || '';
-    const tagMatch = scenarioTag.match(/TC-AUD-REG-\d+/);
+    const tagMatch = scenarioTag.match(/REG-AUD-\d+/);
     const entries: Array<{ type: string; title: string }> = [];
     if (tagMatch) entries.push({ type: tagMatch[0], title: audienceTitle });
     if (this.scenarioTags?.includes('ExistingAudience')) {
@@ -447,27 +447,17 @@ Then('In the value field enter alphabetic text instead of a number and apply', a
 // REGRESSION — Part of Audience Criteria
 // ═══════════════════════════════════════════════════════════════════════════════
 
-Given('an Audience from TC-AUD-REG-01 or TC-AUD-REG-02 or TC-AUD-REG-03 is available', async function (this: PlaywrightWorld) {
-    const data = await readNameJson();
-    const candidateKeys = ['existingAudience'];
-    const available = candidateKeys.filter(k => data?.[k]?.title);
-
-    if (available.length === 0) {
-        throw new Error(`No Audience found in names.json for any of: ${candidateKeys.join(', ')}. Run TC-AUD-REG-01, 02, or 03 first.`);
-    }
-
-    const pickedKey = available[Math.floor(Math.random() * available.length)];
-    const title = data[pickedKey].title;
-    this['existingAudienceTitle'] = title;
-    ExtentTestManager.logPass(`Picked Audience from ${pickedKey}: "${title}"`);
+Given('an Audience from REG-AUD-01 or REG-AUD-02 or REG-AUD-03 is available', async function (this: PlaywrightWorld) {
+    const entry = await waitForNameEntryCompleted('existingAudience');
+    this['existingAudienceTitle'] = entry.title;
+    ExtentTestManager.logPass(`Picked Audience from existingAudience: "${entry.title}"`);
 });
 
 Given('an existing published Audience is available', async function (this: PlaywrightWorld) {
-    const data = await readNameJson();
-    const existing = data?.existingAudience?.title;
-    if (existing) {
-        this['existingAudienceTitle'] = existing;
-        ExtentTestManager.logInfo(`Using existing published Audience: ${existing}`);
+    const entry = await waitForNameEntryCompleted('existingAudience').catch(() => null);
+    if (entry) {
+        this['existingAudienceTitle'] = entry.title;
+        ExtentTestManager.logInfo(`Using existing published Audience: ${entry.title}`);
         return;
     }
     ExtentTestManager.logInfo('No existing published Audience found in names.json — test will create one inline if needed');
@@ -578,25 +568,15 @@ Then('Remove one User Id value from the criteria', async function (this: Playwri
 // ═══════════════════════════════════════════════════════════════════════════════
 
 Given('a Published Audience exists', async function (this: PlaywrightWorld) {
-    const data = await readNameJson();
-    const existing = data?.existingAudience?.title;
-    if (existing) {
-        this['currentAudienceTitle'] = existing;
-        ExtentTestManager.logInfo(`Using published Audience: ${existing}`);
-        return;
-    }
-    throw new Error('No published Audience found in names.json (key: existingAudience). Run @TestPreparation first or create one manually.');
+    const entry = await waitForNameEntryCompleted('existingAudience');
+    this['currentAudienceTitle'] = entry.title;
+    ExtentTestManager.logInfo(`Using published Audience: ${entry.title}`);
 });
 
 Given('an Audience exists in the list', async function (this: PlaywrightWorld) {
-    const data = await readNameJson();
-    const existing = data?.existingAudience?.title;
-    if (existing) {
-        this['existingAudienceTitle'] = existing;
-        ExtentTestManager.logInfo(`Using existing Audience: ${existing}`);
-        return;
-    }
-    throw new Error('No Audience found in names.json. Run a creation scenario first.');
+    const entry = await waitForNameEntryCompleted('existingAudience');
+    this['existingAudienceTitle'] = entry.title;
+    ExtentTestManager.logInfo(`Using existing Audience: ${entry.title}`);
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
