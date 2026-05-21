@@ -127,19 +127,17 @@ export const getNewAudienceTitle = async (filePath = NAME_JSON_PATH): Promise<an
     return getAudienceEntry(data, 'new');
 };
 
-export const saveDraftAudienceTitle = async (brandName: string, title: string): Promise<void> => {
-    if (!title) return;
-    await saveNameEntry('audience', title, brandName);
+export const saveDraftAudienceTitle = async (_brandName: string, _title: string): Promise<void> => {
+    // storing under generic 'audience' key removed; callers should save under the scenario tag key instead
 };
 
 export const getOrSetAudienceTitle = async (
-    brandName = '',
+    _brandName = '',
     minLength = AUDIENCE_TITLE_MIN_LENGTH,
     maxLength = AUDIENCE_TITLE_MAX_LENGTH
 ): Promise<string> => {
-    const title = generateAudienceTitle(minLength, maxLength);
-    await saveNameEntry('audience', title, brandName);
-    return title;
+    // storing under generic 'audience' key removed; callers should save under the scenario tag key instead
+    return generateAudienceTitle(minLength, maxLength);
 };
 
 export const readUsersCsv = async (csvPath = USERS_CSV_PATH): Promise<Array<Record<string, string>>> => {
@@ -344,6 +342,7 @@ export const saveNameEntries = async (
             data[type] = {
                 title: String(title),
                 timestamp: now,
+                status: 'in progress',
                 ...(brand !== undefined ? { brand: String(brand) } : {})
             };
         }
@@ -351,6 +350,35 @@ export const saveNameEntries = async (
         await fsPromises.mkdir(dir, { recursive: true });
         await fsPromises.writeFile(NAME_JSON_PATH, JSON.stringify(data, null, 2), 'utf8');
     });
+};
+
+export const markNameEntryCompleted = async (keys: string[]): Promise<void> => {
+    await withFileLock(async () => {
+        const data = await readNamesFileSafe();
+        for (const key of keys) {
+            if (data[key]) data[key].status = 'completed';
+        }
+        await fsPromises.writeFile(NAME_JSON_PATH, JSON.stringify(data, null, 2), 'utf8');
+    });
+};
+
+/** Poll until `names.json[key].status` is `"completed"` (parallel producer finished). Default 60s, 500ms interval. */
+export const waitForNameEntryCompleted = async (
+    key: string,
+    timeoutMs = 60000
+): Promise<{ title: string; timestamp: string }> => {
+    const deadline = Date.now() + timeoutMs;
+    while (Date.now() < deadline) {
+        const data = await readNameJson();
+        const entry = data?.[key];
+        if (entry?.title && entry.status === 'completed') {
+            return { title: String(entry.title), timestamp: String(entry.timestamp ?? '') };
+        }
+        await new Promise(r => setTimeout(r, 500));
+    }
+    throw new Error(
+        `Timeout waiting for names.json entry "${key}" to reach status "completed" (${timeoutMs}ms)`
+    );
 };
 
 export const getNameEntry = async (

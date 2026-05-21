@@ -4,7 +4,7 @@ import { CampaignPage } from '../pages/campaign.page';
 import { NavigationBar } from '../pages/components/navigation-bar.component';
 import { ExtentTestManager } from '../utils/extent-test-manager';
 import { PlaywrightWorld } from '../support/world';
-import { uniqueId, readNameJson, saveNameEntry } from '../utils/helper';
+import { uniqueId, readNameJson, saveNameEntry, waitForNameEntryCompleted } from '../utils/helper';
 
 // ─── Selectors ───────────────────────────────────────────────────────────────
 
@@ -17,7 +17,48 @@ const LIBRARY_USE_CONTENT_SEL = "//button[@data-testid='library-use-this-content
 /** Helper to instantiate CampaignPage from a step's world context. */
 const getCampaignPage = (world: PlaywrightWorld) => new CampaignPage(world.page);
 
-// ─── Campaign Tab Steps (ST-CAMP-01) ─────────────────────────────────────────
+/** Key in names.json for campaign title reads: first @REG-CAMP-* on scenario (producer); falls back to scenarioTag REG-CAMP match. */
+const resolveNamesJsonCampaignKey = (world: PlaywrightWorld): string | undefined => {
+    const k = world.campaignNamesJsonKey;
+    if (k && /^REG-CAMP-\w+$/.test(k)) return k;
+    return world.scenarioTag?.match(/REG-CAMP-\w+/)?.[0];
+};
+
+/** Published-campaign regression: title comes from the REG-CAMP-01 names.json entry (producer scenario). */
+const PUBLISHED_CAMPAIGN_NAMES_JSON_KEY = 'REG-CAMP-01';
+
+async function performActiveTabCampaignSearch(world: PlaywrightWorld, campaignName: string): Promise<void> {
+    const page = getCampaignPage(world);
+    const maxRetries = 3;
+    let lastError: Error | null = null;
+    const searchBarSel = "//input[@id='campaign-listView-table-search-icon']";
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            console.log(`[Campaign Search] Attempt ${attempt}/${maxRetries}...`);
+            const searchField = world.page!.locator(searchBarSel).first();
+            await searchField.click();
+            await searchField.fill('');
+            await world.page!.waitForTimeout(500);
+            await page.searchCampaign(campaignName);
+
+            await page.verifyCampaignVisible(campaignName, 15000);
+            ExtentTestManager.logPass(`Campaign "${campaignName}" found in the Active tab (attempt ${attempt})`);
+            return;
+        } catch (err) {
+            lastError = err as Error;
+            console.log(`[Campaign Search] Attempt ${attempt} failed: ${lastError.message}`);
+            if (attempt < maxRetries) {
+                console.log('[Campaign Search] Retrying...');
+                await world.page!.waitForTimeout(2000);
+            }
+        }
+    }
+
+    throw lastError || new Error(`Campaign "${campaignName}" not found after ${maxRetries} attempts`);
+}
+
+// ─── Campaign Tab Steps (REG-CAMP-01) ─────────────────────────────────────────
 
 Then('Click the Active tab', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).clickActiveTab();
@@ -59,7 +100,7 @@ Then('Verify All tab should load successfully', async function (this: Playwright
     ExtentTestManager.logPass('All tab loaded successfully');
 });
 
-// ─── Campaign Creation Flow (ST-CAMP-02) ─────────────────────────────────────
+// ─── Campaign Creation Flow (REG-CAMP-02) ─────────────────────────────────────
 
 Then('Click the Create New Campaign button', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).clickCreateNew();
@@ -72,7 +113,8 @@ Then('Enter the Campaign Name and Campaign Tag', async function (this: Playwrigh
     const page = getCampaignPage(this);
     await page.enterCampaignName(campaignName);
     await page.enterCampaignTag('auto-tag');
-    await saveNameEntry('campaign', campaignName);
+    const campKey = this.scenarioTag?.match(/REG-CAMP-\w+/)?.[0];
+    if (campKey) await saveNameEntry(campKey, campaignName);
     ExtentTestManager.logPass(`Entered Campaign Name: ${campaignName}`);
 });
 
@@ -133,7 +175,7 @@ Then('click the Open Goal button', async function (this: PlaywrightWorld) {
 });
 //3
 Then('Verify the Open Goal should be set successfully', async function (this: PlaywrightWorld) {
-    await getCampaignPage(this).verifyGoalIsSet();
+    await getCampaignPage(this).verifyOpenGoalSet();
     ExtentTestManager.logPass('Verified Open Goal is set successfully');
 });
 
@@ -185,15 +227,12 @@ Then('click the Existing Audience button', async function (this: PlaywrightWorld
 });
 
 Then('select the audience from the list', async function (this: PlaywrightWorld) {
-    const data = await readNameJson();
-    const audienceName = data?.existingAudience?.title;
-    if (!audienceName) throw new Error('No existing audience name found in names.json (key: existingAudience). Run @TestPreparation first.');
-
-    this['selectedAudienceName'] = audienceName;
+    const entry = await waitForNameEntryCompleted('existingAudience');
+    this['selectedAudienceName'] = entry.title;
     const page = getCampaignPage(this);
     await page.clickSelectExistingAudience();
-    await page.selectAudienceByName(audienceName);
-    ExtentTestManager.logPass(`Selected audience "${audienceName}" from the list`);
+    await page.selectAudienceByName(entry.title);
+    ExtentTestManager.logPass(`Selected audience "${entry.title}" from the list`);
 });
 
 Then('click the ok button on the pop up', async function (this: PlaywrightWorld) {
@@ -620,6 +659,12 @@ Then('Verify the criteria is saved and shown correctly in the allocation summary
 
 // ─── Publish Steps ───────────────────────────────────────────────────────────
 
+Then('Verify the Publish button is Visible', async function (this: PlaywrightWorld) {
+    const visible = await getCampaignPage(this).isPublishButtonVisible();
+    if (!visible) throw new Error('Publish button is not visible');
+    ExtentTestManager.logPass('Publish button is visible');
+});
+
 Then('click the Publish button', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).clickPublish();
     ExtentTestManager.logPass('Clicked "Publish" button');
@@ -661,40 +706,24 @@ Then('Verify the campaign is saved as Draft successfully', async function (this:
 Then('Enter the Campaign Name in the search bar', async function (this: PlaywrightWorld) {
     let campaignName = this['currentCampaignName'];
     if (!campaignName) {
-        const data = await readNameJson();
-        campaignName = data?.campaign?.title;
-    }
-    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign.title entry.');
-    this['currentCampaignName'] = campaignName;
-
-    const page = getCampaignPage(this);
-    const maxRetries = 3;
-    let lastError: Error | null = null;
-    const searchBarSel = "//input[@id='campaign-listView-table-search-icon']";
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        try {
-            console.log(`[Campaign Search] Attempt ${attempt}/${maxRetries}...`);
-            const searchField = this.page.locator(searchBarSel).first();
-            await searchField.click();
-            await searchField.fill('');
-            await this.page.waitForTimeout(500);
-            await page.searchCampaign(campaignName);
-
-            await page.verifyCampaignVisible(campaignName, 15000);
-            ExtentTestManager.logPass(`Campaign "${campaignName}" found in the Active tab (attempt ${attempt})`);
-            return;
-        } catch (err) {
-            lastError = err as Error;
-            console.log(`[Campaign Search] Attempt ${attempt} failed: ${lastError.message}`);
-            if (attempt < maxRetries) {
-                console.log('[Campaign Search] Retrying...');
-                await this.page.waitForTimeout(2000);
-            }
+        const campKey = resolveNamesJsonCampaignKey(this);
+        if (campKey) {
+            const entry = await waitForNameEntryCompleted(campKey);
+            campaignName = entry.title;
         }
     }
+    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign entry for this scenario tag.');
+    this['currentCampaignName'] = campaignName;
 
-    throw lastError || new Error(`Campaign "${campaignName}" not found after ${maxRetries} attempts`);
+    await performActiveTabCampaignSearch(this, campaignName);
+});
+
+Then('Enter the Published Campaign Name in the search bar', async function (this: PlaywrightWorld) {
+    const entry = await waitForNameEntryCompleted(PUBLISHED_CAMPAIGN_NAMES_JSON_KEY);
+    const campaignName = entry.title;
+    console.log('campaignName', campaignName);
+    this['currentCampaignName'] = campaignName;
+    await performActiveTabCampaignSearch(this, campaignName);
 });
 
 Then('Verify the campaign is visible in the Active tab', async function (this: PlaywrightWorld) {
@@ -732,22 +761,25 @@ Then('Verify the campaign is visible in the list', async function (this: Playwri
     ExtentTestManager.logPass(`Campaign "${campaignName}" is visible in the list`);
 });
 
-// ─── Campaign Details / Edit Name (TC-CAMP-02) ──────────────────────────────
+// ─── Campaign Details / Edit Name (REG-CAMP-02) ──────────────────────────────
 
 Then('Click on the campaign from the list', async function (this: PlaywrightWorld) {
     let campaignName = this['currentCampaignName'];
     if (!campaignName) {
-        const data = await readNameJson();
-        campaignName = data?.campaign?.title;
+        const campKey = resolveNamesJsonCampaignKey(this);
+        if (campKey) {
+            const entry = await waitForNameEntryCompleted(campKey);
+            campaignName = entry.title;
+        }
     }
-    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign.title entry.');
+    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign entry for this scenario tag.');
     this['currentCampaignName'] = campaignName;
     await getCampaignPage(this).clickCampaignFromList(campaignName);
     ExtentTestManager.logPass(`Clicked on campaign "${campaignName}" from the list`);
 });
 
 Then('Verify the campaign details page is displayed', async function (this: PlaywrightWorld) {
-    await getCampaignPage(this).waitForDetailsPage();
+    await getCampaignPage(this).campaignEditbtn();
     ExtentTestManager.logPass('Campaign details page is displayed');
 });
 
@@ -794,7 +826,7 @@ Then('Enter the new Campaign Name in the search bar', async function (this: Play
     ExtentTestManager.logPass(`Searched for updated Campaign Name: ${newName}`);
 });
 
-// ─── Draft / Publish Flow (TC-CAMP-16, TC-CAMP-17) ──────────────────────────
+// ─── Draft / Publish Flow (REG-CAMP-16, REG-CAMP-17) ──────────────────────────
 
 Then('Click on the draft campaign', async function (this: PlaywrightWorld) {
     const campaignName = this['currentCampaignName'];
@@ -816,27 +848,40 @@ Then('Verify the campaign navigates to the Edit Campaign page', async function (
 });
 
 Then('Verify the Open Goal is still set and retained', async function (this: PlaywrightWorld) {
-    await getCampaignPage(this).verifyGoalIsSet();
+    await getCampaignPage(this).verifyOpenGoalSet();
     ExtentTestManager.logPass('Open Goal is still set and retained after re-opening');
 });
 
 Then('Click on the published active campaign from the list', async function (this: PlaywrightWorld) {
     let campaignName = this['currentCampaignName'];
     if (!campaignName) {
-        const data = await readNameJson();
-        campaignName = data?.campaign?.title;
+        const campKey = resolveNamesJsonCampaignKey(this);
+        if (campKey) {
+            const entry = await waitForNameEntryCompleted(campKey);
+            campaignName = entry.title;
+        }
     }
-    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign.title entry.');
+    if (!campaignName) throw new Error('No campaign name available. Either create a campaign first or ensure data/names.json has a campaign entry for this scenario tag.');
     this['currentCampaignName'] = campaignName;
     await getCampaignPage(this).clickCampaignFromList(campaignName);
     ExtentTestManager.logPass(`Clicked on published active campaign "${campaignName}"`);
 });
 
-// ─── Three-dot Menu / Duplicate / Delete (TC-CAMP-19, TC-CAMP-20) ───────────
+// ─── Three-dot Menu / Duplicate / Delete (REG-CAMP-19, REG-CAMP-20) ───────────
 
 Then('Click the three-dot menu on the campaign', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).clickThreeDotMenu();
     ExtentTestManager.logPass('Clicked three-dot menu on the campaign');
+});
+
+Then('Click on the view report button', async function (this: PlaywrightWorld) {
+    await getCampaignPage(this).clickViewReport();
+    ExtentTestManager.logPass('Clicked view report (full report) from campaign row menu');
+});
+
+Then('Click the summary tab', async function (this: PlaywrightWorld) {
+    await getCampaignPage(this).clickPerformanceReportSummaryTab();
+    ExtentTestManager.logPass('Clicked Summary tab on campaign performance report');
 });
 
 Then('Click the Edit campaign settings button', async function (this: PlaywrightWorld) {
@@ -848,6 +893,18 @@ Then('Click the campaign Duplicate option', async function (this: PlaywrightWorl
     await getCampaignPage(this).clickDuplicateOption();
     this['duplicatedCampaignName'] = `Copy of ${this['currentCampaignName'] || ''}`;
     ExtentTestManager.logPass('Clicked Duplicate option');
+});
+
+Then('Enter the duplicated Campaign Name', async function (this: PlaywrightWorld) {
+    let dupName: string = this['duplicatedCampaignName'];
+    if (!dupName) {
+        const current = this['currentCampaignName'];
+        if (!current) throw new Error('duplicatedCampaignName is not set; run "Click the campaign Duplicate option" first or ensure currentCampaignName is set.');
+        dupName = `Copy of ${current}`;
+        this['duplicatedCampaignName'] = dupName;
+    }
+    await getCampaignPage(this).enterDuplicateCampaignName(dupName);
+    ExtentTestManager.logPass(`Entered duplicate campaign name in modal: ${dupName}`);
 });
 
 Then('Click the Duplicate Confirm button', async function (this: PlaywrightWorld) {
@@ -916,7 +973,7 @@ Then('Verify the deleted campaign does not appear in the All tab', async functio
     ExtentTestManager.logPass(`Deleted campaign "${campaignName}" does not appear in the All tab`);
 });
 
-// ─── Pagination (TC-CAMP-21) ─────────────────────────────────────────────────
+// ─── Pagination (REG-CAMP-21) ─────────────────────────────────────────────────
 
 Then('Verify the campaign list has more than one page of results', async function (this: PlaywrightWorld) {
     const hasPages = await getCampaignPage(this).hasMultiplePages();
@@ -945,11 +1002,15 @@ Then('Verify the first page of campaigns is restored correctly', async function 
     ExtentTestManager.logPass('First page of campaigns restored correctly');
 });
 
-// ─── Search (TC-CAMP-22) ─────────────────────────────────────────────────────
+// ─── Search (REG-CAMP-22) ─────────────────────────────────────────────────────
 
 Then('Enter a known Campaign Name in the search bar', async function (this: PlaywrightWorld) {
-    const data = await readNameJson();
-    const campaignName = data?.campaign?.title || this['currentCampaignName'];
+    const campKey = resolveNamesJsonCampaignKey(this);
+    let campaignName: string | undefined = this['currentCampaignName'];
+    if (!campaignName && campKey) {
+        const entry = await waitForNameEntryCompleted(campKey);
+        campaignName = entry.title;
+    }
     if (!campaignName) throw new Error('No campaign name available for search. Create a campaign first.');
     this['searchedCampaignName'] = campaignName;
     await getCampaignPage(this).searchCampaign(campaignName);
@@ -973,7 +1034,7 @@ Then('Verify the full campaign list is restored with all campaigns visible', asy
     ExtentTestManager.logPass('Full campaign list is restored');
 });
 
-// ─── Filter (TC-CAMP-23) ─────────────────────────────────────────────────────
+// ─── Filter (REG-CAMP-23) ─────────────────────────────────────────────────────
 
 Then('Click the Filter button', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).clickFilterBtn();
@@ -1000,7 +1061,7 @@ Then('Click the Clear Filter button', async function (this: PlaywrightWorld) {
     ExtentTestManager.logPass('Clicked Clear Filter button');
 });
 
-// ─── History Log (TC-CAMP-24) ────────────────────────────────────────────────
+// ─── History Log (REG-CAMP-24) ────────────────────────────────────────────────
 
 Then('Click the History Log tab or button', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).clickHistoryLog();
@@ -1019,7 +1080,7 @@ Then('Verify at least one activity entry is visible in the history log', async f
     ExtentTestManager.logPass(`History log has ${count} activity entries`);
 });
 
-// ─── Report (TC-CAMP-25) ─────────────────────────────────────────────────────
+// ─── Report (REG-CAMP-25) ─────────────────────────────────────────────────────
 
 Then('Click the View Report button', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).clickViewReport();

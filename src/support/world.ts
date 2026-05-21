@@ -12,6 +12,8 @@ export class PlaywrightWorld extends World {
     userLockFile: string | null = null;
     scenarioTag: string = '';
     scenarioTags: string[] = [];
+    /** First @REG-CAMP-* on the scenario (for names.json reads). When two tags are present (e.g. @REG-CAMP-01 @REG-CAMP-18), this is the producer data key; scenarioTag is the last REG-CAMP (scenario id). */
+    campaignNamesJsonKey: string = '';
     [key: string]: any;
 
     constructor(options: IWorldOptions) {

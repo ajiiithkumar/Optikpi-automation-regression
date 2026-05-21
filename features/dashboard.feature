@@ -1,7 +1,7 @@
 Feature: Dashboard module
   # Users are managed in config/users.json (kept out of the report).
 
-  @SmokeTest @ST-DASH-01
+  @Regression @REG-DASH-01
   Scenario: Dashboard page loads successfully
     Given I log in for module "Dashboard"
     When I navigate to "Dashboard"
@@ -11,7 +11,7 @@ Feature: Dashboard module
     And Business Performance tab should load
     And Marketing tab should load
 
-  @SmokeTest @ST-DASH-02
+  @Regression @REG-DASH-02
   Scenario: Dashboard filter interaction updates data
     Given I log in for module "Dashboard"
     When I navigate to "Dashboard"

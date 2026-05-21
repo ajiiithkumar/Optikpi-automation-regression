@@ -28,6 +28,9 @@ export class CampaignPage extends BasePage {
         financialTab:    "//button[@data-test-id='campaign-tab-financial']",
         goalDeposit_not_selected:   "//div[contains(@data-testid,'campaign-goal-Financial-Deposit-undefined')]",
         goalSummary:     "//button[@data-testid='campaign-goal-preview-click']",
+        /** Goal set — Engagement Open shows inline preview (post–goal-picker UI). */
+        goalPreviewOpen: "//button[@data-testid='campaign-goal-preview-open']",
+        goalPreviewOpenSummary: "//div[contains(@class,'bg-disabledBackground')][.//span[contains(normalize-space(),'Your campaign goal is')] and .//button[@data-testid='campaign-goal-preview-open']]",
 
         // Audience
         newAudienceTab:       "//button[@data-test-id='campaign-tab-new-audience']",
@@ -96,7 +99,7 @@ export class CampaignPage extends BasePage {
         
 
         // Campaign Details / Edit Name
-        campaignDetailsTitle: "//h2[@title] | //button[@data-testid='campaign-edit-settings-btn'] | //*[contains(@data-testid,'campaign-performance-report')]",
+        campaignEditbtn: "//h2[@title] | //button[@data-testid='campaign-edit-settings-btn'] | //*[contains(@data-testid,'campaign-performance-report')]",
         editNameBtn:          "//button[contains(@data-testid,'edit-name') or contains(@aria-label,'Edit name') or contains(normalize-space(),'Edit name')]",
         nameEditInput:        "//input[@data-testid='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
         saveNameBtn:          "//button[@data-testid='create-campaign-button' and contains(normalize-space(),'Update campaign')]",
@@ -108,6 +111,8 @@ export class CampaignPage extends BasePage {
         dropdownEditSettings: "//button[@data-testid='campaign-list-view-table-dropdown-icon-edit-settings']",
         threeDotMenu:         "//button[contains(@data-testid,'campaign-action-menu') or contains(@aria-label,'Actions') or contains(@class,'action-menu')]",
         duplicateOption:  "//button[@data-testid='campaign-list-view-table-dropdown-icon-duplicate']",
+        /** Duplicate modal — campaign name field (portal / dialog). */
+        duplicateModalNameInput : "//input[@data-testid='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
         deleteOption:     "//button[@data-testid='campaign-list-view-table-dropdown-icon-delete-campaign']",
         duplicateConfirm: "//button[@data-testid='workflow-action-button']",
         deleteConfirm:    "//button[@data-testid='workflow-action-button']",
@@ -129,6 +134,7 @@ export class CampaignPage extends BasePage {
         // Report — option in the 3-dot dropdown on the campaign list row
         viewReportBtn:   "//button[@data-testid='campaign-list-view-table-dropdown-icon-view-full-report']",
         reportPage:      "//*[contains(@data-testid,'campaign-performance-report')]",
+        reportSummaryTab: "//button[@data-testid='campaign-performance-report-summary']",
     };
 
     // ─── Tab Actions ─────────────────────────────────────────────────────────
@@ -235,8 +241,8 @@ export class CampaignPage extends BasePage {
         await this.pause(2000);
     }
 
-    async waitForDetailsPage(timeout = 20000) {
-        await this.waitForVisible(this.sel.campaignDetailsTitle, timeout);
+    async campaignEditbtn(timeout = 20000) {
+        await this.waitForVisible(this.sel.campaignEditbtn, timeout);
     }
 
     async clickEditName() {
@@ -290,7 +296,38 @@ export class CampaignPage extends BasePage {
         await this.waitForVisible(this.sel.editGoal);
     }
 
+    /**
+     * After choosing Engagement → Open and Set Goal, the stepper shows an inline summary
+     * (“Your campaign goal is” … Open) instead of the legacy “Edit goal” chip alone.
+     */
+    async verifyOpenGoalSet(): Promise<void> {
+        await this.waitForVisible(this.sel.goalPreviewOpen, 20000);
+        const summary = this.page.locator(this.sel.goalPreviewOpenSummary).first();
+        await summary.waitFor({ state: 'visible', timeout: 10000 });
+        const text = (await summary.innerText().catch(() => '')).trim();
+        if (!/Your campaign goal is/i.test(text)) {
+            throw new Error(`Open goal summary missing expected copy. Got: "${text}"`);
+        }
+        // innerText() often concatenates span + button with no space → "Your campaign goal isOpen."
+        const hasOpenLabel =
+            /\bis\s+Open\b/i.test(text) ||
+            /\bisOpen\b/i.test(text);
+        if (!hasOpenLabel) {
+            throw new Error(`Open goal summary does not show Open goal. Got: "${text}"`);
+        }
+    }
+
     async getGoalSummaryText(): Promise<string> {
+        const previewOpen = this.page.locator(this.sel.goalPreviewOpenSummary).first();
+        if (await previewOpen.isVisible({ timeout: 3000 }).catch(() => false)) {
+            return (await previewOpen.innerText().catch(() => '')).trim();
+        }
+        const previewClick = this.page.locator(
+            "//div[contains(@class,'bg-disabledBackground')][.//span[contains(normalize-space(),'Your campaign goal is')] and .//button[@data-testid='campaign-goal-preview-click']]"
+        ).first();
+        if (await previewClick.isVisible({ timeout: 2000 }).catch(() => false)) {
+            return (await previewClick.innerText().catch(() => '')).trim();
+        }
         const el = this.page.locator(this.sel.editGoal).first();
         const visible = await el.isVisible().catch(() => false);
         if (visible) {
@@ -577,6 +614,8 @@ export class CampaignPage extends BasePage {
     }
 
     async setCriteriaConditionAndValue() {
+        await this.click(this.sel.criteriaUserIdInput);
+        await this.pause(500);
         await this.click(this.sel.criteriaConditionBtn);
         await this.pause(500);
         await this.click(this.sel.criteriaIsOneOfBtn);
@@ -612,6 +651,10 @@ export class CampaignPage extends BasePage {
     }
 
     // ─── Publish ─────────────────────────────────────────────────────────────
+
+    async isPublishButtonVisible(): Promise<boolean> {
+        return this.isVisible(this.sel.publishBtn, 15000);
+    }
 
     async clickPublish() {
         await this.click(this.sel.publishBtn);
@@ -698,6 +741,12 @@ export class CampaignPage extends BasePage {
         await this.pause(1000);
     }
 
+    async enterDuplicateCampaignName(name: string) {
+        await this.waitForVisible(this.sel.duplicateModalNameInput, 15000);
+        await this.fill(this.sel.duplicateModalNameInput, name);
+        await this.pause(300);
+    }
+
     async clickDeleteOption() {
         await this.click(this.sel.deleteOption);
         await this.pause(500);
@@ -769,6 +818,11 @@ export class CampaignPage extends BasePage {
     async clickViewReport() {
         await this.click(this.sel.viewReportBtn);
         await this.pause(3000);
+    }
+
+    async clickPerformanceReportSummaryTab() {
+        await this.click(this.sel.reportSummaryTab);
+        await this.pause(1500);
     }
 
     async isReportPageVisible(): Promise<boolean> {

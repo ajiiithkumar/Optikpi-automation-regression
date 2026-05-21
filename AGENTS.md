@@ -53,11 +53,11 @@ src/
     settings.steps.ts
     workflow.steps.ts
   support/
-    hooks.ts            # Before/After hooks (browser lifecycle, screenshots)
+    hooks.ts            # Before/After hooks (browser lifecycle, screenshots, names.json status)
     world.ts            # PlaywrightWorld — custom Cucumber World class
   reporting/            # Extent report adapter and templates
   utils/
-    helper.ts           # Shared utilities (saveNameEntry, readNameJson, withFileLock, etc.)
+    helper.ts           # Shared utilities (saveNameEntry, saveNameEntries, waitForNameEntryCompleted, markNameEntryCompleted, readNameJson, withFileLock, etc.)
     extent-test-manager.ts
     extent-manager.ts
     user-pool.ts        # Parallel user allocation with file locks
@@ -73,8 +73,8 @@ reports/                # Generated reports and screenshots (gitignored)
 ```bash
 npm install                        # Install dependencies
 npm test                           # Run all features serially (cleans reports first)
-npm run test:tag -- "@SmokeTest"   # Run scenarios matching a tag expression
-npm run test:tag -- "@TC-AUD-REG-01"   # Run a single scenario by its ID tag (Audience uses TC-AUD-REG-*)
+npm run test:tag -- "@Regression"   # Run scenarios matching a tag expression
+npm run test:tag -- "@REG-AUD-01"   # Run a single scenario by its ID tag (Audience uses REG-AUD-*)
 npm run test:parallel              # Run grouped parallel execution via runner.js
 npm run test:parallel:continue     # Parallel run — continue on failures
 npm run clean                      # Delete reports, screenshots, lock files
@@ -168,8 +168,9 @@ Then('Step description here', async function (this: PlaywrightWorld) {
 | `selectedAudienceName`    | Audience selection steps | Verification steps                |
 | `duplicatedAudienceTitle` | Duplicate steps          | Filter steps                      |
 | `updatedCampaignName`     | Edit name steps          | Search/verify steps               |
-| `scenarioTag`             | Hooks (Before)           | Tag-based save steps              |
+| `scenarioTag`             | Hooks (Before)           | Tag-based save steps; last `@REG-CAMP-*` when audience/module ID tag absent |
 | `scenarioTags`            | Hooks (Before)           | Tag-based conditional logic       |
+| `campaignNamesJsonKey`    | Hooks (Before)           | First `@REG-CAMP-*` on scenario — `names.json` lookup key for campaign reads (use with second tag for dependency, e.g. `@REG-CAMP-01 @REG-CAMP-18`) |
 
 ### Feature Files
 
@@ -184,15 +185,15 @@ Feature file structure:
 ```gherkin
 Feature: Module name
 
-  @SmokeTest @ST-MODULE-01
-  Scenario: Smoke test scenario
+  @Regression @REG-MODULE-01
+  Scenario: Regression test scenario
     ...
 
   # ─────────────────────────────────────────────
   # REGRESSION
   # ─────────────────────────────────────────────
 
-  @Regression @Module @TC-MODULE-01
+  @Regression @Module @REG-MODULE-01
   Scenario: Regression test scenario
     ...
 ```
@@ -201,20 +202,35 @@ Feature: Module name
 
 | Tag                  | Purpose                                      |
 |----------------------|----------------------------------------------|
-| `@SmokeTest`         | Core smoke tests — main parallel run         |
-| `@Regression`        | Extended regression tests — filtered runs    |
+| `@Regression`        | All runnable scenarios — main parallel run   |
 | `@TestPreparation`   | Must run before parallel groups              |
 | `@ExistingAudience`  | Creates a reusable published audience        |
-| `@ST-<MODULE>-<NN>`  | Smoke test identifier (reporting)            |
-| `@TC-<MODULE>-<NN>`  | Regression test identifier (reporting, data) |
+| `@REG-<MODULE>-<NN>` | Scenario identifier (reporting, names.json)  |
 
 ### Test Data (`names.json`)
 
 - Use `saveNameEntry(type, title)` or `saveNameEntries([...])` to persist test data.
-- Use `readNameJson()` or `getNameEntry(type)` to retrieve.
+- Every entry is written with `status: "in progress"` automatically.
+- Use `waitForNameEntryCompleted(key)` to read an entry — it polls every 500 ms until the entry's status is `"completed"`, then returns `{ title, timestamp }`. Default timeout: 60 seconds.
+- Do **not** call `readNameJson()` directly in steps that depend on data produced by another parallel scenario — use `waitForNameEntryCompleted` instead.
+- Use `readNameJson()` or `getNameEntry(type)` only for reads that do not depend on a parallel writer.
 - Built-in file locking via `withFileLock` (exported from `src/utils/helper.ts`) for safe concurrent access in parallel runs.
 - Reset to `{}` at startup — do not rely on data persisting across runs.
-- Valid keys: `'audience'`, `'campaign'`, `'workflow'`, `'existingAudience'`, or scenario tag strings like `'TC-AUD-REG-05'`.
+- Valid keys: `'audience'`, `'campaign'`, `'workflow'`, `'existingAudience'`, or scenario tag strings like `'REG-AUD-05'`.
+- **Campaign dependency scenarios:** list the producer tag first, then the scenario tag, e.g. `@REG-CAMP-01 @REG-CAMP-18`. The `Before` hook sets `campaignNamesJsonKey` to the first `REG-CAMP-*` (for `waitForNameEntryCompleted` / `readNameJson`) and `scenarioTag` to the last (scenario id, `saveNameEntry`, and `markNameEntryCompleted`).
+
+#### Status lifecycle
+
+```
+saveNameEntries / saveNameEntry   →   status: "in progress"
+After hook (scenario PASSED)      →   status: "completed"   (via markNameEntryCompleted)
+After hook (scenario FAILED)      →   status stays "in progress"
+```
+
+The `After` hook automatically marks the following keys as `"completed"` when a scenario passes:
+- The scenario's own tag key (e.g. `REG-AUD-08`)
+- `existingAudience` + `audience` when the `@ExistingAudience` tag is present
+- `campaign` when the scenario tag matches `REG-CAMP-*`
 
 ## Coding Standards
 
@@ -263,6 +279,7 @@ Every bug fix must:
 - Do not call `saveNameEntry` multiple times in sequence for the same scenario — use `saveNameEntries` for atomic batch writes.
 - Do not add `console.log` for normal flow — use `ExtentTestManager.logPass/logInfo` so it appears in the report.
 - Do not create new feature files for existing modules — add scenarios to the existing module feature file.
-- Do not skip `@SmokeTest` or `@Regression` tags on scenarios — the runner uses them for execution grouping.
+- Do not skip `@Regression` tags on scenarios — the runner uses them for execution grouping.
 - Do not use a mismatched Cucumber keyword binding (e.g. importing `Then` for a step that is written as `Given` in the feature file).
 - Do not add `pause()` calls longer than 2 000 ms without an inline comment explaining why no reliable wait signal exists.
+- Do not call `readNameJson()` in steps that depend on data written by another parallel scenario — use `waitForNameEntryCompleted(key)` to block until the writing scenario has completed and the entry is marked `"completed"`.
