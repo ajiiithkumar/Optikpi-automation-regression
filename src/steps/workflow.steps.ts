@@ -121,6 +121,37 @@ Then('click the Workflow New Audience button', async function (this: PlaywrightW
     ExtentTestManager.logPass('Clicked Workflow New Audience button');
 });
 
+// ─── Existing Audience Enrollment Steps (REG-WORKFLOW-03) ────────────────────
+
+Then('Click the Existing Audience enrollment option', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickExistingAudience();
+    ExtentTestManager.logPass('Clicked Existing Audience enrollment option');
+});
+
+Then('Click the Add Enrollment dropdown', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickExistingAudienceDropdown();
+    ExtentTestManager.logPass('Clicked Add Enrollment dropdown');
+});
+
+Then('Select the Part of an Audience option', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickPartOfAudienceOption();
+    ExtentTestManager.logPass('Selected Part of an Audience option');
+});
+
+Then('Select the existing audience from the list', async function (this: PlaywrightWorld) {
+    const title: string = this['existingAudienceTitle'] || '';
+    if (!title) {
+        throw new Error('No existingAudienceTitle set on World. Ensure the @ExistingAudience precondition scenario ran first.');
+    }
+    await getWorkflowPage(this).selectExistingAudienceByTitle(title);
+    ExtentTestManager.logPass(`Selected existing audience: ${title}`);
+});
+
+Then('Click the Enrollment flyout Ok button', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickEnrollmentOk();
+    ExtentTestManager.logPass('Clicked Enrollment flyout Ok button');
+});
+
 Then('Click the New Audience criteria', async function (this: PlaywrightWorld) {
     await getWorkflowPage(this).clickNewAudienceCriteria();
     ExtentTestManager.logPass('Clicked New Audience criteria');
@@ -159,6 +190,23 @@ Then('Click the Add new node button {string}', async function (this: PlaywrightW
 Then('Click the action node button', async function (this: PlaywrightWorld) {
     await getWorkflowPage(this).clickActionNode();
     ExtentTestManager.logPass('Clicked action node button');
+});
+
+// ─── Delay Node Steps (REG-WORKFLOW-03) ──────────────────────────────────────
+
+Then('Click the delay node button', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickDelayNode();
+    ExtentTestManager.logPass('Clicked delay node button');
+});
+
+Then('Click the Live Event delay type option', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickLiveEventOption();
+    ExtentTestManager.logPass('Clicked Live Event delay type option');
+});
+
+Then('Select the Login live event option', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickLoginLiveEvent();
+    ExtentTestManager.logPass('Selected Login live event option');
 });
 
 Then('Click the action node add content button', async function (this: PlaywrightWorld) {

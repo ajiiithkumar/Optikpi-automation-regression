@@ -32,13 +32,17 @@ export class WorkflowPage extends BasePage {
         existingAudienceDropdown:     "//button[@data-testid='workflow-existing-audience-dropdown']",
         existingAudiencePartOfBtn:    "//button[@data-testid='workflow-existing-audience-dropdown-part-of-an-audience']",
         existingAudienceOkBtn:        "//button[@data-testid='flyout-confirm-btn']",
+        existingAudienceSearch:       "//input[@id='search-data']",
 
         // Node controls
         nodeApplyBtn:       "//button[@data-testid='workflow-node-apply-button']",
         cancelBtn:          "//button[@data-testid='close-node-flyout-btn']",
         addNodeDropdown:    "//button[@data-testid='add-node-dropdown']",
         addActionNode:      "//button[@data-testid='add-node-dropdown-add-action']",
+        addDelayNode:       "//button[@data-testid='add-node-dropdown-add-delay']",
         addExitNode:        "//button[@data-testid='add-node-dropdown-exit-flow']",
+        liveEventOption:    "//button[@data-testid='liveEvent']",
+        loginEventOption:   "//*[@data-testid='login']",
         actionAddContent:   "//button[@data-testid='workflow-actions-communication-add-content-btn']",
         exitMarkAsGoal:     "//button[@role='switch']",
         nodeEditBtn:        "//button[@data-testid='node-operations-dropdown-edit']",
@@ -131,9 +135,43 @@ export class WorkflowPage extends BasePage {
     async clickSetupEnrollment()  { await this.click(this.sel.setupEnrollment); }
     async clickNewAudience()      { await this.click(this.sel.newAudienceBtn); }
     async clickExistingAudience() { await this.click(this.sel.existingAudienceBtn); }
+
+    async clickExistingAudienceDropdown(): Promise<void> {
+        await this.click(this.sel.existingAudienceDropdown);
+        await this.pause(1000);
+    }
+
+    async clickPartOfAudienceOption(): Promise<void> {
+        await this.click(this.sel.existingAudiencePartOfBtn);
+        await this.pause(1000);
+    }
+
+    async selectExistingAudienceByTitle(title: string): Promise<void> {
+        // 1. Type the title in the search bar
+        console.log(`[Workflow] Selecting existing audience: ${title}`);
+        const searchInput = this.page.locator(this.sel.existingAudienceSearch).first();
+        await searchInput.waitFor({ state: 'visible', timeout: 20000 });
+        await searchInput.fill(title);
+        await this.page.keyboard.press('Enter');
+        await this.pause(1500);
+
+        // 2. Click the matching audience label
+        const lbl = this.page.locator(
+            `//label[normalize-space()='${title}' or contains(normalize-space(),'${title}')]`
+        ).first();
+        await lbl.waitFor({ state: 'visible', timeout: 20000 });
+        await lbl.click();
+        await this.pause(500);
+    }
+
+    async clickEnrollmentOk(): Promise<void> {
+        await this.click(this.sel.existingAudienceOkBtn);
+        await this.pause(1000);
+    }
+
     async clickNewAudienceCriteria() { await this.click(this.sel.newAudienceCriteria); }
-    async clickAddToEnrollment()  { await this.click(this.sel.addToEnrollmentBtn); }
-    async clickDashboardBack()    { await this.click(this.sel.dashboardBackBtn); await this.pause(2000); }
+    async clickAddToEnrollment()     { await this.click(this.sel.addToEnrollmentBtn); }
+    async clickDashboardBack()       { await this.click(this.sel.dashboardBackBtn); await this.pause(2000); }
 
     async clickAudiencePreview() {
         await this.click(this.sel.audiencePreview);
@@ -176,12 +214,27 @@ export class WorkflowPage extends BasePage {
         await btn.click({ force: true });
     }
 
-    async clickActionNode() {
+    async clickActionNode(): Promise<void> {
         await this.click(this.sel.addActionNode);
         await this.pause(2000);
     }
 
-    async clickExitNode() {
+    async clickDelayNode(): Promise<void> {
+        await this.click(this.sel.addDelayNode);
+        await this.pause(2000);
+    }
+
+    async clickLiveEventOption(): Promise<void> {
+        await this.click(this.sel.liveEventOption);
+        await this.pause(1000);
+    }
+
+    async clickLoginLiveEvent(): Promise<void> {
+        await this.click(this.sel.loginEventOption);
+        await this.pause(1000);
+    }
+
+    async clickExitNode(): Promise<void> {
         await this.click(this.sel.addExitNode);
         await this.pause(2000);
     }
