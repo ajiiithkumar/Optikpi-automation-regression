@@ -5,11 +5,12 @@ import { AudiencePage } from '../pages/audience.page';
 import { DateTimePicker } from '../pages/components/date-time-picker.component';
 import { ExtentTestManager } from '../utils/extent-test-manager';
 import { PlaywrightWorld } from '../support/world';
-import { uniqueId } from '../utils/helper';
+import { uniqueId, waitForNameEntryCompleted } from '../utils/helper';
 
 const getWorkflowPage = (world: PlaywrightWorld) => new WorkflowPage(world.page);
 const getAudiencePage = (world: PlaywrightWorld) => new AudiencePage(world.page);
 const getDatePicker   = (world: PlaywrightWorld) => new DateTimePicker(world.page);
+
 
 // ─── Workflow Tab Steps (REG-WORKFLOW-02) ─────────────────────────────────────
 
@@ -139,12 +140,9 @@ Then('Select the Part of an Audience option', async function (this: PlaywrightWo
 });
 
 Then('Select the existing audience from the list', async function (this: PlaywrightWorld) {
-    const title: string = this['existingAudienceTitle'] || '';
-    if (!title) {
-        throw new Error('No existingAudienceTitle set on World. Ensure the @ExistingAudience precondition scenario ran first.');
-    }
-    await getWorkflowPage(this).selectExistingAudienceByTitle(title);
-    ExtentTestManager.logPass(`Selected existing audience: ${title}`);
+    const entry = await waitForNameEntryCompleted('existingAudience');
+    await getWorkflowPage(this).selectExistingAudienceByTitle(entry.title);
+    ExtentTestManager.logPass(`Selected existing audience: ${entry.title}`);
 });
 
 Then('Click the Enrollment flyout Ok button', async function (this: PlaywrightWorld) {

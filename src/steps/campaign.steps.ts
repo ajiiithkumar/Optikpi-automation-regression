@@ -521,6 +521,7 @@ Then('Search the communication name in the search bar', async function (this: Pl
     await this.page.keyboard.press('Enter');
     await this.page.waitForTimeout(2000);
     this['lastSearchedCommunication'] = communicationName;
+    await this.page.keyboard.press('Enter');
     ExtentTestManager.logPass(`Searched communication name in library: ${communicationName}`);
 });
 

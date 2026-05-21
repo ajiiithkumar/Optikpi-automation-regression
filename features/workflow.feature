@@ -42,6 +42,11 @@ Feature: Workflow module
     Then Click the workflow Cancel button
     Then Click the workflow save draft button
     Then Click the workflow save draft confirm button
+    Then I should see the "Workflow" page
+    Then Enter the workflow name in the search bar
+    Then Verify the workflow name is shown in the list
+    Then Click the three-dot menu on the Workflow
+    Then Click the Edit Workflow settings button
     Then Click the Workflow Publish button
     Then Check for Error message
     Then Click the node edit button "2"

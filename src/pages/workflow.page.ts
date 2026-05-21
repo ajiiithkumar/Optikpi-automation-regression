@@ -32,7 +32,7 @@ export class WorkflowPage extends BasePage {
         existingAudienceDropdown:     "//button[@data-testid='workflow-existing-audience-dropdown']",
         existingAudiencePartOfBtn:    "//button[@data-testid='workflow-existing-audience-dropdown-part-of-an-audience']",
         existingAudienceOkBtn:        "//button[@data-testid='flyout-confirm-btn']",
-        existingAudienceSearch:       "//input[@id='search-data']",
+        existingAudienceSearch:       "//input[@name='search-input-box']",
 
         // Node controls
         nodeApplyBtn:       "//button[@data-testid='workflow-node-apply-button']",
@@ -41,8 +41,12 @@ export class WorkflowPage extends BasePage {
         addActionNode:      "//button[@data-testid='add-node-dropdown-add-action']",
         addDelayNode:       "//button[@data-testid='add-node-dropdown-add-delay']",
         addExitNode:        "//button[@data-testid='add-node-dropdown-exit-flow']",
+       selectLiveEventOption:   "//button[@title='Add event']",
         liveEventOption:    "//button[@data-testid='liveEvent']",
+        
         loginEventOption:   "//*[@data-testid='login']",
+        librarySearch:      "//input[@data-testid='library-search-input' or @placeholder='Search']",
+        libraryUseContent:  "//button[@data-testid='library-use-this-content-btn' or contains(normalize-space(),'Use this content')]",
         actionAddContent:   "//button[@data-testid='workflow-actions-communication-add-content-btn']",
         exitMarkAsGoal:     "//button[@role='switch']",
         nodeEditBtn:        "//button[@data-testid='node-operations-dropdown-edit']",
@@ -147,20 +151,22 @@ export class WorkflowPage extends BasePage {
     }
 
     async selectExistingAudienceByTitle(title: string): Promise<void> {
-        // 1. Type the title in the search bar
-        console.log(`[Workflow] Selecting existing audience: ${title}`);
         const searchInput = this.page.locator(this.sel.existingAudienceSearch).first();
         await searchInput.waitFor({ state: 'visible', timeout: 20000 });
         await searchInput.fill(title);
         await this.page.keyboard.press('Enter');
         await this.pause(1500);
 
-        // 2. Click the matching audience label
-        const lbl = this.page.locator(
-            `//label[normalize-space()='${title}' or contains(normalize-space(),'${title}')]`
-        ).first();
-        await lbl.waitFor({ state: 'visible', timeout: 20000 });
-        await lbl.click();
+        // Prefer input[@id=title] (same pattern as audience.page.ts), fall back to input[@title=title]
+        const checkbox = this.page.locator(`//label[text()='${title}']`).first();
+        const usedCheckbox = await checkbox.isVisible({ timeout: 5000 }).catch(() => false);
+        if (usedCheckbox) {
+            await checkbox.click();
+        } else {
+            const option = this.page.locator(`//label[text()='${title}']`).first();
+            await option.waitFor({ state: 'visible', timeout: 20000 });
+            await option.click();
+        }
         await this.pause(500);
     }
 
@@ -230,6 +236,7 @@ export class WorkflowPage extends BasePage {
     }
 
     async clickLoginLiveEvent(): Promise<void> {
+        await this.click(this.sel.selectLiveEventOption);
         await this.click(this.sel.loginEventOption);
         await this.pause(1000);
     }
@@ -240,6 +247,27 @@ export class WorkflowPage extends BasePage {
     }
 
     async clickAddContent()   { await this.click(this.sel.actionAddContent); }
+
+    async searchCommunication(name: string): Promise<void> {
+        const searchInput = this.page.locator(this.sel.librarySearch).first();
+        await searchInput.waitFor({ state: 'visible', timeout: 20000 });
+        await searchInput.click();
+        await searchInput.fill(name);
+        await this.pause(2000);
+        await this.page.keyboard.press('Enter');
+    }
+
+    async clickFirstCommunication(name: string): Promise<void> {
+        const card = this.page.locator(`//div[@data-testid='${name}']`).first();
+        await card.waitFor({ state: 'visible', timeout: 10000 });
+        await this.pause(2000);
+        await card.hover({ force: true });
+        await this.pause(500);
+        const useBtn = this.page.locator(this.sel.libraryUseContent).first();
+        await useBtn.waitFor({ state: 'visible', timeout: 10000 });
+        await useBtn.click();
+        await this.pause(2000);
+    }
     async clickCancel()       { await this.click(this.sel.cancelBtn); await this.pause(1000); }
 
     async clickNodeEdit(nodeIndex: string) {
