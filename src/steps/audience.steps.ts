@@ -2,7 +2,7 @@
 import { Given, Then } from '@cucumber/cucumber';
 import { AudiencePage } from '../pages/audience.page';
 import { DateTimePicker } from '../pages/components/date-time-picker.component';
-import { readUsersCsv, saveNameEntry, saveNameEntries, generateAudienceTitle, readNameJson, waitForNameEntryCompleted } from '../utils/helper';
+import { readUsersCsv, saveNameEntry, saveNameEntries, uniqueId, readNameJson, waitForNameEntryCompleted } from '../utils/helper';
 import { ExtentTestManager } from '../utils/extent-test-manager';
 import { PlaywrightWorld } from '../support/world';
 
@@ -96,7 +96,7 @@ Then('I should see the Create Audience page', async function (this: PlaywrightWo
 });
 
 Then('Fill in the Audience details and save', async function (this: PlaywrightWorld) {
-    const audienceTitle = generateAudienceTitle();
+    const audienceTitle = `Audience-${uniqueId()}`;
     this['currentAudienceTitle'] = audienceTitle;
 
     const scenarioTag = this.scenarioTag || '';
@@ -115,7 +115,7 @@ Then('Fill in the Audience details and save', async function (this: PlaywrightWo
 });
 
 Then('Fill in the Existing Audience details and save', async function (this: PlaywrightWorld) {
-    const audienceTitle = generateAudienceTitle();
+    const audienceTitle = `Audience-${uniqueId()}`;
     this['currentAudienceTitle'] = audienceTitle;
     await saveNameEntry('existingAudience', audienceTitle, 'Test');
 
@@ -638,7 +638,7 @@ Then('Verify the duplicate popup shows the title starting with Copy of', async f
 });
 
 Then('Clear the duplicate title and enter a new unique title', async function (this: PlaywrightWorld) {
-    const newTitle = generateAudienceTitle();
+    const newTitle = `Audience-${uniqueId()}`;
     this['duplicatedAudienceTitle'] = newTitle;
     this['currentAudienceTitle'] = newTitle;
     await getAudiencePage(this).setDuplicateTitle(newTitle);
