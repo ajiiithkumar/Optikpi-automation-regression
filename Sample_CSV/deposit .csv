@@ -1,0 +1,21 @@
+event_id,event_name,event_category,event_time,user_id,amount,payment_method,transaction_id,payment_provider_id,payment_provider_name,failure_reason
+event_f056c22c0b7d,Successful Deposit,Deposit,2026-05-12T09:00:11.000Z,user_e496790f9a,131.01,wallet,transact_c3dff558,payment__47e7fb95,Stripe,bank_declined
+event_97d2fafda4ae,First Time Deposit,Deposit,2026-05-12T09:07:51.000Z,user_307f2c1d37,638.09,wallet,transact_b30af574,payment__8a0cb531,Stripe,insufficient_funds
+event_8a1471622aad,Second Time Deposit,Deposit,2026-05-12T09:14:35.000Z,user_56d9a36411,88.6,card,transact_85a29e92,payment__3f1c3edd,Stripe,network_error
+event_618f5fed4464,Third Time Deposit,Deposit,2026-05-12T09:21:08.000Z,user_9556fe88a4,610.2,bank_transfer,transact_754eec68,payment__1f4b320e,Paytm,insufficient_funds
+event_d189be89c8ba,Failed Deposit,Deposit,2026-05-12T09:28:16.000Z,user_865129a4eb,740.65,card,transact_34d42688,payment__c4d98a99,Paytm,bank_declined
+event_cb78b31594f3,Successful Deposit,Deposit,2026-05-12T09:35:56.000Z,user_37cd03908f,190.09,card,transact_59fd230c,payment__d5eb7bc0,Stripe,kyc_pending
+event_a10ecc799851,First Time Deposit,Deposit,2026-05-12T09:42:06.000Z,user_3cdc1437fa,873.18,wallet,transact_f88f882f,payment__5776731a,Paytm,kyc_pending
+event_d941434cb886,Second Time Deposit,Deposit,2026-05-12T09:49:03.000Z,user_4d9a393349,372.5,wallet,transact_6a046c3f,payment__46ce8dc7,Stripe,network_error
+event_5f482f3b7fee,Third Time Deposit,Deposit,2026-05-12T09:56:11.000Z,user_5703717a31,251.38,card,transact_276f92d2,payment__f04b7ea0,Paytm,insufficient_funds
+event_6f3fa626eda8,Failed Deposit,Deposit,2026-05-12T10:03:20.000Z,user_c442447691,951.89,bank_transfer,transact_706c2fd7,payment__84cf138f,Worldpay,kyc_pending
+event_7c81ce2bc73f,Successful Deposit,Deposit,2026-05-12T10:10:32.000Z,user_2bed102ea3,487.57,card,transact_d6b30ece,payment__1830fd88,Worldpay,network_error
+event_966d600936c3,First Time Deposit,Deposit,2026-05-12T10:17:49.000Z,user_62c87252d1,318.69,upi,transact_e581a93b,payment__fc48af69,Stripe,insufficient_funds
+event_6bf4d416f238,Second Time Deposit,Deposit,2026-05-12T10:24:13.000Z,user_a932d85b5b,83.94,bank_transfer,transact_245fb938,payment__b5a964ac,Paytm,bank_declined
+event_a40a0b5a84f6,Third Time Deposit,Deposit,2026-05-12T10:31:09.000Z,user_e40f9b3cee,745.83,bank_transfer,transact_f4060586,payment__02760f2b,Worldpay,kyc_pending
+event_032108ac80b0,Failed Deposit,Deposit,2026-05-12T10:38:04.000Z,user_500df04c8b,29.58,wallet,transact_0387af9c,payment__f36fd545,Worldpay,bank_declined
+event_9a283517efd4,Successful Deposit,Deposit,2026-05-12T10:45:10.000Z,user_cb6219b451,296.84,upi,transact_b0cd9626,payment__0c96dc17,Paytm,bank_declined
+event_2d75df80fe29,First Time Deposit,Deposit,2026-05-12T10:52:39.000Z,user_404e22493f,461.52,upi,transact_1c099054,payment__bc62e9cf,Worldpay,bank_declined
+event_ca33df1d9461,Second Time Deposit,Deposit,2026-05-12T10:59:48.000Z,user_ab00dd275b,712.31,upi,transact_e97fcb61,payment__6c8f0c73,Paytm,network_error
+event_0e5f29af46c6,Third Time Deposit,Deposit,2026-05-12T11:06:54.000Z,user_3006945663,522.49,card,transact_9ecbb122,payment__1db4af87,Razorpay,network_error
+event_44b64f36d480,Failed Deposit,Deposit,2026-05-12T11:13:14.000Z,user_2f2664cb71,47.86,card,transact_7d090858,payment__12e966cd,Worldpay,bank_declined

@@ -50,6 +50,8 @@ export class WorkflowPage extends BasePage {
         actionAddContent:   "//button[@data-testid='workflow-actions-communication-add-content-btn']",
         exitMarkAsGoal:     "//button[@role='switch']",
         nodeEditBtn:        "//button[@data-testid='node-operations-dropdown-edit']",
+        headerThreeDotBtn:  "//button[@data-testid='workflow-header-operations-dropdown']",
+        headerEditBtn:      "//button[@data-testid='workflow-operations-dropdown-edit']",
 
         // Publish & Draft
         saveDraftBtn:        "//button[@data-testid='workflow-save-draft-button']",
@@ -274,6 +276,16 @@ export class WorkflowPage extends BasePage {
         const nodeSelector = `(//button[@data-testid='node-operations-dropdown'])[${nodeIndex}]`;
         await this.click(nodeSelector);
         await this.click(this.sel.nodeEditBtn);
+        await this.pause(2000);
+    }
+
+    async clickHeaderThreeDotMenu(): Promise<void> {
+        await this.click(this.sel.headerThreeDotBtn);
+        await this.pause(1000);
+    }
+
+    async clickHeaderEditWorkflow(): Promise<void> {
+        await this.click(this.sel.headerEditBtn);
         await this.pause(2000);
     }
 

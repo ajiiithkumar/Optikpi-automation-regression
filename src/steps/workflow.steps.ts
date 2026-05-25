@@ -356,6 +356,16 @@ Then('Click the workflow filter apply button', async function (this: PlaywrightW
     ExtentTestManager.logPass('Clicked workflow filter apply button');
 });
 
+Then('Click the three-dot menu on the Workflow', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickHeaderThreeDotMenu();
+    ExtentTestManager.logPass('Clicked three-dot menu on the Workflow');
+});
+
+Then('Click the Edit Workflow settings button', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickHeaderEditWorkflow();
+    ExtentTestManager.logPass('Clicked Edit Workflow settings button');
+});
+
 Then('Enter the workflow name in the search bar', async function (this: PlaywrightWorld) {
     const workflowName = this['currentWorkflowTitle'] || '';
     if (!workflowName) {

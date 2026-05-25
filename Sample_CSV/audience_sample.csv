@@ -1,0 +1,2 @@
+User_ID,username,full_name,first_name,last_name,date_of_birth,email,phone_number,gender,country,city,language,currency,phone_verification,email_verification,bank_verification,iddoc_verification,marketing_email_preference,notifications_preference,subscription
+45652,John,John Doe,John,Doe,01-01-1990,john.doe@example.com,987654321,Male,USA,New York,English,USD,Verified,Verified,Verified,Verified,Subscribed,Enabled,Premium
