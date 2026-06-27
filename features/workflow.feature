@@ -15,7 +15,7 @@ Feature: Workflow module
     Then Click The All tab
     Then Verify Workflow All tab should load successfully
 
-  @Regression @REG-WORKFLOW-02
+  @Regression @REG-WORKFLOW-02 TODO: @REG-WORKFLOW-02
   Scenario: Workflow Activation with error validation
     Given I log in for module "Workflow"
     When I navigate to "Workflow"
