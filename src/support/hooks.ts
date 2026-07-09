@@ -84,11 +84,14 @@ AfterStep(async function (this: PlaywrightWorld, { result, pickleStep }: any) {
 
     // ✅ Capture screenshot for PASSED steps (if you want)
     else if (status === Status.PASSED) {
-        await Helper.captureScreenshot(this, {
-            label: `PASSED: ${stepText}`,
-            writeToDisk: false, // Don't clutter disk with passed screenshots
-            filePrefix: `STEP-PASSED-${stepText.replace(/[^a-zA-Z0-9]/g, '_')}`,
-        });
+        const stepMode = String(process.env.STEP_SCREENSHOTS || 'always').toLowerCase();
+        if (stepMode === 'always' || stepMode === 'all') {
+            await Helper.captureScreenshot(this, {
+                label: `PASSED: ${stepText}`,
+                writeToDisk: false, // Don't clutter disk with passed screenshots
+                filePrefix: `STEP-PASSED-${stepText.replace(/[^a-zA-Z0-9]/g, '_')}`,
+            });
+        }
     }
 });
 

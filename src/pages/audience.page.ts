@@ -1,4 +1,5 @@
 import { BasePage } from './base.page';
+import { ExtentTestManager } from '../utils/extent-test-manager';
 
 /**
  * AudiencePage — encapsulates all Audience module selectors and actions.
@@ -7,129 +8,129 @@ export class AudiencePage extends BasePage {
 
     private readonly sel = {
         // Tabs
-        tabAll:        "//a[@data-testid='audience-tab-all']",
-        tabLive:       "//a[@data-testid='audience-tab-live']",
+        tabAll: "//a[@data-testid='audience-tab-all']",
+        tabLive: "//a[@data-testid='audience-tab-live']",
         tabOnSchedule: "//a[@data-testid='audience-tab-scheduled']",
-        tabStatic:     "//a[@data-testid='audience-tab-static']",
+        tabStatic: "//a[@data-testid='audience-tab-static']",
         staticTabActive: "//h3[normalize-space()='Static audiences']",
 
         // View toggle
-        viewDropdown:      "//button[@data-testid='audience-select-menu']",
-        cardViewBtn:       "//button[@data-testid='audience-select-menu-card-view']",
-        listViewBtn:       "//button[@data-testid='audience-select-menu-list-view']",
+        viewDropdown: "//button[@data-testid='audience-select-menu']",
+        cardViewBtn: "//button[@data-testid='audience-select-menu-card-view']",
+        listViewBtn: "//button[@data-testid='audience-select-menu-list-view']",
         cardViewContainer: "//button[.//span[normalize-space()='Card']]",
         listViewContainer: "//button[.//span[normalize-space()='List']]",
 
         // Create
-        createNewBtn:      "//button[@data-testid='create-new-audience-btn']",
-        createFromScratch: "//div[normalize-space(.)='Create from scratch']",
-        nameInput:         "//input[@data-testid='create-audience-modal-popup-input']",
-        tagsInput:         "//input[@data-testid='create-audience-modal-popup-tag']",
-        submitBtn:         "//button[@data-testid='create-audience-modal-popup-ok-btn']",
-        editTitle:         "//h2[@title]",
+        createNewBtn: "//button[@data-testid='create-new-audience-btn']",
+        createFromScratch: "//li[@data-testid='audience-create-from-scratch-modal-btn'] | //*[normalize-space()='Create from scratch' and not(ancestor::li)]",
+        nameInput: "//input[@data-testid='create-audience-modal-popup-input']",
+        tagsInput: "//input[@data-testid='create-audience-modal-popup-tag']",
+        submitBtn: "//button[@data-testid='create-audience-modal-popup-ok-btn']",
+        editTitle: "//h2[@title]",
 
         // Criteria
-        criteria:                  "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1']",
-        criteriaCustomerProps:     "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-customer-properties']",
-        customerPropsEvent:        "//button[@data-testid='audience-ruleBuilder-customer-properties-group-1-customer property-btn-1']",
-        userIdInput:               "//input[@data-testid='user_id']",
-        ConditionIsOneOfBtn:    "//input[@data-testid='is-one-of']",
-       searchField:               "//input[@id='search-data']",
-        CustomerPropertiesValueslevel1Btn:    "//button[@data-testid='audience-ruleBuilder-customer-properties-group-1-values-btn-1-1']",
-        CustomerEngagementValueslevel1Btn:                 "//button[@data-testid='audience-ruleBuilder-customer-engagement-group-1-eventValues-btn-1-1']",
-        CustomerEngagementValueslevel2Btn:                 "//button[@data-testid='audience-ruleBuilder-customer-engagement-group-1-eventValues-btn-1-2']",
-        addValuesBtn:              "//button[@data-testid='commonProfile-add-values-btn']",
-        CustomerPropertiesValueslevel2Btn:              "//button[@data-testid='audience-ruleBuilder-customer-properties-group-1-values-btn-1']",
+        criteria: "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1']",
+        criteriaCustomerProps: "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-customer-properties']",
+        customerPropsEvent: "//button[normalize-space()='+ customer property' or contains(@data-testid,'customer property-btn-')]",
+        userIdInput: "//input[@data-testid='user_id']",
+        ConditionIsOneOfBtn: "//input[@data-testid='is-one-of']",
+        searchField: "//input[@id='search-data']",
+        CustomerPropertiesValueslevel1Btn: "//button[contains(@data-testid,'customer-properties-group-') and contains(@data-testid,'-values-btn-') and not(contains(normalize-space(), 'Add'))]",
+        CustomerEngagementValueslevel1Btn: "//button[contains(@data-testid,'customer-engagement-group-') and contains(@data-testid,'-eventValues-btn-') and not(contains(normalize-space(), 'Add'))]",
+        CustomerEngagementValueslevel2Btn: "//button[contains(@data-testid,'customer-engagement-group-') and contains(@data-testid,'-eventValues-btn-') and contains(normalize-space(), 'Add')]",
+        addValuesBtn: "//button[@data-testid='commonProfile-add-values-btn']",
+        CustomerPropertiesValueslevel2Btn: "//button[contains(@data-testid,'customer-properties-group-') and contains(@data-testid,'-values-btn-')]",
         // Preview
         preview1: "//button[@data-testid='audience-ruleBuilder-previewButton']",
         preview2: "//button[@data-testid='audience-ruleBuilder-preview-refresh-button']",
 
         // Save / Publish
-        saveDraftBtn:       "//button[@data-testid='audience-create-save-draft-btn']",
-        saveDraftConfirm:   "//button[@data-testid='audience-save-draft-create-btn']",
-        cancelBtn:          "//button[@data-testid='audience-cancel-save-draft']",
-        publishBtn:         "//button[@data-testid='audience-create-publish-now-btn']",
-        publishConfirm1:    "//button[@data-testid='audience-publish-create-btn']",
-        publishCancel:      "//button[@data-testid='audience-cancel-publish']",
+        saveDraftBtn: "//button[@data-testid='audience-create-save-draft-btn']",
+        saveDraftConfirm: "//button[@data-testid='audience-save-draft-create-btn']",
+        cancelBtn: "//button[@data-testid='audience-cancel-save-draft']",
+        publishBtn: "//button[@data-testid='audience-create-publish-now-btn']",
+        publishConfirm1: "//button[@data-testid='audience-publish-create-btn']",
+        publishCancel: "//button[@data-testid='audience-cancel-publish']",
         publishTypeConfirm: "//button[@data-testid='audience-type-modal-confirm-btn']",
-        publishStatic:      "//button[@data-testid='audience-type-modal-static-input-radio']",
-        publishSchedule:    "//input[@data-testid='audience-type-modal-scheduled-input-radio']",
-        updateBtn:          "//button[@data-testid='audience-edit-update-btn']",
-        updateConfirm:      "//button[@data-testid='audience-publish-edit-btn']",
+        publishStatic: "//button[@data-testid='audience-type-modal-static-input-radio']",
+        publishSchedule: "//input[@data-testid='audience-type-modal-scheduled-input-radio']",
+        updateBtn: "//button[@data-testid='audience-edit-update-btn']",
+        updateConfirm: "//button[@data-testid='audience-publish-edit-btn']",
 
         // Filter & Search
-        filterBtn:        "//button[@data-testid='audience-table-listing-filter-btn']",
-        filterActive:     "//input[@data-testid='audience-active']",
-        filterApplyBtn:   "//button[@data-testid='audience-apply-btn']",
-        mainSearchField:  "//input[@id='mobile-search-candidate']",
+        filterBtn: "//button[@data-testid='audience-table-listing-filter-btn']",
+        filterActive: "//input[@data-testid='audience-active']",
+        filterApplyBtn: "//button[@data-testid='audience-apply-btn']",
+        mainSearchField: "//input[@placeholder='Search']",
 
         // Criteria — Event Performed
-        criteriaEventPerformed:   "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-event-performed']",
-        criteriaevent:                    "//button[@data-testid='audience-ruleBuilder-event-performed-group-1-event-btn-1']",
-        eventLoginOption:         "//input[@data-testid='login']",
+        criteriaEventPerformed: "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-event-performed']",
+        criteriaevent: "//button[normalize-space()='+ event' or contains(@data-testid,'event-performed-group-1-event-btn-')]",
+        eventLoginOption: "//input[@data-testid='login']",
         eventOccurrenceExactlyOnce: "//span[@data-testid='audience-ruleBuilder-event-performed-group-1-occurrence-condition-btn-1']",
-        eventOccurrenceAtLeast:   "//input[@data-testid='atleast-[#]-time']",
-        occurrenceCountInput:     "//input[@class='w-10 px-2 py-1 text-sm outline-none border-none bg-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none']",
-        eventDateRangeBtn:        "//span[@data-testid='audience-ruleBuilder-event-performed-group-1-dateTimePickerModal-rangeValue-Btn-1']",
-        eventDateRangeToday:      "//ul[@data-testid='dateTimePicker-modal-relative-today']",
-        eventDateRangeApply:      "//button[@data-testid='dateTimePicker-modal-apply-button']",
-        eventDateRangeCancel:     "//button[@data-testid='dateTimePicker-modal-cancel-button']",    
-        TimeWindowBtn:            "//button[@class='bg-white flex flex-row items-center justify-center border border-gray-300 rounded-lg px-3 py-2 cursor-pointer']",
-        SlectedTimeWindowclose:   "//span[normalize-space()='Today']/ancestor::div[contains(@class,'bg-white')]//button[contains(@class,'ps-1')]",
-        
-        
-        
+        eventOccurrenceAtLeast: "//input[@data-testid='atleast-[#]-time']",
+        occurrenceCountInput: "//input[@class='w-10 px-2 py-1 text-sm outline-none border-none bg-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none']",
+        eventDateRangeBtn: "//span[@data-testid='audience-ruleBuilder-event-performed-group-1-dateTimePickerModal-rangeValue-Btn-1']",
+        eventDateRangeToday: "//ul[@data-testid='dateTimePicker-modal-relative-today']",
+        eventDateRangeApply: "//button[@data-testid='dateTimePicker-modal-apply-button']",
+        eventDateRangeCancel: "//button[@data-testid='dateTimePicker-modal-cancel-button']",
+        TimeWindowBtn: "//button[@class='bg-white flex flex-row items-center justify-center border border-gray-300 rounded-lg px-3 py-2 cursor-pointer']",
+        SlectedTimeWindowclose: "//span[normalize-space()='Today']/ancestor::div[contains(@class,'bg-white')]//button[contains(@class,'ps-1')]",
+
+
+
         // Criteria — Customer Metric
-        criteriaCustomerMetric:       "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-customer-metric']",
+        criteriaCustomerMetric: "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-customer-metric']",
         criteriaCustomerMetricEvent: "//button[@class='bg-white flex flex-row items-center justify-center rounded-md px-3 py-2 border border-gray-300 cursor-pointer']",
-        metricTotalDeposited:         "//input[@data-testid='total-deposited-amount']",
-        ConditionBtn:           "//button[@class='bg-white flex flex-row items-center justify-center border border-gray-300 rounded-lg px-3 py-2 cursor-pointer']",
-        metricConditionGreaterEqual:  "//input[@data-testid='greater-than-or-equal-to']",
-        metricValueInput:             "//input[@class='text-center focus:outline-none']",
+        metricTotalDeposited: "//input[@data-testid='total-deposited-amount']",
+        ConditionBtn: "//button[@class='bg-white flex flex-row items-center justify-center border border-gray-300 rounded-lg px-3 py-2 cursor-pointer']",
+        metricConditionGreaterEqual: "//input[@data-testid='greater-than-or-equal-to']",
+        metricValueInput: "//input[@class='text-center focus:outline-none']",
 
         // Criteria — Part of Audience
-        criteriaPartOfAudience:    "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-part-of-an-audience']",
-        criteriaPartOfAudienceevent: "//button[@data-testid='audience-ruleBuilder-part-of-an-audience-existingAudience-1-btn']",
-        partOfAudienceDropdown:    "//button[@data-testid='audience-ruleBuilder-part-of-an-audience-existingAudience-1-btn']",
-        partOfAudienceSearch:      "//input[@id='search-data']",
-        AddAudienceBtn:            "//button[@data-testid='commonProfile-add-audience-btn']",
+        criteriaPartOfAudience: "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-part-of-an-audience']",
+        criteriaPartOfAudienceevent: "//button[contains(@data-testid,'existingAudience-') or contains(normalize-space(),'audience') or contains(normalize-space(),'Audience')]",
+        partOfAudienceDropdown: "//button[contains(@data-testid,'existingAudience-') or contains(normalize-space(),'audience') or contains(normalize-space(),'Audience')]",
+        partOfAudienceSearch: "//input[@id='search-data'] | //input[@placeholder='Search'] | //*[@role='dialog']//input[@type='text'] | //*[contains(text(),'Select one of the existing')]/preceding-sibling::*//input | //*[contains(@class, 'search')]//input",
+        AddAudienceBtn: "//button[@data-testid='commonProfile-add-audience-btn']",
 
         // Criteria — Customer Engagement
-        criteriaCustomerEngagement:  "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-customer-engagement']",
-        criteriaCustomerEngagementevent: "//button[@data-testid='audience-ruleBuilder-customer-engagement-group-1-eventAttribute-btn-1']",
-        engagementWorkflow:          "//input[@data-testid='workflow_engagement']",
-        engagementattribute:          "//button[@data-testid='audience-ruleBuilder-customer-engagement-group-1-eventAttribute-btn-1']",
-        workflowName:        "//input[@data-testid='workflow_id']",
-        workflowAction:      "//input[@data-testid='node_id']",
+        criteriaCustomerEngagement: "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-customer-engagement']",
+        criteriaCustomerEngagementevent: "//button[contains(normalize-space(),'+ engagement') or contains(normalize-space(),'+ customer engagement') or (contains(@data-testid,'customer-engagement') and contains(@data-testid,'btn-'))]",
+        engagementWorkflow: "//input[@data-testid='workflow_engagement']",
+        engagementattribute: "//button[contains(@data-testid,'eventAttribute-btn-') or contains(normalize-space(),'workflow') or contains(normalize-space(),'Workflow')]",
+        workflowName: "//input[@data-testid='workflow_id']",
+        workflowAction: "//input[@data-testid='node_id']",
 
         // AND / OR logic
-        Group1AndConditionBtn:   "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1']",
-        addGroupBtn:       "//button[@data-testid='audience-ruleBuilder-add-group-btn']",
-        criteriaGroup2:    "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-2']",
+        Group1AndConditionBtn: "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1']",
+        addGroupBtn: "//button[@data-testid='audience-ruleBuilder-OR-groupIcon'] | //*[normalize-space()='+ OR group']",
+        criteriaGroup2: "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-2']",
         criteriaGroup2CustomerProps: "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-2-customer-properties']",
 
         // Action menu (list view)
-        actionMenuBtnTemplate:  "//tr[.//span[contains(normalize-space(.), '{{TITLE}}')]]//button[contains(@class,'action') or @data-testid]//span[contains(@class,'dots') or text()='⋮']/.. | //tr[.//span[contains(normalize-space(.), '{{TITLE}}')]]//td[last()]//button",
-        duplicateOption:        "//button[normalize-space()='Duplicate' or @data-testid='audience-listView-tableList-dropdownIcon-1-duplicate']",
-        duplicatePopupInput:    "//div[contains(@class,'modal') or @role='dialog']//input",
-        duplicatePopupBtn:      "//button[normalize-space()='Duplicate']",
-        duplicatePopupCancel:   "//button[normalize-space()='Cancel']",
-        duplicatePopupTitle:    "//div[contains(@class,'modal') or @role='dialog']//input",
+        actionMenuBtnTemplate: "//tr[.//span[contains(normalize-space(.), '{{TITLE}}')]]//button[contains(@class,'action') or @data-testid]//span[contains(@class,'dots') or text()='⋮']/.. | //tr[.//span[contains(normalize-space(.), '{{TITLE}}')]]//td[last()]//button",
+        duplicateOption: "//button[normalize-space()='Duplicate' or @data-testid='audience-listView-tableList-dropdownIcon-1-duplicate']",
+        duplicatePopupInput: "//div[contains(@class,'modal') or @role='dialog']//input",
+        duplicatePopupBtn: "//button[normalize-space()='Duplicate']",
+        duplicatePopupCancel: "//button[normalize-space()='Cancel']",
+        duplicatePopupTitle: "//div[contains(@class,'modal') or @role='dialog']//input",
 
-       
+
         // Validation
-        validationError:       "//div[contains(@class,'bg-warning')]//p[string-length(normalize-space()) > 0]",
+        validationError: "//div[contains(@class,'bg-warning')]//p[string-length(normalize-space()) > 0]",
 
         // Value removal
-        removeValueBtn:  "//button[@data-testid='audience-ruleBuilder-customer-properties-group-1-eventValue-clearBtn-1-values']",
+        removeValueBtn: "//button[@data-testid='audience-ruleBuilder-customer-properties-group-1-eventValue-clearBtn-1-values']",
     };
 
     // ─── Tab Navigation ──────────────────────────────────────────────────────
 
-    async clickTabAll()        { await this.click(this.sel.tabAll); }
-    async clickTabLive()       { await this.click(this.sel.tabLive); }
+    async clickTabAll() { await this.click(this.sel.tabAll); }
+    async clickTabLive() { await this.click(this.sel.tabLive); }
     async clickTabOnSchedule() { await this.click(this.sel.tabOnSchedule); }
-    async clickTabStatic()     { await this.click(this.sel.tabStatic); }
+    async clickTabStatic() { await this.click(this.sel.tabStatic); }
 
     async isStaticTabActive(): Promise<boolean> {
         return this.isVisible(this.sel.staticTabActive);
@@ -159,10 +160,13 @@ export class AudiencePage extends BasePage {
 
     // ─── Audience Creation ───────────────────────────────────────────────────
 
-    async clickCreateNew()       { await this.pause(500);
-        await this.click(this.sel.createNewBtn); }
-    async clickCreateFromScratch() { await this.pause(500);
-        await this.click(this.sel.createFromScratch); }
+    async clickCreateNew() {
+        await this.click(this.sel.createNewBtn);
+    }
+    async clickCreateFromScratch() {
+        // Specifically click the 'Create audience' link inside the 'Create from scratch' template card
+        await this.click(this.sel.createFromScratch);
+    }
 
     async waitForCreatePage() {
         await this.waitForVisible(this.sel.nameInput, 30000);
@@ -174,7 +178,7 @@ export class AudiencePage extends BasePage {
             const visible = await this.isVisible(this.sel.tagsInput);
             if (visible) {
                 await this.fill(this.sel.tagsInput, tag);
-                await this.page.keyboard.press('Enter').catch(() => {});
+                await this.page.keyboard.press('Enter').catch(() => { });
             }
         }
     }
@@ -183,13 +187,13 @@ export class AudiencePage extends BasePage {
         const submitBtn = this.page.locator(this.sel.submitBtn).first();
         await submitBtn.waitFor({ state: 'visible', timeout: 20000 });
         await Promise.allSettled([
-            this.page.waitForLoadState('networkidle').catch(() => {}),
+            this.page.waitForLoadState('networkidle').catch(() => { }),
             submitBtn.click({ timeout: 20000 }),
         ]);
     }
 
     async waitForEditPage() {
-        await this.waitForVisible(this.sel.criteria, 30000);
+        await this.waitForVisible(this.sel.criteria);
     }
 
     // ─── Criteria Builder ────────────────────────────────────────────────────
@@ -210,23 +214,35 @@ export class AudiencePage extends BasePage {
     }
 
     async selectCustomerPropertiesValueslevel1Btn() {
-        await this.click(this.sel.CustomerPropertiesValueslevel1Btn);
+        await this.clickLast(this.sel.CustomerPropertiesValueslevel1Btn);
     }
 
-
     async clickAddValuesBtn() {
-        await this.click(this.sel.CustomerPropertiesValueslevel2Btn);
+        await this.clickLast(this.sel.CustomerPropertiesValueslevel2Btn);
     }
 
     async enterUserIdValue(userId: string) {
-        
-        await this.pause(2000);
+        await this.pause(1000);
         const searchField = this.page.locator(this.sel.searchField).first();
-        if (await searchField.isVisible().catch(() => false)) {
-            await searchField.fill(userId);
-            await this.page.keyboard.press('Enter').catch(() => {});
-            await this.click(this.sel.addValuesBtn);
+        await searchField.waitFor({ state: 'visible', timeout: 15000 });
+        await searchField.fill(userId);
+        await this.pause(1000); // wait for search filter
+
+        // Try to click the specific value's checkbox/label, or the first available checkbox
+        const exactMatch = this.page.locator(`//label[contains(normalize-space(), '${userId}')] | //div[contains(@class, 'checkbox')]//span[contains(normalize-space(), '${userId}')]`).first();
+        const firstCheckbox = this.page.locator('input[type="checkbox"]').first();
+
+        if (await exactMatch.isVisible().catch(() => false)) {
+            await exactMatch.click();
+        } else if (await firstCheckbox.isVisible().catch(() => false)) {
+            await firstCheckbox.click();
+        } else {
+            // Fallback: press Enter or click "+ Add value" if it's a new value
+            await this.page.keyboard.press('Enter').catch(() => { });
         }
+
+        await this.pause(500);
+        await this.click(this.sel.addValuesBtn);
     }
 
     async addExtraUserIds(userIds: string[]) {
@@ -237,24 +253,41 @@ export class AudiencePage extends BasePage {
 
         for (const userId of userIds) {
             await searchField.fill(userId);
-            await this.page.keyboard.press('Enter').catch(() => {});
+            await this.page.keyboard.press('Enter').catch(() => { });
         }
         await this.click(this.sel.addValuesBtn);
     }
 
     // ─── Preview ─────────────────────────────────────────────────────────────
 
-    async clickPreview1() { await this.click(this.sel.preview1); }
+    async clickPreview1() {
+        await this.click(this.sel.preview1);
+    }
+    
+    async isPreviewDisabled(): Promise<boolean> {
+        const previewBtn = this.page.locator(this.sel.preview1).first();
+        return await previewBtn.isDisabled();
+    }
+    
+    async isIncompleteCriteriaErrorVisible(): Promise<boolean> {
+        const errorLocator = this.page.locator("text='Please choose a valid rule to activate the preview and publish button.'");
+        return await errorLocator.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
+    }
+    
     async clickPreview2() { await this.click(this.sel.preview2); }
 
     // ─── Save / Publish ──────────────────────────────────────────────────────
+
+    async clickPublishBtn() {
+        await this.click(this.sel.publishBtn);
+    }
 
     async saveDraft() {
         await this.click(this.sel.saveDraftBtn);
         const confirmBtn = this.page.locator(this.sel.saveDraftConfirm).first();
         await confirmBtn.waitFor({ state: 'visible', timeout: 20000 });
         await Promise.allSettled([
-            this.page.waitForLoadState('networkidle').catch(() => {}),
+            this.page.waitForLoadState('networkidle').catch(() => { }),
             confirmBtn.click(),
         ]);
     }
@@ -275,7 +308,7 @@ export class AudiencePage extends BasePage {
         const confirmBtn = this.page.locator(`${this.sel.publishConfirm1} | ${this.sel.updateConfirm}`).first();
         await confirmBtn.waitFor({ state: 'visible', timeout: 20000 });
         await Promise.allSettled([
-            this.page.waitForLoadState('networkidle').catch(() => {}),
+            this.page.waitForLoadState('networkidle').catch(() => { }),
             confirmBtn.click(),
         ]);
 
@@ -292,7 +325,7 @@ export class AudiencePage extends BasePage {
         const confirmBtn = this.page.locator(`${this.sel.publishConfirm1} | ${this.sel.updateConfirm}`).first();
         await confirmBtn.waitFor({ state: 'visible', timeout: 20000 });
         await Promise.allSettled([
-            this.page.waitForLoadState('networkidle').catch(() => {}),
+            this.page.waitForLoadState('networkidle').catch(() => { }),
             confirmBtn.click(),
         ]);
 
@@ -302,21 +335,28 @@ export class AudiencePage extends BasePage {
 
     // ─── Filter & Search ─────────────────────────────────────────────────────
 
-    async applyActiveFilter() {
+    async applyStatusFilter(status: string) {
         await this.click(this.sel.filterBtn);
-        await this.click(this.sel.filterActive);
+        const testId = `audience-${status.toLowerCase()}`;
+        const checkboxSelector = `//input[@data-testid='${testId}']`;
+        await this.page.locator(checkboxSelector).check().catch(() => this.click(checkboxSelector));
         await this.click(this.sel.filterApplyBtn);
-        await this.pause(2000);
+        await this.pause(2000); // Give the table time to filter
     }
 
     async searchByName(name: string) {
         const searchField = this.page.locator(this.sel.mainSearchField).first();
-        if (await searchField.isVisible().catch(() => false)) {
-            await searchField.fill(name);
-            await this.page.keyboard.press('Enter').catch(() => {});
-            await this.pause(4000);
-            await this.page.keyboard.press('Enter').catch(() => {});
-        }
+        // Explicitly wait for the search box to appear (solves race conditions after page redirects)
+        await searchField.waitFor({ state: 'visible', timeout: 30000 });
+
+        // Clear existing text first
+        await searchField.fill('');
+        await this.page.waitForTimeout(500);
+
+        // Type the new search term and hit Enter
+        await searchField.fill(name);
+        await this.page.keyboard.press('Enter').catch(() => { });
+        await this.pause(2000); // Give the table time to filter
     }
 
     // ─── Edit Audience ───────────────────────────────────────────────────────
@@ -326,7 +366,7 @@ export class AudiencePage extends BasePage {
         const menuSelector = `//tr[.//span[contains(normalize-space(.), ${titleXPath})]]//button[contains(@data-testid,'audience-listView-tableList-dropdownIcon')]`;
         await this.click(menuSelector);
 
-        const editBtn = this.page.locator("//button[@data-testid='audience-listView-tableList-dropdownIcon-1-edit-audience']").first();
+        const editBtn = this.page.locator("//button[contains(normalize-space(),'Edit Audience') or @data-testid='audience-listView-tableList-dropdownIcon-1-edit-audience'] | //li[normalize-space()='Edit Audience']").first();
         await editBtn.waitFor({ state: 'visible', timeout: 20000 });
         await editBtn.click();
     }
@@ -342,11 +382,21 @@ export class AudiencePage extends BasePage {
     }
 
     async verifyTooltipTitle(expectedTitle: string) {
+        // 1. Locate the hidden tooltip
         const tooltipLocator = this.page.locator(
             "span[class*='group-hover:visible']",
             { hasText: expectedTitle }
         ).first();
-        await tooltipLocator.waitFor({ state: 'attached', timeout: 20000 });
+
+        // 2. Find its closest ancestor with the Tailwind 'group' class. 
+        // In Tailwind, hovering this specific container is what triggers 'group-hover:visible'
+        const groupLocator = tooltipLocator.locator("xpath=ancestor::*[contains(@class, 'group')][1]");
+
+        // 3. Hover over the exact group container
+        await groupLocator.hover();
+
+        // 4. Wait for the tooltip to become visible
+        await tooltipLocator.waitFor({ state: 'visible', timeout: 5000 });
         const actualTitle = (await tooltipLocator.textContent())?.trim() || '';
 
         if (actualTitle !== expectedTitle) {
@@ -383,25 +433,41 @@ export class AudiencePage extends BasePage {
         const searchField = this.page.locator(this.sel.searchField).first();
         await searchField.waitFor({ state: 'visible', timeout: 30000 });
         await searchField.fill(name);
-        await this.page.keyboard.press('Enter').catch(() => {});
+        await this.page.keyboard.press('Enter').catch(() => { });
     }
 
     // ─── Event Performed Criteria ─────────────────────────────────────────────
 
     async openEventPerformed() {
-        await this.click(this.sel.criteria);
+        await this.clickLast(this.sel.criteria);
         await this.click(this.sel.criteriaEventPerformed);
     }
 
     async selectLoginEvent() {
-        await this.click(this.sel.criteriaevent);
+        await this.clickLast(this.sel.criteriaevent);
         await this.click(this.sel.eventLoginOption);
         await this.pause(500);
     }
 
     async setAtLeastOneTime() {
         await this.click(this.sel.eventOccurrenceExactlyOnce);
-        await this.click(this.sel.eventOccurrenceAtLeast);
+        await this.pause(1000);
+
+        const radio = this.page.locator("//label[contains(normalize-space(),'Atleast')] | //input[contains(@data-testid, 'atleast')]").first();
+        await radio.waitFor({ state: 'attached', timeout: 5000 });
+        await radio.click({ force: true });
+
+        const applyBtn = this.page.locator("//button[normalize-space()='Add occurrence'] | //button[normalize-space()='Apply'] | //button[@data-testid='flyout-confirm-btn']").first();
+
+        // If "Atleast" was already selected by default (V2.0 behavior), the Apply button will be disabled
+        // because no actual changes were made to the form. If so, just click Cancel to close the flyout!
+        const isBtnDisabled = await applyBtn.isDisabled().catch(() => false);
+        if (isBtnDisabled) {
+            const cancelBtn = this.page.locator("//button[normalize-space()='Cancel']").first();
+            await cancelBtn.click();
+        } else {
+            await applyBtn.click();
+        }
         await this.pause(500);
     }
 
@@ -415,30 +481,31 @@ export class AudiencePage extends BasePage {
         return target;
     }
 
-    
+
 
     async setOccurrenceDateToday() {
 
-       if(await this.isVisible(this.sel.TimeWindowBtn)){ 
-       for (let attempt = 0; attempt < 3; attempt++) {
-            await this.click(this.sel.TimeWindowBtn);
-            await this.click(this.sel.eventDateRangeToday);
-            await this.page.locator(this.sel.eventDateRangeApply).first().click();
-            await this.pause(500);
-            if (await this.isVisible(this.sel.SlectedTimeWindowclose)) break;
-        }}
-        else{await this.pause(500);}
+        if (await this.isVisible(this.sel.TimeWindowBtn)) {
+            for (let attempt = 0; attempt < 3; attempt++) {
+                await this.click(this.sel.TimeWindowBtn);
+                await this.click(this.sel.eventDateRangeToday);
+                await this.page.locator(this.sel.eventDateRangeApply).first().click();
+                await this.pause(500);
+                if (await this.isVisible(this.sel.SlectedTimeWindowclose)) break;
+            }
+        }
+        else { await this.pause(500); }
     }
 
     // ─── Customer Metric Criteria ─────────────────────────────────────────────
 
     async openCustomerMetric() {
-        await this.page.locator(this.sel.criteria).last().click();
+        await this.clickLast(this.sel.criteria);
         await this.click(this.sel.criteriaCustomerMetric);
     }
 
     async selectTotalDepositedAmount() {
-        await this.click(this.sel.criteriaCustomerMetricEvent);
+        await this.clickLast(this.sel.criteriaCustomerMetricEvent);
         await this.click(this.sel.metricTotalDeposited);
         await this.pause(500);
     }
@@ -454,7 +521,7 @@ export class AudiencePage extends BasePage {
         await input.waitFor({ state: 'visible', timeout: 10000 });
         await input.click();
         await input.fill(value);
-        await this.page.keyboard.press('Enter').catch(() => {});
+        await this.page.keyboard.press('Enter').catch(() => { });
         await this.pause(500);
     }
 
@@ -481,23 +548,24 @@ export class AudiencePage extends BasePage {
     // ─── Part of Audience Criteria ────────────────────────────────────────────
 
     async openPartOfAudience() {
-        await this.click(this.sel.criteria);
+        await this.clickLast(this.sel.criteria);
         await this.click(this.sel.criteriaPartOfAudience);
     }
 
     async selectExistingAudienceInCriteria(audienceName: string) {
-        await this.click(this.sel.criteriaPartOfAudienceevent);
-        await this.click(this.sel.partOfAudienceDropdown);
+        // Click ONCE to open the dropdown popup. (The second identical click was instantly closing it!)
+        await this.clickLast(this.sel.partOfAudienceDropdown);
         await this.pause(500);
         const searchField = this.page.locator(this.sel.partOfAudienceSearch).first();
         if (await searchField.isVisible({ timeout: 5000 }).catch(() => false)) {
             await searchField.click();
             await searchField.fill(audienceName);
-            await this.page.keyboard.press('Enter').catch(() => {});
+            await this.page.keyboard.press('Enter').catch(() => { });
             await this.pause(1500);
         }
-        const option = this.page.locator(`//input[@id='${audienceName}']`).first();
-        await option.click();
+        // Match either the label containing the text, or the data-testid (lowercased)
+        const option = this.page.locator(`//label[contains(., '${audienceName}')] | //*[@data-testid='${audienceName.toLowerCase()}']`).last();
+        await option.click({ force: true });
         await this.click(this.sel.AddAudienceBtn);
         await this.pause(500);
     }
@@ -505,12 +573,12 @@ export class AudiencePage extends BasePage {
     // ─── Customer Engagement Criteria ─────────────────────────────────────────
 
     async openCustomerEngagement() {
-        await this.click(this.sel.criteria);
+        await this.clickLast(this.sel.criteria);
         await this.click(this.sel.criteriaCustomerEngagement);
     }
 
     async selectWorkflowEngagement() {
-        await this.click(this.sel.criteriaCustomerEngagementevent);
+        await this.clickLast(this.sel.criteriaCustomerEngagementevent);
         await this.click(this.sel.engagementWorkflow);
         await this.pause(500);
     }
@@ -525,19 +593,8 @@ export class AudiencePage extends BasePage {
     async selectWorkflowNameValue() {
         await this.click(this.sel.ConditionBtn);
         await this.click(this.sel.ConditionIsOneOfBtn);
-        await this.click(this.sel.CustomerEngagementValueslevel1Btn);
-        // const searchField = this.page.locator(this.sel.searchField).first();
-        // await searchField.waitFor({ state: 'visible', timeout: 10000 });
-        // await searchField.fill('Workflow');
-        // await this.pause(2000);
-
-        const results = this.page.locator("//button[@class='flex items-center']");
-        const count = await results.count();
-        if (count === 1) {
-            await results.first().click();
-        } else if (count > 1) {
-            await results.first().click();
-        }
+        await this.page.locator("//button[contains(@data-testid,'-eventValues-btn-')]").first().click();
+        await this.page.locator("//input[@id='search-data']/ancestor::div[contains(@class,'absolute') or contains(@class,'bg-white')][1]//button[@class='flex items-center']").first().click();
         await this.click(this.sel.addValuesBtn);
         await this.pause(500);
     }
@@ -545,10 +602,8 @@ export class AudiencePage extends BasePage {
     async selectWorkflowActionValue() {
         await this.page.locator(this.sel.ConditionBtn).last().click();
         await this.click(this.sel.ConditionIsOneOfBtn);
-        await this.click(this.sel.CustomerEngagementValueslevel2Btn);
-        
-        const results = this.page.locator("//button[@class='flex items-center']");
-        await results.first().click();
+        await this.page.locator("//button[contains(@data-testid,'-eventValues-btn-')]").last().click();
+        await this.page.locator("//input[@id='search-data']/ancestor::div[contains(@class,'absolute') or contains(@class,'bg-white')][1]//button[@class='flex items-center']").first().click();
         await this.click(this.sel.addValuesBtn);
         await this.pause(500);
     }
@@ -654,7 +709,7 @@ export class AudiencePage extends BasePage {
 
     // ─── Edit Published ───────────────────────────────────────────────────────
 
- 
+
 
     async saveUpdatedAudience() {
         const updateBtn = this.page.locator(this.sel.updateBtn).first();

@@ -14,7 +14,7 @@ export class WorkflowPage extends BasePage {
 
         // Creation
         createNewBtn:       "//a[@data-testid='setup-new-workflow-btn']",
-        createFromScratch:  "//div[@data-testid='workflow-create-card-scratch-btn']",
+        createFromScratch:  "//div[@data-testid='workflow-create-card-scratch-btn'] | //*[normalize-space()='Create from scratch' and not(ancestor::li)]",
         nameInput:          "//input[@data-testid='workflow-name-input']",
         tagInput:           "//input[@data-testid='workflow-tag-input']",
         createBtn:          "//button[@data-testid='create-workflow-button']",
@@ -82,8 +82,12 @@ export class WorkflowPage extends BasePage {
 
     // ─── Creation ────────────────────────────────────────────────────────────
 
-    async clickCreateNew()        { await this.click(this.sel.createNewBtn); }
-    async clickCreateFromScratch() { await this.click(this.sel.createFromScratch); }
+    async clickCreateNew() {
+        await this.click(this.sel.createNewBtn);
+    }
+    async clickCreateFromScratch() {
+        await this.click(this.sel.createFromScratch);
+    }
 
     async enterWorkflowName(name: string) {
         await this.fill(this.sel.nameInput, name);
@@ -280,12 +284,22 @@ export class WorkflowPage extends BasePage {
     }
 
     async clickHeaderThreeDotMenu(): Promise<void> {
-        await this.click(this.sel.headerThreeDotBtn);
+        const rowMenu = this.page.locator("//tbody//tr[1]//button[contains(@data-testid, 'operations-dropdown') or contains(@class, 'dropdown')] | (//button[contains(@data-testid, 'operations-dropdown') and not(contains(@data-testid, 'header'))])[1]").first();
+        if (await rowMenu.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await rowMenu.click();
+        } else {
+            await this.click(this.sel.headerThreeDotBtn);
+        }
         await this.pause(1000);
     }
 
     async clickHeaderEditWorkflow(): Promise<void> {
-        await this.click(this.sel.headerEditBtn);
+        const editBtn = this.page.locator("//button[contains(@data-testid, 'dropdown-edit') or contains(normalize-space(), 'Edit')]").first();
+        if (await editBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await editBtn.click();
+        } else {
+            await this.click(this.sel.headerEditBtn);
+        }
         await this.pause(2000);
     }
 

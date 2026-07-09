@@ -2,8 +2,8 @@
     {% for log in step.logs %}
 			{% if log.type == 'attachment' %}
 				{% if log.text %}
-					<div class="step-text-log">
-						<pre>{{ log.text }}</pre>
+					<div style="margin-top: 4px; color: #b0b8c4;">
+						{{ log.text }}
 					</div>
 				{% elif log.video %}
 					<details>
@@ -14,9 +14,28 @@
 						</video>
 					</details>
 				{% elif log.image %}
+					<style>
+						.base64-img {
+							display: inline-block !important;
+							padding: 2px 8px !important;
+							background-color: #9333ea !important; /* Beautiful purple pill */
+							color: white !important;
+							border-radius: 4px !important;
+							font-size: 11px !important;
+							font-weight: 500 !important;
+							text-transform: none !important;
+							text-decoration: none !important;
+							margin-top: 3px !important;
+							cursor: pointer !important;
+						}
+						.base64-img:hover {
+							background-color: #7e22ce !important;
+							color: white !important;
+						}
+					</style>
 					<div class="step-image-log">
 						<a href="data:{{ log.mediatype }};base64,{{ log.image | trim}}" class="base64-img" data-featherlight="image">
-							Click here
+							base64 img
 						</a>
 					</div>
 				{% else %}

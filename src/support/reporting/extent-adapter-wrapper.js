@@ -17,6 +17,7 @@ const { ExtentManager } = require('../../utils/extent-manager');
 const timestampToMs = require('cucumber-js-extent/extent/report/timestamp_util.js');
 const fs = require('fs');
 const path = require('path');
+const dayjs = require('dayjs');
 
 // ── Run-summary helpers ───────────────────────────────────────────────────────
 
@@ -98,12 +99,14 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
         this.testCaseIdToTiming = new Map();
         this.testRunFinishTimestamp = null;
         this.attachmentsByTestStep = new Map();
+        this.testStepTimings = new Map();
 
         ExtentManager.ensureReportDirectory();
 
         options.eventBroadcaster.on('envelope', (envelope) => {
             if (envelope.testRunStarted) this.testRunStarted(envelope);
             if (envelope.testCaseStarted) this.testCaseStarted(envelope);
+            if (envelope.testStepStarted) this.testStepStarted(envelope);
             if (envelope.attachment) this.handleAttachment(envelope);
             if (envelope.testCaseFinished) this.testCaseFinished(envelope);
             if (envelope.testRunFinished) this.testRunFinished(envelope);
@@ -115,6 +118,7 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
         this.testCaseStartIdToTestCaseId = new Map();
         this.testCaseIdToTiming = new Map();
         this.attachmentsByTestStep = new Map();
+        this.testStepTimings = new Map();
     }
 
     testCaseStarted(envelope) {
@@ -125,6 +129,13 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
         );
         this.testCaseIdToTiming.set(testCaseStarted.testCaseId, {
             start: testCaseStarted.timestamp
+        });
+    }
+
+    testStepStarted(envelope) {
+        const testStepStarted = envelope.testStepStarted;
+        this.testStepTimings.set(testStepStarted.testStepId, {
+            start: testStepStarted.timestamp
         });
     }
 
@@ -270,6 +281,11 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
                         testStep.text || desc,
                         desc
                     );
+
+                    const timing = rawTestStepId ? this.testStepTimings.get(rawTestStepId) : null;
+                    if (timing && timing.start) {
+                        stepHookTest.start = dayjs(timestampToMs(timing.start));
+                    }
 
                     stepHookTest.status = stepStatus;
                     stepHookTest.addDuration(testStep.result.duration);

@@ -22,6 +22,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then In the value field enter a valid User Id and apply
     Then Click the Publish button and Confirm the Publish Static Audience
     Then Static tab should load successfully
+    Then Filter the Audience by "Active" status
     Then Filter the Audience with the saved Audience title
     Then Verify the Audience is displayed in the list
  
@@ -46,6 +47,8 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Click the Preview button
     Then Check updates records are matching
     Then Save as draft the Audience and go back to Audience list page
+    Then Filter the Audience by "Draft" status
+    Then Filter the Audience with the saved Audience title
     Then Validate the Audience tooltip title matches the saved Audience title
  
   @Regression @REG-AUD-03
@@ -70,6 +73,8 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Click the Preview button
     Then Check updates records are matching
     Then Save as draft the Audience and go back to Audience list page
+    Then Filter the Audience by "Draft" status
+    Then Filter the Audience with the saved Audience title
     Then Validate the Audience tooltip title matches the saved Audience title
 
   @Regression @REG-AUD-04
@@ -88,6 +93,8 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Click the Preview button
     Then Check updates records are matching
     Then Save as draft the Audience and go back to Audience list page
+    Then Filter the Audience by "Draft" status
+    Then Filter the Audience with the saved Audience title
     Then Validate the Audience tooltip title matches the saved Audience title
 
 
@@ -164,6 +171,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Check the Preview button 2 records is shown
     Then check the Customer count
     Then Save as draft the Audience and go back to Audience list page
+    Then Filter the Audience by "Draft" status
     Then Filter the Audience with the saved Audience title
     Then Verify the Audience is displayed in the list
     Then enter into that Audience
@@ -187,6 +195,8 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Click the Preview button
     Then Check updates records are matching
     Then Save as draft the Audience and go back to Audience list page
+    Then Filter the Audience by "Draft" status
+    Then Filter the Audience with the saved Audience title
     Then Validate the Audience tooltip title matches the saved Audience title
 
 
@@ -224,6 +234,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Check the Preview button 2 records is shown
     Then Click the Publish button and Confirm the Publish Static Audience
     Then Static tab should load successfully
+    Then Filter the Audience by "Active" status
     Then Filter the Audience with the saved Audience title
     Then Verify the Audience is displayed in the list
 
@@ -256,7 +267,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   # ─────────────────────────────────────────────
 
   @Regression @Negative @REG-AUD-12
-  Scenario: Saving an Audience without any criteria shows a validation error
+  Scenario: Saving an Audience with incomplete criteria shows a validation error
     Given I log in for module "Audience"
     When I navigate to "Audience"
     Then I should see the "Audience" page
@@ -265,7 +276,10 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then I should see the Create Audience page
     Then Fill in the Audience details and save
     Then It should enter into the edit page of the created Audience
-    Then Click the Preview button and then Publish button without adding any criteria
+    Then Click the customer property option on Criteria
+    Then on the customer property pop up select User Id property and apply
+    Then Verify the Preview button is disabled
+    Then Verify the incomplete criteria error message is displayed
     
 
   @Regression @Negative @REG-AUD-13

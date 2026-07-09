@@ -13,6 +13,9 @@ export class LoginPage extends BasePage {
         headlessOverlay: "//*[@id='headlessui-portal-root']//div[contains(@class,'fixed') and contains(@class,'inset-0')]",
         // "Got it" / "OK" / "Close" / "Dismiss" dismiss buttons for first-login modals
         firstLoginDismiss: "//button[contains(normalize-space(),'Got it') or contains(normalize-space(),'OK') or contains(normalize-space(),'Dismiss') or contains(normalize-space(),'Close') or contains(normalize-space(),'Continue')]",
+        announcementTitle: "//*[normalize-space()='Introducing the new Dashboard']",
+        announcementDialog: "//*[@role='dialog' and .//*[normalize-space()='Introducing the new Dashboard']] | //*[@id='headlessui-portal-root']//*[.//*[normalize-space()='Introducing the new Dashboard']]",
+        announcementCloseButton: ".//button[@aria-label='Close' or @title='Close' or normalize-space()='x' or normalize-space()='X' or .//*[local-name()='svg']]",
     };
 
     readonly baseUrl = 'https://demo.optikpi.com/en';
@@ -59,5 +62,27 @@ export class LoginPage extends BasePage {
             url => !url.toString().endsWith('/en') && !url.toString().endsWith('/en/'),
             { timeout: 30000 }
         ).catch(() => {});
+    }
+
+    /** Close the one-time dashboard announcement if the user has not dismissed it yet. */
+    async closeAnnouncementPopupIfVisible(timeout = 5000): Promise<boolean> {
+        const title = this.page.locator(this.sel.announcementTitle).first();
+        const visible = await title.isVisible({ timeout }).catch(() => false);
+        if (!visible) {
+            return false;
+        }
+
+        const dialog = this.page.locator(this.sel.announcementDialog).first();
+        const closeButton = dialog.locator(`xpath=${this.sel.announcementCloseButton}`).last();
+        const closeVisible = await closeButton.isVisible({ timeout: 3000 }).catch(() => false);
+
+        if (closeVisible) {
+            await closeButton.click({ force: true });
+        } else {
+            await this.page.keyboard.press('Escape');
+        }
+
+        await title.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+        return true;
     }
 }
