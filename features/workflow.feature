@@ -1,4 +1,4 @@
-Feature: Workflow module
+Feature: Workflow module Test Cases
   # Users are managed in config/users.json (kept out of the report).
 
   @Regression @REG-WORKFLOW-01
@@ -15,7 +15,7 @@ Feature: Workflow module
     Then Click The All tab
     Then Verify Workflow All tab should load successfully
 
-  @Regression @REG-WORKFLOW-02 
+  @Regression @REG-WORKFLOW-02
   Scenario: Workflow Activation with error validation
     Given I log in for module "Workflow"
     When I navigate to "Workflow"
