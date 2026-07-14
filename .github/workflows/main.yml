@@ -43,7 +43,7 @@ jobs:
       - name: Run full regression suite
         id: run-tests
         continue-on-error: true
-        run: npm run test:tag -- "Audience"
+        run: npm run test:tag -- "@REG-AUD-01"
 
       - name: Upload test reports
         if: always()
