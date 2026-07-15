@@ -13,7 +13,7 @@ const EXTENT_HTML = path.join(EXTENT_DIR, 'OptiKPI_V2.0_Smoke_Test.html');
 const PARALLEL_CONFIG_PATH = path.join('config', 'parallel-run-config.json');
 const RERUN_FILE = path.join('reports', 'rerun.txt');
 const RUN_SUMMARY_FILE = path.join('reports', 'run-summary.json');
-const MAX_RETRIES = 1;  // Number of times to retry failed scenarios
+const MAX_RETRIES = 0;  // Set to 1 to re-enable retry after fixing failures
 
 const CLEAN_TARGETS = [
   EXTENT_DIR,
@@ -228,8 +228,8 @@ const setupExtentReport = () => {
   }
 
   const extentConfig = {
-    documentTitle: 'Optikpi V2.0 Smoke Test',
-    reportName: `Optikpi V2.0 Smoke Test  ${new Date().toLocaleString()}`,
+    documentTitle: 'OptiKPI V2.0 Regression Test',
+    reportName: `OptiKPI V2.0 Regression Test  ${new Date().toLocaleString()}`,
     theme: 'standard',
     encoding: 'utf-8',
     timelineEnabled: true
@@ -450,7 +450,7 @@ const mergeExtentReports = (groups, results) => {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>OptiKPI V2.0 Smoke Test — Combined Report</title>
+  <title>OptiKPI V2.0 Regression Test — Combined Report</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }
@@ -506,7 +506,7 @@ const mergeExtentReports = (groups, results) => {
 </head>
 <body>
   <div class="group-runner-header">
-    <h1>OptiKPI V2.0 Smoke Test — Combined Report</h1>
+    <h1>OptiKPI V2.0 Regression Test — Combined Report</h1>
     <div class="timestamp">${now}</div>
     <table class="group-summary-table">
       <thead>
@@ -547,27 +547,19 @@ const mergeOrderedReports = (prereqResults, allResults) => {
 
   const reportFiles = [];
 
-  // Collect prerequisite HTML files
+  // Collect prerequisite HTML files (non-empty only)
   for (let i = 0; i < prereqResults.length; i++) {
     if (prereqResults[i].skipped) continue;
     const prereqFile = path.join(extentDir, `prereq-${i + 1}.html`);
-    if (fs.existsSync(prereqFile)) {
-      reportFiles.push({
-        path: prereqFile,
-        name: `Prerequisite: ${prereqResults[i].name}`,
-        index: reportFiles.length + 1
-      });
+    if (fs.existsSync(prereqFile) && fs.statSync(prereqFile).size > 100) {
+      reportFiles.push(prereqFile);
     }
   }
 
-  // Collect main run HTML
+  // Collect main run HTML (non-empty only)
   const mainFile = path.join(extentDir, 'main-run.html');
-  if (fs.existsSync(mainFile)) {
-    reportFiles.push({
-      path: mainFile,
-      name: 'Main Run (@Regression)',
-      index: reportFiles.length + 1
-    });
+  if (fs.existsSync(mainFile) && fs.statSync(mainFile).size > 100) {
+    reportFiles.push(mainFile);
   }
 
   if (reportFiles.length === 0) {
@@ -575,126 +567,45 @@ const mergeOrderedReports = (prereqResults, allResults) => {
     return;
   }
 
-  // Only one report — just copy it as the final report
+  // Only one report — copy it directly as the final native Extent report
   if (reportFiles.length === 1) {
-    fs.copyFileSync(reportFiles[0].path, outputPath);
-    console.log(`[Runner] Single report copied to: ${EXTENT_HTML}`);
-    return;
+    fs.copyFileSync(reportFiles[0], outputPath);
+    console.log(`[Runner] Single report saved as: ${EXTENT_HTML}`);
+  } else {
+    // Merge multiple Extent HTML files into one by combining their test list content.
+    // Strategy: use the first file as the base, extract <ul id="test-collection">…</ul>
+    // items from subsequent files and inject them into the base's list.
+    const baseHtml = fs.readFileSync(reportFiles[0], 'utf8');
+
+    // Extract test-collection <li> items from each subsequent report
+    const extraItems = [];
+    for (let i = 1; i < reportFiles.length; i++) {
+      const html = fs.readFileSync(reportFiles[i], 'utf8');
+      const match = html.match(/<ul[^>]*id="test-collection"[^>]*>([\s\S]*?)<\/ul>/i);
+      if (match) {
+        extraItems.push(match[1]);
+      }
+    }
+
+    let mergedHtml = baseHtml;
+    if (extraItems.length > 0) {
+      // Find the closing </ul> of the test-collection in the base and inject before it
+      mergedHtml = baseHtml.replace(
+        /(<ul[^>]*id="test-collection"[^>]*>[\s\S]*?)(<\/ul>)/i,
+        (_, open, close) => open + extraItems.join('\n') + close
+      );
+    }
+
+    fs.writeFileSync(outputPath, mergedHtml, 'utf8');
+    console.log(`[Runner] Merged ${reportFiles.length} reports into: ${EXTENT_HTML}`);
   }
 
-  const now = new Date().toLocaleString();
-
-  const groupTabs = reportFiles.map(rf =>
-    `<button class="group-tab ${rf.index === 1 ? 'active' : ''}" onclick="showGroup(this, ${rf.index})">${rf.name}</button>`
-  ).join('\n        ');
-
-  const groupSections = reportFiles.map(rf => {
-    const relPath = path.basename(rf.path);
-    return `<iframe id="group-${rf.index}" class="group-section" src="${relPath}" style="display: ${rf.index === 1 ? 'block' : 'none'}"></iframe>`;
-  }).join('\n      ');
-
-  const summaryRows = allResults.map((r, i) => {
-    const statusClass = r.skipped ? 'skip' : r.status === 0 ? 'pass' : 'fail';
-    const statusLabel = r.skipped ? '⏭ SKIPPED' : r.status === 0 ? '✅ PASSED' : '❌ FAILED';
-    return `<tr class="${statusClass}">
-      <td>${i + 1}</td>
-      <td>${r.name}</td>
-      <td>${statusLabel}</td>
-      <td>${formatDuration(r.duration)}</td>
-    </tr>`;
-  }).join('\n          ');
-
-  const combinedHtml = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>OptiKPI V2.0 Smoke Test — Combined Report</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }
-    .group-runner-header {
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      color: #fff;
-      padding: 20px 30px;
-    }
-    .group-runner-header h1 { margin: 0 0 5px; font-size: 20px; }
-    .group-runner-header .timestamp { font-size: 12px; opacity: 0.7; }
-    .group-summary-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 15px 0;
-      font-size: 14px;
-    }
-    .group-summary-table th {
-      background: #475569;
-      color: #fff;
-      padding: 8px 12px;
-      text-align: left;
-    }
-    .group-summary-table td { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; }
-    .group-summary-table tr.pass td { background: #f0fdf4; }
-    .group-summary-table tr.fail td { background: #fef2f2; }
-    .group-summary-table tr.skip td { background: #f8fafc; color: #94a3b8; }
-    .group-tabs {
-      display: flex;
-      gap: 4px;
-      padding: 10px 30px 0;
-      background: #f1f5f9;
-      border-bottom: 2px solid #e2e8f0;
-      flex-wrap: wrap;
-    }
-    .group-tab {
-      padding: 10px 20px;
-      border: none;
-      background: #e2e8f0;
-      cursor: pointer;
-      border-radius: 6px 6px 0 0;
-      font-size: 13px;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    .group-tab:hover { background: #cbd5e1; }
-    .group-tab.active { background: #fff; border-bottom: 2px solid #3b82f6; color: #1e40af; }
-    .group-section {
-      width: 100%;
-      height: calc(100vh - 60px);
-      border: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="group-runner-header">
-    <h1>OptiKPI V2.0 Smoke Test — Combined Report</h1>
-    <div class="timestamp">${now}</div>
-    <table class="group-summary-table">
-      <thead>
-        <tr><th>#</th><th>Phase</th><th>Status</th><th>Duration</th></tr>
-      </thead>
-      <tbody>
-        ${summaryRows}
-      </tbody>
-    </table>
-  </div>
-  <div class="group-tabs">
-    ${groupTabs}
-  </div>
-  <div class="group-content">
-    ${groupSections}
-  </div>
-  <script>
-    function showGroup(btn, idx) {
-      document.querySelectorAll('.group-section').forEach(function(s) { s.style.display = 'none'; });
-      document.querySelectorAll('.group-tab').forEach(function(t) { t.classList.remove('active'); });
-      document.getElementById('group-' + idx).style.display = 'block';
-      btn.classList.add('active');
-    }
-  </script>
-</body>
-</html>`;
-
-  fs.writeFileSync(outputPath, combinedHtml, 'utf8');
-  console.log(`[Runner] Merged ${reportFiles.length} phase reports into: ${EXTENT_HTML}`);
+  // Clean up temp files so only the final report remains
+  for (let i = 0; i < prereqResults.length; i++) {
+    const f = path.join(extentDir, `prereq-${i + 1}.html`);
+    if (fs.existsSync(f)) fs.unlinkSync(f);
+  }
+  if (fs.existsSync(mainFile)) fs.unlinkSync(mainFile);
 };
 
 // ──────────────────────────────────────────────
@@ -824,6 +735,13 @@ const main = () => {
       if (prereqFailed && failFast) {
         console.log('\n[Runner] Aborting — prerequisite failed and failFast is enabled.');
         printSummary(prereqResults);
+        
+        // Merge prerequisite reports before exiting so a unified HTML is produced
+        const allResults = [
+          ...prereqResults.map(r => ({ ...r, name: `[prereq] ${r.name}` })),
+        ];
+        mergeOrderedReports(prereqResults, allResults);
+
         sendSlackNotification();
         process.exit(1);
       }
@@ -964,6 +882,17 @@ const main = () => {
 
     sendSlackNotification();
 
+    // ── Generate ordered report (sort-report.js) ──────────────────────────────
+    const sortReportScript = path.join(process.cwd(), 'scripts', 'sort-report.js');
+    const jsonResultsFile  = path.join(process.cwd(), 'reports', 'json', 'results.json');
+    if (fs.existsSync(sortReportScript) && fs.existsSync(jsonResultsFile)) {
+      console.log('[Runner] Generating ordered report...');
+      const sortResult = spawnSync('node', [sortReportScript], { stdio: 'inherit', shell: true });
+      if (sortResult.status !== 0) {
+        console.warn('[Runner] Warning: sort-report.js exited with non-zero status.');
+      }
+    }
+
     const exitCode = hasFailure ? 1 : 0;
     process.exit(exitCode);
   }
@@ -975,8 +904,22 @@ const main = () => {
     console.log('[Runner] Extent report: reports/extent/OptiKPI_V2.0_Smoke_Test.html');
   }
 
-  sendSlackNotification();
+
+    sendSlackNotification();
+
+  // ── Generate ordered report (sort-report.js) ──────────────────────────────
+  const sortReportScriptLegacy = path.join(process.cwd(), 'scripts', 'sort-report.js');
+  const jsonResultsFileLegacy  = path.join(process.cwd(), 'reports', 'json', 'results.json');
+  if (fs.existsSync(sortReportScriptLegacy) && fs.existsSync(jsonResultsFileLegacy)) {
+    console.log('[Runner] Generating ordered report...');
+    const sortResultL = spawnSync('node', [sortReportScriptLegacy], { stdio: 'inherit', shell: true });
+    if (sortResultL.status !== 0) {
+      console.warn('[Runner] Warning: sort-report.js exited with non-zero status.');
+    }
+  }
+
   process.exit(exitCode);
 };
 
 main();
+

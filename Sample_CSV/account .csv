@@ -1,0 +1,21 @@
+event_id,event_name,event_category,event_time,user_id,device,affiliate_id,partner_id,status,reason,campaign_code
+event_0c2518055786,Email Verification,Account,2026-05-12T09:00:40.000Z,user_97102dbb95,ios,affiliat_e93e84a0,partner_0c47b86f,active,insufficient_funds,WELCOME25
+event_fd18a6c49d3c,Kyc Verification,Account,2026-05-12T09:07:40.000Z,user_6fe2cf095a,ios,affiliat_8c01fb09,partner_d8a6c7cc,active,insufficient_funds,MAYBONUS
+event_d9494f25d291,Login,Account,2026-05-12T09:14:07.000Z,user_9c7c4151d3,web,affiliat_6e92c797,partner_fc2b1096,failed,timeout,CASINO10
+event_315bd42c2c98,Logout,Account,2026-05-12T09:21:51.000Z,user_d820c5a323,desktop,affiliat_d57204be,partner_78040a0d,failed,timeout,MAYBONUS
+event_419cb2121f0c,Phone Verification,Account,2026-05-12T09:28:35.000Z,user_87f52616c2,desktop,affiliat_d2bded40,partner_b40255f5,verified,user_request,MAYBONUS
+event_4ece175a6f3b,Player Activation,Account,2026-05-12T09:35:29.000Z,user_874cd2ffa9,web,affiliat_bcab321a,partner_656b2dfd,pending,limit_reached,CASINO10
+event_a0f025d2cf25,Player Registration,Account,2026-05-12T09:42:22.000Z,user_79117d3480,android,affiliat_ef810490,partner_26847007,verified,limit_reached,CASINO10
+event_7d8ab2f2515b,Email Verification,Account,2026-05-12T09:49:25.000Z,user_b840dec84f,desktop,affiliat_6ebfab56,partner_c352deef,pending,verification_complete,CASINO10
+event_37e4f885ee56,Kyc Verification,Account,2026-05-12T09:56:33.000Z,user_a89eed894f,android,affiliat_05dc32fa,partner_992d61a6,verified,verification_complete,MAYBONUS
+event_83ada3d3fd40,Login,Account,2026-05-12T10:03:11.000Z,user_520ee8f68b,ios,affiliat_3d6e6b29,partner_bb381bbd,failed,limit_reached,POKER15
+event_d676864dd009,Logout,Account,2026-05-12T10:10:01.000Z,user_2251288fb3,desktop,affiliat_d5c62f83,partner_e166045d,pending,insufficient_funds,WELCOME25
+event_36b53ccff33a,Phone Verification,Account,2026-05-12T10:17:50.000Z,user_e040660e02,ios,affiliat_ad2a214d,partner_303ac93d,verified,verification_complete,MAYBONUS
+event_f7e1c7926aa7,Player Activation,Account,2026-05-12T10:24:10.000Z,user_45c7e94e0c,desktop,affiliat_44c662e8,partner_1b237e79,success,verification_complete,POKER15
+event_ef515fac08c6,Player Registration,Account,2026-05-12T10:31:02.000Z,user_a2d3fbfc68,ios,affiliat_2c294297,partner_00ded546,active,insufficient_funds,POKER15
+event_65b3e3292134,Email Verification,Account,2026-05-12T10:38:15.000Z,user_863c4a3d8b,web,affiliat_6bc52112,partner_e634ef02,verified,verification_complete,MAYBONUS
+event_dd75198eff55,Kyc Verification,Account,2026-05-12T10:45:41.000Z,user_e6370684be,ios,affiliat_96eadb11,partner_b9f69185,success,verification_complete,POKER15
+event_ad5c4d10c802,Login,Account,2026-05-12T10:52:27.000Z,user_86f1b7913c,android,affiliat_7c83dcf7,partner_90f28419,failed,insufficient_funds,CASINO10
+event_2aa6e8d26fa4,Logout,Account,2026-05-12T10:59:17.000Z,user_b62d3a44f2,ios,affiliat_d6447bad,partner_9e5dde05,failed,limit_reached,POKER15
+event_8d3b77bdd27b,Phone Verification,Account,2026-05-12T11:06:58.000Z,user_f0862a82d2,android,affiliat_56fada86,partner_99cae2d3,success,insufficient_funds,MAYBONUS
+event_7b0fb0bb216d,Player Activation,Account,2026-05-12T11:13:53.000Z,user_e5960cc7fc,android,affiliat_d90277d9,partner_ac22f88b,pending,limit_reached,WELCOME25

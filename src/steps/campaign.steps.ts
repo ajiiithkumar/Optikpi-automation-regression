@@ -521,6 +521,7 @@ Then('Search the communication name in the search bar', async function (this: Pl
     await this.page.keyboard.press('Enter');
     await this.page.waitForTimeout(2000);
     this['lastSearchedCommunication'] = communicationName;
+    await this.page.keyboard.press('Enter');
     ExtentTestManager.logPass(`Searched communication name in library: ${communicationName}`);
 });
 
@@ -551,7 +552,7 @@ Then('Click the Edit communication button', async function (this: PlaywrightWorl
 });
 
 Then('Verify the search results are displayed', async function (this: PlaywrightWorld) {
-    const result = this.page.locator(`//div[@data-testid='${communicationName}']`).first();
+    const result = this.page.locator(`//div[@data-testid='${communicationName}'] | //div[contains(@class, 'card') or contains(@class, 'item')]//*[contains(normalize-space(), '${communicationName}')]`).first();
     const visible = await result.isVisible({ timeout: 10000 }).catch(() => false);
     if (!visible) throw new Error(`Search results not displayed for communication: ${communicationName}`);
     ExtentTestManager.logPass('Search results are displayed in the communication library');

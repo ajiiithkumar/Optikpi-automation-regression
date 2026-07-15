@@ -6,7 +6,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   # ─────────────────────────────────────────────
   # FUNCTIONAL - Criteria Types
   # ─────────────────────────────────────────────
-@Regression @REG-AUD-01 @ExistingAudience
+@Regression @Audience @REG-AUD-01 @ExistingAudience
   Scenario: Publish Audience and verify it appears in the correct tab with Active status
     Given I log in for module "Audience"
     When I navigate to "Audience"
@@ -22,12 +22,13 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then In the value field enter a valid User Id and apply
     Then Click the Publish button and Confirm the Publish Static Audience
     Then Static tab should load successfully
+    Then Filter the Audience by "Active" status
     Then Filter the Audience with the saved Audience title
     Then Verify the Audience is displayed in the list
  
     
 
-  @Regression @REG-AUD-02
+  @Regression @Audience @REG-AUD-02
   Scenario: Create Audience with Customer Metric criteria
     Given I log in for module "Audience"
     When I navigate to "Audience"
@@ -46,9 +47,11 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Click the Preview button
     Then Check updates records are matching
     Then Save as draft the Audience and go back to Audience list page
+    Then Filter the Audience by "Draft" status
+    Then Filter the Audience with the saved Audience title
     Then Validate the Audience tooltip title matches the saved Audience title
  
-  @Regression @REG-AUD-03
+  @Regression @Audience @REG-AUD-03
   Scenario: Create Audience with Customer Engagement and Workflow attributes
     Given I log in for module "Audience"
     When I navigate to "Audience"
@@ -70,9 +73,11 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Click the Preview button
     Then Check updates records are matching
     Then Save as draft the Audience and go back to Audience list page
+    Then Filter the Audience by "Draft" status
+    Then Filter the Audience with the saved Audience title
     Then Validate the Audience tooltip title matches the saved Audience title
 
-  @Regression @REG-AUD-04
+  @Regression @Audience @REG-AUD-04
   Scenario: Create Audience with Part of Audience criteria
     Given I log in for module "Audience"
     And an Audience from REG-AUD-01 or REG-AUD-02 or REG-AUD-03 is available
@@ -88,6 +93,8 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Click the Preview button
     Then Check updates records are matching
     Then Save as draft the Audience and go back to Audience list page
+    Then Filter the Audience by "Draft" status
+    Then Filter the Audience with the saved Audience title
     Then Validate the Audience tooltip title matches the saved Audience title
 
 
@@ -95,7 +102,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   # FUNCTIONAL - Logical Conditions
   # ─────────────────────────────────────────────
 
-  @Regression @REG-AUD-05
+  @Regression @Audience @REG-AUD-05
   Scenario: AND condition validation within a single criteria group
     Given I log in for module "Audience"
     When I navigate to "Audience"
@@ -118,7 +125,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Check updates records are matching
     Then Save as draft the Audience and go back to Audience list page
 
-  @Regression @REG-AUD-06
+  @Regression @Audience @REG-AUD-06
   Scenario: OR group validation across multiple criteria groups
     Given I log in for module "Audience"
     When I navigate to "Audience"
@@ -144,7 +151,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   # REGRESSION - Lifecycle
   # ─────────────────────────────────────────────
 
-  @Regression @REG-AUD-07
+  @Regression @Audience @REG-AUD-07
   Scenario: Save as Draft and reopen Audience persists criteria data
     Given I log in for module "Audience"
     When I navigate to "Audience"
@@ -164,12 +171,13 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Check the Preview button 2 records is shown
     Then check the Customer count
     Then Save as draft the Audience and go back to Audience list page
+    Then Filter the Audience by "Draft" status
     Then Filter the Audience with the saved Audience title
     Then Verify the Audience is displayed in the list
     Then enter into that Audience
     Then Verify the added user Id are still in the Audience
 
-   @Regression @REG-AUD-08
+   @Regression @Audience @REG-AUD-08
   Scenario: Create Audience with Event and Occurrence criteria
     Given I log in for module "Audience"
     When I navigate to "Audience"
@@ -187,10 +195,12 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Click the Preview button
     Then Check updates records are matching
     Then Save as draft the Audience and go back to Audience list page
+    Then Filter the Audience by "Draft" status
+    Then Filter the Audience with the saved Audience title
     Then Validate the Audience tooltip title matches the saved Audience title
 
 
-  @Regression @REG-AUD-09
+  @Regression @Audience @REG-AUD-09
   Scenario: Edit a Published Audience and verify edit behaviour
     Given I log in for module "Audience"
     And a Published Audience exists
@@ -207,7 +217,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Save the updated Audience
     Then Verify the updated criteria are reflected correctly
 
-  @Regression @REG-AUD-10
+  @Regression @Audience @REG-AUD-10
   Scenario: Duplicate an existing Audience and verify all fields are copied
     Given I log in for module "Audience"
     And an Audience exists in the list
@@ -224,6 +234,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Check the Preview button 2 records is shown
     Then Click the Publish button and Confirm the Publish Static Audience
     Then Static tab should load successfully
+    Then Filter the Audience by "Active" status
     Then Filter the Audience with the saved Audience title
     Then Verify the Audience is displayed in the list
 
@@ -231,7 +242,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   # FUNCTIONAL - Preview
   # ─────────────────────────────────────────────
 
-  @Regression @REG-AUD-11
+  @Regression @Audience @REG-AUD-11
   Scenario: Preview count updates in real time when criteria are added or removed
     Given I log in for module "Audience"
     When I navigate to "Audience"
@@ -255,8 +266,8 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   # NEGATIVE
   # ─────────────────────────────────────────────
 
-  @Regression @Negative @REG-AUD-12
-  Scenario: Saving an Audience without any criteria shows a validation error
+  @Regression @Audience @Negative @REG-AUD-12
+  Scenario: Saving an Audience with incomplete criteria shows a validation error
     Given I log in for module "Audience"
     When I navigate to "Audience"
     Then I should see the "Audience" page
@@ -265,10 +276,13 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then I should see the Create Audience page
     Then Fill in the Audience details and save
     Then It should enter into the edit page of the created Audience
-    Then Click the Preview button and then Publish button without adding any criteria
+    Then Click the customer property option on Criteria
+    Then on the customer property pop up select User Id property and apply
+    Then Verify the Preview button is disabled
+    Then Verify the incomplete criteria error message is displayed
     
 
-  @Regression @Negative @REG-AUD-13
+  @Regression @Audience @Negative @REG-AUD-13
   Scenario: Entering text in a numeric criteria field shows a validation message
     Given I log in for module "Audience"
     When I navigate to "Audience"
@@ -288,7 +302,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   # UI
   # ─────────────────────────────────────────────
 
-  @Regression @UI @REG-AUD-14
+  @Regression @Audience @UI @REG-AUD-14
   Scenario: Navigation and UI consistency when switching tabs and views
     Given I log in for module "Audience"
     When I navigate to "Audience"
@@ -302,7 +316,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then List view should load successfully
     Then Verify no UI breakage or console errors across all tabs and views
 
-  @Regression @UI @REG-AUD-15
+  @Regression @Audience @UI @REG-AUD-15
   Scenario: Action menu on Audience list shows all expected options
     Given I log in for module "Audience"
     And an Audience exists in the list

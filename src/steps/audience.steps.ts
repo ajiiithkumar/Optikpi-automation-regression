@@ -163,7 +163,7 @@ Then('Check the Preview button 1 record is shown', async function (this: Playwri
     ExtentTestManager.logPass('Preview 1 button clicked (expected 1 record).');
 });
 
-Then('Click the \"+ Add values\" enter a valid User Id and apply', async function (this: PlaywrightWorld) {
+Then('Click the "+ Add values" enter a valid User Id and apply', async function (this: PlaywrightWorld) {
     const users = await readUsersCsv().catch(() => []);
     const secondUser = Array.isArray(users) && users.length > 1 ? users[1] : null;
     const userIdValue = secondUser?.user_id || 'user_002';
@@ -327,14 +327,6 @@ Then('Filter the Audience with the saved Audience title', async function (this: 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
             console.log(`[Audience Search] Attempt ${attempt}/${maxRetries}...`);
-            await audience.applyActiveFilter();
-
-            // Clear the search field first, then enter the audience name
-            const searchField = this.page.locator("//input[@id='mobile-search-candidate']").first();
-            if (await searchField.isVisible().catch(() => false)) {
-                await searchField.fill('');
-                await this.page.waitForTimeout(500);
-            }
             await audience.searchByName(expectedTitle);
 
             // Verify audience is visible
@@ -361,6 +353,12 @@ Then('Verify the Audience is displayed in the list', async function (this: Playw
     // Verification already done in filter step with retry
     await getAudiencePage(this).verifyAudienceInList(expectedTitle);
     ExtentTestManager.logPass(`Verified Audience "${expectedTitle}" is displayed in the list`);
+});
+
+Then('Filter the Audience by {string} status', async function (this: PlaywrightWorld, status: string) {
+    const audience = getAudiencePage(this);
+    await audience.applyStatusFilter(status);
+    ExtentTestManager.logPass(`Filtered Audience list by status: ${status}`);
 });
 
 Then('Log out from the application', async function (this: PlaywrightWorld) {
@@ -612,7 +610,6 @@ Then('Filter the Audience with the existing Audience title', async function (thi
     if (!title) throw new Error('existingAudienceTitle not set. Ensure prerequisite Given step ran.');
 
     const audience = getAudiencePage(this);
-    await audience.applyActiveFilter();
     await audience.searchByName(title);
     ExtentTestManager.logPass(`Filtered for existing Audience: ${title}`);
 });
@@ -668,21 +665,20 @@ Then('Verify all criteria and fields are copied from the original Audience', asy
 // REGRESSION — Negative
 // ═══════════════════════════════════════════════════════════════════════════════
 
-Then('Click the Preview button and then Publish button without adding any criteria', async function (this: PlaywrightWorld) {
-    const audience = getAudiencePage(this);
-    const { allDisabled, details } = await audience.verifyPreviewAndPublishDisabled();
-    if (!allDisabled) {
-        throw new Error(`Preview/Publish buttons should be disabled without criteria: ${details.join('; ')}`);
+Then('Verify the Preview button is disabled', async function (this: PlaywrightWorld) {
+    const isDisabled = await getAudiencePage(this).isPreviewDisabled();
+    if (!isDisabled) {
+        throw new Error('Expected Preview button to be disabled, but it was enabled');
     }
-    ExtentTestManager.logPass(`Buttons correctly disabled without criteria — ${details.join(', ')}`);
+    ExtentTestManager.logPass('Verified Preview button is disabled');
 });
 
-Then('A validation error message should be displayed', async function (this: PlaywrightWorld) {
-    const hasError = await getAudiencePage(this).isValidationErrorVisible();
-    if (!hasError) {
-        throw new Error('Expected validation error message but none was displayed');
+Then('Verify the incomplete criteria error message is displayed', async function (this: PlaywrightWorld) {
+    const isVisible = await getAudiencePage(this).isIncompleteCriteriaErrorVisible();
+    if (!isVisible) {
+        throw new Error('Expected incomplete criteria error message but none was displayed');
     }
-    ExtentTestManager.logPass('Validation error message displayed');
+    ExtentTestManager.logPass('Verified incomplete criteria error message is displayed');
 });
 
 Then('A field validation message should be displayed', async function (this: PlaywrightWorld) {

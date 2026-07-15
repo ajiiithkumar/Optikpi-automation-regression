@@ -1,4 +1,4 @@
-# OptiKPI V2.0 Smoke Test Automation
+# OptiKPI V2.0 Regression Test Automation
 
 End-to-end smoke and regression test suite for the **OptiKPI V2.0** customer-engagement platform.
 Tests are written in Gherkin (BDD) and executed with Cucumber.js + Playwright against a headless Chromium browser.

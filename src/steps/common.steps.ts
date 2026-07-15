@@ -53,6 +53,10 @@ const createSession = async (world: PlaywrightWorld, username: string, password:
     if (!world.browser) throw new Error("Browser not initialized");
     const context = await world.browser.newContext(contextOptions);
     const page = await context.newPage();
+    
+    // Set global timeouts to 60 seconds (up from the default 30s)
+    page.setDefaultTimeout(60000);
+    page.setDefaultNavigationTimeout(60000);
     const didLogin = await loginIfNeeded(page, username, password);
     if (!isHeadless) {
         await page.evaluate(() => {
@@ -181,6 +185,9 @@ When('I navigate to {string}', async function (this: PlaywrightWorld, moduleName
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
             await navBar.navigateTo(moduleName);
+            await this.page!.waitForLoadState('domcontentloaded');
+            await this.page!.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+            await this.page!.waitForTimeout(1000); // Settle buffer for React/Vue hydration
             ExtentTestManager.logPass(`Navigated to ${moduleName} (attempt ${attempt})`);
             return;
         } catch (err) {

@@ -12,7 +12,7 @@
  *   SLACK_CHANNEL_ID  — channel ID (e.g. C0AC6AV2LEM)
  *
  * Optional env vars:
- *   RUN_LABEL    — label for this run (e.g. "OptiKPI V2.0 Smoke Test")
+ *   RUN_LABEL    — label for this run (e.g. "OptiKPI V2.0 Regression Test")
  */
 
 try { require('dotenv').config(); } catch (_) {}
@@ -49,7 +49,7 @@ if (!summary) {
 // ── Config ────────────────────────────────────────────────────────────────────
 const token     = process.env.SLACK_BOT_TOKEN;
 const channelId = process.env.SLACK_CHANNEL_ID;
-const runLabel  = process.env.RUN_LABEL || 'OptiKPI V2.0 Smoke Test';
+const runLabel  = process.env.RUN_LABEL || 'OptiKPI V2.0 Regression Test';
 
 if (!token || !channelId) {
   console.log('[slack-report] SLACK_BOT_TOKEN or SLACK_CHANNEL_ID not set — skipping.');
@@ -144,8 +144,8 @@ if (summary.failedScenarios && summary.failedScenarios.length > 0) {
     const uploadResult = await client.filesUploadV2({
       channel_id: channelId,
       file: fs.createReadStream(HTML_REPORT),
-      filename: 'OptiKPI_V2.0_Smoke_Test.html',
-      title: 'OptiKPI V2.0 Smoke Test — Extent Report',
+      filename: `OptiKPI_V2.0_Regression_Test_${new Date().toISOString().replace(/[:.]/g, '-')}.html`,
+      title: `OptiKPI V2.0 Regression Test — Extent Report (${summary.timestamp})`,
       initial_comment: 'HTML Extent Report attached. Download and open in a browser to view.',
     });
 

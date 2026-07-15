@@ -9,37 +9,79 @@ export class BasePage {
     constructor(protected page: Page) {}
 
     /** Wait for an element to be visible, then click it. */
-    protected async click(selector: string, timeout = 20000) {
+    protected async click(selector: string, timeout?: number) {
         const el = this.page.locator(selector).first();
         await el.waitFor({ state: 'visible', timeout });
         await el.click();
-        await this.page.waitForTimeout(3000);
+        await this.page.waitForTimeout(1500);
+    }
+
+    /**
+     * Click a trigger element repeatedly until a target element becomes visible.
+     * This handles React hydration race conditions where a click happens before the event listener is attached.
+     */
+    protected async clickUntilVisible(triggerSelector: string, targetSelector: string, maxAttempts = 3, timeout?: number) {
+        const trigger = this.page.locator(triggerSelector).first();
+        const target = this.page.locator(targetSelector).first();
+        
+        await trigger.waitFor({ state: 'visible', timeout });
+        
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            // Only click if it's actually still on the screen
+            const triggerVisible = await trigger.isVisible().catch(() => false);
+            if (triggerVisible) {
+                await trigger.click({ timeout: 3000 }).catch(() => {});
+            }
+            
+            // Wait for the target to appear
+            const isOpen = await target.isVisible({ timeout: 3000 }).catch(() => false);
+            if (isOpen) {
+                return;
+            }
+            
+            // If the trigger disappeared (e.g., page navigation), we should wait for the target on the new page
+            const triggerStillVisible = await trigger.isVisible({ timeout: 500 }).catch(() => false);
+            if (!triggerStillVisible) {
+                await target.waitFor({ state: 'visible', timeout });
+                return;
+            }
+        }
+        
+        throw new Error(`[HydrationRetry] Failed to open target "${targetSelector}" after clicking "${triggerSelector}" ${maxAttempts} times.`);
+    }
+
+    /** Wait for the last matching element to be visible, then click it. */
+    protected async clickLast(selector: string, timeout?: number) {
+        const el = this.page.locator(selector).last();
+        await el.waitFor({ state: 'visible', timeout });
+        await el.click();
+        await this.page.waitForTimeout(1500);
     }
 
     /** Wait for an element, then click it with force (useful for overlapping elements). */
-    protected async forceClick(selector: string, timeout = 20000) {
+    protected async forceClick(selector: string, timeout?: number) {
         const el = this.page.locator(selector).first();
         await el.waitFor({ state: 'visible', timeout });
         await el.click({ force: true });
-        await this.page.waitForTimeout(3000);
+        await this.page.waitForTimeout(1500);
     }
 
     /** Wait for an element to be visible, clear it, then type the value. */
-    protected async fill(selector: string, value: string, timeout = 20000) {
+    protected async fill(selector: string, value: string, timeout?: number) {
         const el = this.page.locator(selector).first();
         await el.waitFor({ state: 'visible', timeout });
         await el.fill(value);
     }
 
     /** Read the inner text of a visible element. */
-    protected async getText(selector: string, timeout = 20000): Promise<string> {
+    protected async getText(selector: string, timeout?: number): Promise<string> {
         const el = this.page.locator(selector).first();
         await el.waitFor({ state: 'visible', timeout });
         return (await el.innerText()).trim();
     }
 
     /** Read the value of an <input> / <textarea> / <select>. */
-    protected async getInputValue(selector: string, timeout = 20000): Promise<string> {
+    protected async getInputValue(selector: string, timeout?: number): Promise<string> {
         const el = this.page.locator(selector).first();
         await el.waitFor({ state: 'visible', timeout });
         return await el.inputValue();
@@ -53,7 +95,7 @@ export class BasePage {
     }
 
     /** Wait until an element becomes visible. */
-    protected async waitForVisible(selector: string, timeout = 20000) {
+    protected async waitForVisible(selector: string, timeout?: number) {
         await this.page.locator(selector).first()
             .waitFor({ state: 'visible', timeout });
     }

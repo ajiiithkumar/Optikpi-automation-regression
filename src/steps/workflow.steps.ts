@@ -5,11 +5,12 @@ import { AudiencePage } from '../pages/audience.page';
 import { DateTimePicker } from '../pages/components/date-time-picker.component';
 import { ExtentTestManager } from '../utils/extent-test-manager';
 import { PlaywrightWorld } from '../support/world';
-import { uniqueId } from '../utils/helper';
+import { uniqueId, waitForNameEntryCompleted } from '../utils/helper';
 
 const getWorkflowPage = (world: PlaywrightWorld) => new WorkflowPage(world.page);
 const getAudiencePage = (world: PlaywrightWorld) => new AudiencePage(world.page);
 const getDatePicker   = (world: PlaywrightWorld) => new DateTimePicker(world.page);
+
 
 // ─── Workflow Tab Steps (REG-WORKFLOW-02) ─────────────────────────────────────
 
@@ -121,6 +122,34 @@ Then('click the Workflow New Audience button', async function (this: PlaywrightW
     ExtentTestManager.logPass('Clicked Workflow New Audience button');
 });
 
+// ─── Existing Audience Enrollment Steps (REG-WORKFLOW-03) ────────────────────
+
+Then('Click the Existing Audience enrollment option', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickExistingAudience();
+    ExtentTestManager.logPass('Clicked Existing Audience enrollment option');
+});
+
+Then('Click the Add Enrollment dropdown', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickExistingAudienceDropdown();
+    ExtentTestManager.logPass('Clicked Add Enrollment dropdown');
+});
+
+Then('Select the Part of an Audience option', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickPartOfAudienceOption();
+    ExtentTestManager.logPass('Selected Part of an Audience option');
+});
+
+Then('Select the existing audience from the list', async function (this: PlaywrightWorld) {
+    const entry = await waitForNameEntryCompleted('existingAudience');
+    await getWorkflowPage(this).selectExistingAudienceByTitle(entry.title);
+    ExtentTestManager.logPass(`Selected existing audience: ${entry.title}`);
+});
+
+Then('Click the Enrollment flyout Ok button', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickEnrollmentOk();
+    ExtentTestManager.logPass('Clicked Enrollment flyout Ok button');
+});
+
 Then('Click the New Audience criteria', async function (this: PlaywrightWorld) {
     await getWorkflowPage(this).clickNewAudienceCriteria();
     ExtentTestManager.logPass('Clicked New Audience criteria');
@@ -159,6 +188,23 @@ Then('Click the Add new node button {string}', async function (this: PlaywrightW
 Then('Click the action node button', async function (this: PlaywrightWorld) {
     await getWorkflowPage(this).clickActionNode();
     ExtentTestManager.logPass('Clicked action node button');
+});
+
+// ─── Delay Node Steps (REG-WORKFLOW-03) ──────────────────────────────────────
+
+Then('Click the delay node button', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickDelayNode();
+    ExtentTestManager.logPass('Clicked delay node button');
+});
+
+Then('Click the Live Event delay type option', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickLiveEventOption();
+    ExtentTestManager.logPass('Clicked Live Event delay type option');
+});
+
+Then('Select the Login live event option', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickLoginLiveEvent();
+    ExtentTestManager.logPass('Selected Login live event option');
 });
 
 Then('Click the action node add content button', async function (this: PlaywrightWorld) {
@@ -308,6 +354,16 @@ Then('Click the workflow filter active checkbox', async function (this: Playwrig
 Then('Click the workflow filter apply button', async function (this: PlaywrightWorld) {
     await getWorkflowPage(this).clickFilterApply();
     ExtentTestManager.logPass('Clicked workflow filter apply button');
+});
+
+Then('Click the three-dot menu on the Workflow', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickHeaderThreeDotMenu();
+    ExtentTestManager.logPass('Clicked three-dot menu on the Workflow');
+});
+
+Then('Click the Edit Workflow settings button', async function (this: PlaywrightWorld) {
+    await getWorkflowPage(this).clickHeaderEditWorkflow();
+    ExtentTestManager.logPass('Clicked Edit Workflow settings button');
 });
 
 Then('Enter the workflow name in the search bar', async function (this: PlaywrightWorld) {

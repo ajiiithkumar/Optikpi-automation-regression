@@ -139,7 +139,7 @@ Feature: Campaign module
     Then Click the Financial tab on the Goal section
     Then Click the Deposit Goal button
     Then click the Set Goal button
-    Then Verify the Open Goal should be set successfully
+    Then Verify the Financial Goal should be set successfully
     Then click the Existing Audience button
     Then select the audience from the list
     Then click the ok button on the pop up

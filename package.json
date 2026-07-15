@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "postinstall": "node -e \"const fs=require('fs');const s='src/support/reporting/templates/step_logs_macro.njk';const d='node_modules/cucumber-js-extent/extent/view/macros/step_logs_macro.njk';if(fs.existsSync(s)&&fs.existsSync('node_modules/cucumber-js-extent')){fs.cpSync(s,d);console.log('Patched extent report template')}\"",
+    "postinstall": "node scripts/patch-templates.js",
     "clean": "rimraf reports/extent reports/screenshots reports/json data/.user-locks data/auth",
     "pretest": "npm run clean",
     "test": "cucumber-js -c config/cucumber.js",
@@ -15,6 +15,8 @@
     "test:parallel": "node src/runner/runner.js --groups",
     "test:parallel:continue": "node src/runner/runner.js --groups --continue-on-fail",
     "test:parallel:dry-run": "node src/runner/runner.js --groups --dry-run",
+    "test:parallel:sorted": "node src/runner/runner.js --groups --continue-on-fail && node scripts/sort-report.js",
+    "report:sorted": "node scripts/sort-report.js",
     "slack:report": "node scripts/slack-report.js",
     "cleanup": "node scripts/cleanup-test-data.js",
     "cleanup:dry-run": "node scripts/cleanup-test-data.js --dry-run",

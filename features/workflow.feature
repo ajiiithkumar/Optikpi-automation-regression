@@ -1,4 +1,4 @@
-Feature: Workflow module
+Feature: Workflow module Test Cases
   # Users are managed in config/users.json (kept out of the report).
 
   @Regression @REG-WORKFLOW-01
@@ -25,7 +25,6 @@ Feature: Workflow module
     Then enter the Workflow name and Tag
     Then Click The Create Workflow button
     Then Verify Workflow Edit page should load successfully
-    Then Click the zoom out workflow panel
     Then click the Setup Enrollment node
     Then click the Workflow New Audience button
     Then Click the New Audience criteria
@@ -43,6 +42,11 @@ Feature: Workflow module
     Then Click the workflow Cancel button
     Then Click the workflow save draft button
     Then Click the workflow save draft confirm button
+    Then I should see the "Workflow" page
+    Then Enter the workflow name in the search bar
+    Then Verify the workflow name is shown in the list
+    Then Click the three-dot menu on the Workflow
+    Then Click the Edit Workflow settings button
     Then Click the Workflow Publish button
     Then Check for Error message
     Then Click the node edit button "2"
@@ -64,5 +68,42 @@ Feature: Workflow module
     Then Click the Workflow Publish confirm button
     Then I should see the "Workflow" page
     Then Verify Workflow Active tab should load successfully
+    Then Enter the workflow name in the search bar
+    Then Verify the workflow name is shown in the list
+
+  @Regression @REG-WORKFLOW-03
+  Scenario: Workflow creation with Existing Audience enrollment and Delay node saved as Draft
+    Given I log in for module "Workflow"
+    When I navigate to "Workflow"
+    Then I should see the "Workflow" page
+    Then Click The Create New Workflow button
+    Then Click the workflow create from scratch button
+    Then enter the Workflow name and Tag
+    Then Click The Create Workflow button
+    Then Verify Workflow Edit page should load successfully
+    Then click the Setup Enrollment node
+    Then Click the Existing Audience enrollment option
+    Then Click the Add Enrollment dropdown
+    Then Select the Part of an Audience option
+    Then Select the existing audience from the list
+    Then Click the Enrollment flyout Ok button
+    Then Click the workflow apply button
+    Then Click the Add new node button "1"
+    Then Click the delay node button
+    Then Click the Live Event delay type option
+    Then Select the Login live event option
+    Then Click the workflow apply button
+    Then Click the Add new node button "2"
+    Then Click the action node button
+    Then Click the Add Content button
+    Then Search the communication name in the search bar
+    Then Click the communication that comes first in the list
+    Then Click the workflow apply button
+    Then Click the Add new node button "3"
+    Then Click the new exit node button
+    Then Click the exit node mark as goal button and verify toggle is ON
+    Then Click the workflow apply button
+    Then Click the workflow save draft button
+    Then Click the workflow save draft confirm button
     Then Enter the workflow name in the search bar
     Then Verify the workflow name is shown in the list

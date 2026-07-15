@@ -24,7 +24,7 @@ export class CampaignPage extends BasePage {
         goalClick:       "//div[@data-testid='campaign-goal-Engagement-Click-undefined']",
         goalOpen:        "//div[@data-testid='campaign-goal-Engagement-Open-undefined']",
         setGoalBtn:      "//button[@data-testid='campaign-stepper-set-goal-button']",
-        editGoal:        "//span[text()='Edit goal']",
+        editGoal:        "//button[normalize-space()='Edit goal'] | //span[normalize-space()='Edit goal']",
         financialTab:    "//button[@data-test-id='campaign-tab-financial']",
         goalDeposit_not_selected:   "//div[contains(@data-testid,'campaign-goal-Financial-Deposit-undefined')]",
         goalSummary:     "//button[@data-testid='campaign-goal-preview-click']",
@@ -35,7 +35,7 @@ export class CampaignPage extends BasePage {
         // Audience
         newAudienceTab:       "//button[@data-test-id='campaign-tab-new-audience']",
         existingAudienceTab:  "//button[@data-test-id='campaign-tab-existing-audience']",
-        selectExistingBtn:    "//button[text()='Select existing audience']",
+        selectExistingBtn:    "//button[normalize-space()='+ Select existing audience']",
         existingAudienceOk:   "//button[@data-testid='flyout-confirm-btn']",
         setAudienceBtn:       "//button[@data-testid='campaign-stepper-set-audience-button']",
         audienceSummary:      "//div[@class='flex items-center flex-wrap justify-start p-2.5 rounded text-tertiary bg-disabledBackground']",
@@ -435,10 +435,6 @@ export class CampaignPage extends BasePage {
         await this.pause(500);
     }
     async selectLoginEvent() {
-        if (await this.isVisible(this.sel.Add_live_event_Btn, 5000)) {
-            await this.click(this.sel.Add_live_event_Btn);
-            await this.pause(500);
-        }
         await this.click(this.sel.addSimpleEvent);
         await this.click(this.sel.loginEvent);
         await this.pause(500);
@@ -793,7 +789,15 @@ export class CampaignPage extends BasePage {
     }
 
     async clickClearFilter() {
-        await this.click(this.sel.clearFilterBtn);
+        const btn = this.page.locator(this.sel.clearFilterBtn).first();
+        if (await btn.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await btn.click();
+        } else {
+            const clearText = this.page.locator("//button[contains(normalize-space(),'Clear all') or contains(normalize-space(),'Clear Filter')]").first();
+            if (await clearText.isVisible({ timeout: 3000 }).catch(() => false)) {
+                await clearText.click();
+            }
+        }
         await this.pause(1000);
     }
 

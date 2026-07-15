@@ -14,7 +14,7 @@ export class WorkflowPage extends BasePage {
 
         // Creation
         createNewBtn:       "//a[@data-testid='setup-new-workflow-btn']",
-        createFromScratch:  "//div[@data-testid='workflow-create-card-scratch-btn']",
+        createFromScratch:  "//div[@data-testid='workflow-create-card-scratch-btn'] | //*[normalize-space()='Create from scratch' and not(ancestor::li)]",
         nameInput:          "//input[@data-testid='workflow-name-input']",
         tagInput:           "//input[@data-testid='workflow-tag-input']",
         createBtn:          "//button[@data-testid='create-workflow-button']",
@@ -32,16 +32,26 @@ export class WorkflowPage extends BasePage {
         existingAudienceDropdown:     "//button[@data-testid='workflow-existing-audience-dropdown']",
         existingAudiencePartOfBtn:    "//button[@data-testid='workflow-existing-audience-dropdown-part-of-an-audience']",
         existingAudienceOkBtn:        "//button[@data-testid='flyout-confirm-btn']",
+        existingAudienceSearch:       "//input[@name='search-input-box']",
 
         // Node controls
         nodeApplyBtn:       "//button[@data-testid='workflow-node-apply-button']",
         cancelBtn:          "//button[@data-testid='close-node-flyout-btn']",
         addNodeDropdown:    "//button[@data-testid='add-node-dropdown']",
         addActionNode:      "//button[@data-testid='add-node-dropdown-add-action']",
+        addDelayNode:       "//button[@data-testid='add-node-dropdown-add-delay']",
         addExitNode:        "//button[@data-testid='add-node-dropdown-exit-flow']",
+       selectLiveEventOption:   "//button[@title='Add event']",
+        liveEventOption:    "//button[@data-testid='liveEvent']",
+        
+        loginEventOption:   "//*[@data-testid='login']",
+        librarySearch:      "//input[@data-testid='library-search-input' or @placeholder='Search']",
+        libraryUseContent:  "//button[@data-testid='library-use-this-content-btn' or contains(normalize-space(),'Use this content')]",
         actionAddContent:   "//button[@data-testid='workflow-actions-communication-add-content-btn']",
         exitMarkAsGoal:     "//button[@role='switch']",
         nodeEditBtn:        "//button[@data-testid='node-operations-dropdown-edit']",
+        headerThreeDotBtn:  "//button[@data-testid='workflow-header-operations-dropdown']",
+        headerEditBtn:      "//button[@data-testid='workflow-operations-dropdown-edit']",
 
         // Publish & Draft
         saveDraftBtn:        "//button[@data-testid='workflow-save-draft-button']",
@@ -72,8 +82,12 @@ export class WorkflowPage extends BasePage {
 
     // ─── Creation ────────────────────────────────────────────────────────────
 
-    async clickCreateNew()        { await this.click(this.sel.createNewBtn); }
-    async clickCreateFromScratch() { await this.click(this.sel.createFromScratch); }
+    async clickCreateNew() {
+        await this.click(this.sel.createNewBtn);
+    }
+    async clickCreateFromScratch() {
+        await this.click(this.sel.createFromScratch);
+    }
 
     async enterWorkflowName(name: string) {
         await this.fill(this.sel.nameInput, name);
@@ -131,9 +145,45 @@ export class WorkflowPage extends BasePage {
     async clickSetupEnrollment()  { await this.click(this.sel.setupEnrollment); }
     async clickNewAudience()      { await this.click(this.sel.newAudienceBtn); }
     async clickExistingAudience() { await this.click(this.sel.existingAudienceBtn); }
+
+    async clickExistingAudienceDropdown(): Promise<void> {
+        await this.click(this.sel.existingAudienceDropdown);
+        await this.pause(1000);
+    }
+
+    async clickPartOfAudienceOption(): Promise<void> {
+        await this.click(this.sel.existingAudiencePartOfBtn);
+        await this.pause(1000);
+    }
+
+    async selectExistingAudienceByTitle(title: string): Promise<void> {
+        const searchInput = this.page.locator(this.sel.existingAudienceSearch).first();
+        await searchInput.waitFor({ state: 'visible', timeout: 20000 });
+        await searchInput.fill(title);
+        await this.page.keyboard.press('Enter');
+        await this.pause(1500);
+
+        // Prefer input[@id=title] (same pattern as audience.page.ts), fall back to input[@title=title]
+        const checkbox = this.page.locator(`//label[text()='${title}']`).first();
+        const usedCheckbox = await checkbox.isVisible({ timeout: 5000 }).catch(() => false);
+        if (usedCheckbox) {
+            await checkbox.click();
+        } else {
+            const option = this.page.locator(`//label[text()='${title}']`).first();
+            await option.waitFor({ state: 'visible', timeout: 20000 });
+            await option.click();
+        }
+        await this.pause(500);
+    }
+
+    async clickEnrollmentOk(): Promise<void> {
+        await this.click(this.sel.existingAudienceOkBtn);
+        await this.pause(1000);
+    }
+
     async clickNewAudienceCriteria() { await this.click(this.sel.newAudienceCriteria); }
-    async clickAddToEnrollment()  { await this.click(this.sel.addToEnrollmentBtn); }
-    async clickDashboardBack()    { await this.click(this.sel.dashboardBackBtn); await this.pause(2000); }
+    async clickAddToEnrollment()     { await this.click(this.sel.addToEnrollmentBtn); }
+    async clickDashboardBack()       { await this.click(this.sel.dashboardBackBtn); await this.pause(2000); }
 
     async clickAudiencePreview() {
         await this.click(this.sel.audiencePreview);
@@ -176,23 +226,80 @@ export class WorkflowPage extends BasePage {
         await btn.click({ force: true });
     }
 
-    async clickActionNode() {
+    async clickActionNode(): Promise<void> {
         await this.click(this.sel.addActionNode);
         await this.pause(2000);
     }
 
-    async clickExitNode() {
+    async clickDelayNode(): Promise<void> {
+        await this.click(this.sel.addDelayNode);
+        await this.pause(2000);
+    }
+
+    async clickLiveEventOption(): Promise<void> {
+        await this.click(this.sel.liveEventOption);
+        await this.pause(1000);
+    }
+
+    async clickLoginLiveEvent(): Promise<void> {
+        await this.click(this.sel.selectLiveEventOption);
+        await this.click(this.sel.loginEventOption);
+        await this.pause(1000);
+    }
+
+    async clickExitNode(): Promise<void> {
         await this.click(this.sel.addExitNode);
         await this.pause(2000);
     }
 
     async clickAddContent()   { await this.click(this.sel.actionAddContent); }
+
+    async searchCommunication(name: string): Promise<void> {
+        const searchInput = this.page.locator(this.sel.librarySearch).first();
+        await searchInput.waitFor({ state: 'visible', timeout: 20000 });
+        await searchInput.click();
+        await searchInput.fill(name);
+        await this.pause(2000);
+        await this.page.keyboard.press('Enter');
+    }
+
+    async clickFirstCommunication(name: string): Promise<void> {
+        const card = this.page.locator(`//div[@data-testid='${name}']`).first();
+        await card.waitFor({ state: 'visible', timeout: 10000 });
+        await this.pause(2000);
+        await card.hover({ force: true });
+        await this.pause(500);
+        const useBtn = this.page.locator(this.sel.libraryUseContent).first();
+        await useBtn.waitFor({ state: 'visible', timeout: 10000 });
+        await useBtn.click();
+        await this.pause(2000);
+    }
     async clickCancel()       { await this.click(this.sel.cancelBtn); await this.pause(1000); }
 
     async clickNodeEdit(nodeIndex: string) {
         const nodeSelector = `(//button[@data-testid='node-operations-dropdown'])[${nodeIndex}]`;
         await this.click(nodeSelector);
         await this.click(this.sel.nodeEditBtn);
+        await this.pause(2000);
+    }
+
+    async clickHeaderThreeDotMenu(): Promise<void> {
+        const rowMenu = this.page.locator("//tbody//tr[1]//button[contains(@data-testid, 'operations-dropdown') or contains(@class, 'dropdown')] | (//button[contains(@data-testid, 'operations-dropdown') and not(contains(@data-testid, 'header'))])[1]").first();
+        if (await rowMenu.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await rowMenu.click();
+        } else {
+            await this.click(this.sel.headerThreeDotBtn);
+        }
+        await this.pause(1000);
+    }
+
+    async clickHeaderEditWorkflow(): Promise<void> {
+        const editBtn = this.page.locator("//button[contains(@data-testid, 'dropdown-edit') or contains(normalize-space(), 'Edit')]").first();
+        if (await editBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await editBtn.click();
+        } else {
+            await this.click(this.sel.headerEditBtn);
+        }
         await this.pause(2000);
     }
 
