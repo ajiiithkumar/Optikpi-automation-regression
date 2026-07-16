@@ -5,7 +5,7 @@ Feature: Campaign module
   # REGRESSION
   # ─────────────────────────────────────────────
 
-@Regression @Campaign @REG-CAMP-01
+  @Regression @Campaign @REG-CAMP-01
   Scenario: Publish Campaign after completing all steps and verify it appears in Active tab
     Given I log in for module "Campaign"
     When I navigate to "Campaign"
@@ -79,7 +79,7 @@ Feature: Campaign module
     Then Verify the Click Goal should be set successfully
     Then Verify the goal summary section shows Click as the selected goal
 
-  @Regression @Campaign @REG-CAMP-03
+  @Regression @Campaign @REG-CAMP-03B
   Scenario: Select Engagement goal Open and verify goal is saved correctly
     Given I log in for module "Campaign"
     When I navigate to "Campaign"
@@ -419,7 +419,7 @@ Feature: Campaign module
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Active tab
-    Then Verify Active tab should load successfully   
+    Then Verify Active tab should load successfully
     Then Click the Completed tab
     Then Verify Completed tab should load successfully
     Then Click the Draft tab

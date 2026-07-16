@@ -35,7 +35,7 @@ export class CampaignPage extends BasePage {
         // Audience
         newAudienceTab:       "//button[@data-test-id='campaign-tab-new-audience']",
         existingAudienceTab:  "//button[@data-test-id='campaign-tab-existing-audience']",
-        selectExistingBtn:    "//button[normalize-space()='+ Select existing audience']",
+        selectExistingBtn:    "//button[contains(normalize-space(),'Select existing audience')]",
         existingAudienceOk:   "//button[@data-testid='flyout-confirm-btn']",
         setAudienceBtn:       "//button[@data-testid='campaign-stepper-set-audience-button']",
         audienceSummary:      "//div[@class='flex items-center flex-wrap justify-start p-2.5 rounded text-tertiary bg-disabledBackground']",
