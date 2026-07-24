@@ -57,8 +57,8 @@ export class CampaignPage extends BasePage {
         applyTriggerBtn:   "//button[@data-testid='trigger-apply-btn' or contains(normalize-space(),'Apply')]",
         triggerValidationError: "//*[contains(normalize-space(),'Trigger dates or Event rules are not set properly. Please update the dates or rules to finish campaign setup.') or contains(normalize-space(),'Trigger dates are not set properly. Please update the dates to finish campaign setup.')]",
         editTriggerBtn:    "//button[contains(@data-testid,'edit-trigger') or (contains(@class,'edit') and ancestor::*[contains(@class,'trigger')])]",
-        reenrollToggle:    "//button[contains(@data-testid,'reenroll-toggle') or contains(@aria-label,'Re-enroll')]",
-        reenrollDaysInput: "//input[contains(@data-testid,'reenroll-days') or contains(@placeholder,'days')]",
+        reenrollToggle:    "//button[contains(@data-testid,'reenroll-toggle') or contains(@aria-label,'Re-enroll')] | //div[contains(normalize-space(),'Re-enroll')]//button[@role='switch'] | //button[following-sibling::*[contains(normalize-space(),'Re-enroll')]]",
+        reenrollDaysInput: "//input[contains(@data-testid,'reenroll-days') or contains(@placeholder,'days') or @placeholder='Value']",
   
         // Communication
         chooseContentBtn:     "//button[@data-testid='campaign-choose-content-btn']",
@@ -116,6 +116,7 @@ export class CampaignPage extends BasePage {
         deleteOption:     "//button[@data-testid='campaign-list-view-table-dropdown-icon-delete-campaign']",
         duplicateConfirm: "//button[@data-testid='workflow-action-button']",
         deleteConfirm:    "//button[@data-testid='workflow-action-button']",
+        deleteConfirmInput: "//*[@id='headlessui-portal-root']//input[@type='text' or not(@type)]",
         successToast:     "//*[contains(@class,'toast') or contains(@class,'notification') or contains(@class,'Toastify')][string-length(normalize-space()) > 0]",
 
         // Pagination
@@ -169,13 +170,28 @@ export class CampaignPage extends BasePage {
         const visible = await this.isVisible(this.sel.tagInput);
         if (visible) {
             await this.fill(this.sel.tagInput, tag);
+            await this.page.waitForTimeout(300); // Wait for React to register the text
             await this.page.keyboard.press('Enter').catch(() => {});
+            await this.page.waitForTimeout(500); // Wait for the tag chip to render before clicking Create
         }
     }
 
     async clickCreateCampaign() {
         await this.click(this.sel.createBtn);
         await this.waitForNetworkIdle();
+        
+        // Immediately check if the red error text appears in the modal
+        const errorText = this.page.locator("text=/An unexpected error/i").first();
+        if (await errorText.isVisible({ timeout: 1000 }).catch(() => false)) {
+            // Retry once after 1s for transient server spikes under parallel load
+            await this.page.waitForTimeout(1000);
+            await this.click(this.sel.createBtn).catch(() => {});
+            await this.waitForNetworkIdle();
+
+            if (await errorText.isVisible({ timeout: 1000 }).catch(() => false)) {
+                throw new Error('Failed to create campaign: "An unexpected error occurred" is displayed in the modal.');
+            }
+        }
     }
 
     async waitForEditPage(timeout = 30000) {
@@ -370,7 +386,8 @@ export class CampaignPage extends BasePage {
 
     async isAudienceSummaryVisible(): Promise<boolean> {
         const el = this.page.locator(this.sel.contentSummary).nth(1);
-        return el.isVisible({ timeout: 10000 }).catch(() => false);
+        await el.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+        return el.isVisible();
     }
 
     async isEstimatedReachVisible(): Promise<boolean> {
@@ -753,9 +770,34 @@ export class CampaignPage extends BasePage {
         await this.pause(2000);
     }
 
-    async clickDeleteConfirm() {
-        await this.click(this.sel.deleteConfirm);
-        await this.pause(2000);
+    async clickDeleteConfirm(campaignName?: string) {
+        // The delete modal requires typing the campaign name to enable the Delete button
+        const confirmInput = this.page.locator(this.sel.deleteConfirmInput).first();
+        await confirmInput.waitFor({ state: 'visible', timeout: 10000 });
+        
+        if (!campaignName) {
+            throw new Error('[Delete Confirm] No campaign name provided — cannot confirm deletion.');
+        }
+
+        await confirmInput.click();
+        await confirmInput.fill(campaignName);
+        console.log(`[Delete Confirm] Typed campaign name: ${campaignName}`);
+        await this.pause(500);
+
+        // Wait for button to naturally enable after typing the correct name
+        const btn = this.page.locator(this.sel.deleteConfirm).first();
+        await btn.waitFor({ state: 'visible', timeout: 10000 });
+        await btn.click(); // NO force — button must be enabled by the app after typing
+
+        // Wait for headlessui portal to fully close before next step
+        await this.page.waitForFunction(
+            () => {
+                const portal = document.querySelector('#headlessui-portal-root');
+                return !portal || portal.children.length === 0;
+            },
+            { timeout: 10000 }
+        ).catch(() => {});
+        await this.pause(500);
     }
 
     async isSuccessToastVisible(): Promise<boolean> {

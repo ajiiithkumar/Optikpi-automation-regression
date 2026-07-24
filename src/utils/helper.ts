@@ -1,5 +1,5 @@
 
-import fs, { openSync, closeSync, unlinkSync } from 'fs';
+import fs, { openSync, closeSync, unlinkSync, statSync } from 'fs';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 import { Buffer } from 'buffer';
@@ -271,12 +271,19 @@ const NAMES_LOCK = NAME_JSON_PATH + '.lock';
 
 const withFileLock = async <T>(fn: () => Promise<T>): Promise<T> => {
     let fd: number | null = null;
-    const maxRetries = 20;
+    const maxRetries = 30;
     for (let i = 0; i < maxRetries; i++) {
         try {
             fd = openSync(NAMES_LOCK, 'wx');
             break;
         } catch {
+            // Auto-clean stale lockfile left behind by killed processes (>3s old)
+            try {
+                const stat = statSync(NAMES_LOCK);
+                if (Date.now() - stat.mtimeMs > 3000) {
+                    unlinkSync(NAMES_LOCK);
+                }
+            } catch {}
             await new Promise(r => setTimeout(r, 100));
         }
     }
@@ -284,7 +291,9 @@ const withFileLock = async <T>(fn: () => Promise<T>): Promise<T> => {
     try {
         return await fn();
     } finally {
-        closeSync(fd);
+        if (fd !== null) {
+            try { closeSync(fd); } catch {}
+        }
         try { unlinkSync(NAMES_LOCK); } catch {}
     }
 };
@@ -362,10 +371,10 @@ export const markNameEntryCompleted = async (keys: string[]): Promise<void> => {
     });
 };
 
-/** Poll until `names.json[key].status` is `"completed"` (parallel producer finished). Default 60s, 500ms interval. */
+/** Poll until `names.json[key].status` is `"completed"` (parallel producer finished). Default 5 minutes, 500ms interval. */
 export const waitForNameEntryCompleted = async (
     key: string,
-    timeoutMs = 60000
+    timeoutMs = 300000 // 5 minutes
 ): Promise<{ title: string; timestamp: string }> => {
     const deadline = Date.now() + timeoutMs;
     while (Date.now() < deadline) {

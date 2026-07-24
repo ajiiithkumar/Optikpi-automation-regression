@@ -26,12 +26,50 @@ const shouldCaptureStep = (status: any): boolean => {
     return status === Status.PASSED || status === Status.FAILED;
 };
 
-// ─── Auto-skip remaining steps when limit reached ────────────────────────────
 BeforeStep(async function (this: PlaywrightWorld, { pickleStep }: any) {
     if (this.limitReached) {
         console.log(`[LimitReached] ⏭️ Skipping step: ${pickleStep.text}`);
         ExtentTestManager.logInfo(`⏭️ Skipped (limit reached): ${pickleStep.text}`);
         return 'skipped';
+    }
+
+    // Inject Global Error Observer and Network Listener once per page
+    if (this.page && !this._globalErrorListenerAttached) {
+        this._globalErrorListenerAttached = true;
+        
+        // Network Level Listener for 5xx errors
+        this.globalApiErrors = [];
+        this.page.on('response', response => {
+            const status = response.status();
+            // Catch 500, 502, 503, 504 etc. Ignore 400 validation errors.
+            if (status >= 500 && status < 600) {
+                this.globalApiErrors.push(`API Error ${status} on ${response.url()}`);
+            }
+        });
+
+        // UI Level DOM Observer for critical error text
+        const initScript = `
+            window.__criticalTestErrors = [];
+            const observer = new MutationObserver((mutations) => {
+                for (const mutation of mutations) {
+                    if (mutation.type === 'childList') {
+                        mutation.addedNodes.forEach(node => {
+                            if (node.nodeType === Node.ELEMENT_NODE) {
+                                const text = node.textContent || '';
+                                if (/unexpected error|internal server error|failed to load/i.test(text)) {
+                                    window.__criticalTestErrors.push(text.trim());
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        `;
+        
+        await this.page.addInitScript(initScript);
+        // Also evaluate on the current page immediately (in case addInitScript missed the first load)
+        await this.page.evaluate(initScript).catch(() => {});
     }
 });
 
@@ -72,6 +110,28 @@ AfterStep(async function (this: PlaywrightWorld, { result, pickleStep }: any) {
     const stepText = pickleStep.text;
 
     if (!this.page) return;
+
+    // Check for API errors (5xx)
+    // IGNORED FOR NOW as requested by user
+    /*
+    if (this.globalApiErrors && this.globalApiErrors.length > 0) {
+        const errs = this.globalApiErrors.join(', ');
+        this.globalApiErrors = []; // Reset so it doesn't fail subsequent steps
+        throw new Error(`CRITICAL NETWORK ERROR: HTTP 5xx detected during step "${stepText}". Details: ${errs}`);
+    }
+    */
+
+    // Check for UI errors (DOM Toasts)
+    const uiErrors = await this.page.evaluate(() => {
+        const win = window as any;
+        const errors = win.__criticalTestErrors || [];
+        win.__criticalTestErrors = []; // Reset after reading
+        return errors;
+    }).catch(() => []);
+
+    if (uiErrors.length > 0) {
+        throw new Error(`CRITICAL SYSTEM ERROR: An unexpected UI error was detected during step "${stepText}". Details: ${uiErrors.join(', ')}`);
+    }
 
     // ✅ Capture screenshot for FAILED steps (always)
     if (status === Status.FAILED) {

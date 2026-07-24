@@ -9,7 +9,7 @@ const JSON_REPORT_PATH = process.env.JSON_REPORT_PATH || 'reports/json/results.j
 
 module.exports = {
   default: {
-    paths: ['features/**/*.feature'],
+    paths: ['features/**.feature'],
     requireModule: ['ts-node/register'],
     require: [
       'src/steps/**/*.ts',

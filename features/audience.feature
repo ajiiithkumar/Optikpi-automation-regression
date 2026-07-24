@@ -9,6 +9,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
 @Regression @Audience @REG-AUD-01 @ExistingAudience
   Scenario: Publish Audience and verify it appears in the correct tab with Active status
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     When I navigate to "Audience"
     Then I should see the "Audience" page
     Then Click the Create new Audience button
@@ -31,6 +32,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   @Regression @Audience @REG-AUD-02
   Scenario: Create Audience with Customer Metric criteria
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     When I navigate to "Audience"
     Then I should see the "Audience" page
     Then Click the Create new Audience button
@@ -54,6 +56,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   @Regression @Audience @REG-AUD-03
   Scenario: Create Audience with Customer Engagement and Workflow attributes
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     When I navigate to "Audience"
     Then I should see the "Audience" page
     Then Click the Create new Audience button
@@ -80,6 +83,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   @Regression @Audience @REG-AUD-04
   Scenario: Create Audience with Part of Audience criteria
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     And an Audience from REG-AUD-01 or REG-AUD-02 or REG-AUD-03 is available
     When I navigate to "Audience"
     Then I should see the "Audience" page
@@ -105,6 +109,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   @Regression @Audience @REG-AUD-05
   Scenario: AND condition validation within a single criteria group
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     When I navigate to "Audience"
     Then I should see the "Audience" page
     Then Click the Create new Audience button
@@ -128,6 +133,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   @Regression @Audience @REG-AUD-06
   Scenario: OR group validation across multiple criteria groups
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     When I navigate to "Audience"
     Then I should see the "Audience" page
     Then Click the Create new Audience button
@@ -154,6 +160,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   @Regression @Audience @REG-AUD-07
   Scenario: Save as Draft and reopen Audience persists criteria data
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     When I navigate to "Audience"
     Then I should see the "Audience" page
     Then Click the Create new Audience button
@@ -180,6 +187,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
    @Regression @Audience @REG-AUD-08
   Scenario: Create Audience with Event and Occurrence criteria
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     When I navigate to "Audience"
     Then I should see the "Audience" page
     Then Click the Create new Audience button
@@ -203,6 +211,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   @Regression @Audience @REG-AUD-09
   Scenario: Edit a Published Audience and verify edit behaviour
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     And a Published Audience exists
     When I navigate to "Audience"
     Then I should see the "Audience" page
@@ -220,6 +229,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   @Regression @Audience @REG-AUD-10
   Scenario: Duplicate an existing Audience and verify all fields are copied
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     And an Audience exists in the list
     When I navigate to "Audience"
     Then I should see the "Audience" page
@@ -245,6 +255,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   @Regression @Audience @REG-AUD-11
   Scenario: Preview count updates in real time when criteria are added or removed
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     When I navigate to "Audience"
     Then I should see the "Audience" page
     Then Click the Create new Audience button
@@ -269,6 +280,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   @Regression @Audience @Negative @REG-AUD-12
   Scenario: Saving an Audience with incomplete criteria shows a validation error
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     When I navigate to "Audience"
     Then I should see the "Audience" page
     Then Click the Create new Audience button
@@ -285,6 +297,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   @Regression @Audience @Negative @REG-AUD-13
   Scenario: Entering text in a numeric criteria field shows a validation message
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     When I navigate to "Audience"
     Then I should see the "Audience" page
     Then Click the Create new Audience button
@@ -305,6 +318,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   @Regression @Audience @UI @REG-AUD-14
   Scenario: Navigation and UI consistency when switching tabs and views
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     When I navigate to "Audience"
     Then I should see the "Audience" page
     Then Live tab should load successfully
@@ -319,6 +333,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
   @Regression @Audience @UI @REG-AUD-15
   Scenario: Action menu on Audience list shows all expected options
     Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
     And an Audience exists in the list
     When I navigate to "Audience"
     Then I should see the "Audience" page
@@ -327,3 +342,4 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then All expected action options should be visible and clickable
 
     
+

@@ -32,15 +32,28 @@ export class LoginPage extends BasePage {
 
     /** Fill in credentials and submit the login form. */
     async login(username: string, password: string) {
-        await this.waitForVisible(this.sel.emailInput, 30000);
-        await this.pause(1000);
-        await this.fill(this.sel.emailInput, username);
+        const emailLoc = this.page.locator(this.sel.emailInput);
+        await emailLoc.waitFor({ state: 'visible', timeout: 30000 });
+        await emailLoc.click().catch(() => {});
+        await emailLoc.fill(username);
+        
+        // Handle React hydration race condition where email input gets cleared during re-render
+        if ((await emailLoc.inputValue()) !== username) {
+            await this.pause(500);
+            await emailLoc.fill(username);
+        }
 
-        await this.waitForVisible(this.sel.passwordInput, 10000);
-        await this.pause(1000);
-        await this.fill(this.sel.passwordInput, password);
+        const passLoc = this.page.locator(this.sel.passwordInput);
+        await passLoc.waitFor({ state: 'visible', timeout: 10000 });
+        await passLoc.click().catch(() => {});
+        await passLoc.fill(password);
 
-        await this.pause(3000);
+        if ((await passLoc.inputValue()) !== password) {
+            await this.pause(500);
+            await passLoc.fill(password);
+        }
+
+        await this.pause(1000);
         const submit = this.page.locator(this.sel.submitButton);
         await submit.waitFor({ state: 'attached', timeout: 30000 });
 
