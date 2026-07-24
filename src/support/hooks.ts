@@ -78,6 +78,7 @@ Before(async function (this: any, scenario: any) {
     ExtentTestManager.setTest(this);
 
     this._hasFailureScreenshot = false;
+    this._screenshotTaken = false; // Track if at least one screenshot was taken this scenario
 
     // Extract all scenario tags and the unique identifier tag
     const tags: any[] = scenario?.pickle?.tags || [];
@@ -137,15 +138,17 @@ AfterStep(async function (this: PlaywrightWorld, { result, pickleStep }: any) {
     if (status === Status.FAILED) {
         await Helper.captureScreenshot(this, {
             label: `FAILED: ${stepText}`,
-            writeToDisk: true, // Save to disk for failures
+            writeToDisk: true,
             filePrefix: `STEP-FAILED-${stepText.replace(/[^a-zA-Z0-9]/g, '_')}`,
         });
+        (this as any)._screenshotTaken = true;
     }
 
-    // ✅ Capture screenshot ONLY for Verify/Check/Should/Confirm steps when PASSED
-    // This reduces screenshots from ~470 per run down to ~25, shrinking the report ~90%
+    // ✅ Capture screenshot for Verify/Check/Should/Confirm steps + specific named steps
     else if (status === Status.PASSED) {
-        const isVerifyStep = /^(verify|check|should|confirm)/i.test(stepText.trim());
+        const isVerifyStep =
+            /^(verify|check|should|confirm|all expected|a field)/i.test(stepText.trim()) ||
+            /\b(visible and clickable|validation message|should be displayed|should be visible)\b/i.test(stepText);
         if (isVerifyStep) {
             await this.page.waitForTimeout(300); // Let page settle before screenshot
             await Helper.captureScreenshot(this, {
@@ -153,6 +156,7 @@ AfterStep(async function (this: PlaywrightWorld, { result, pickleStep }: any) {
                 writeToDisk: false,
                 filePrefix: `STEP-PASSED-${stepText.replace(/[^a-zA-Z0-9]/g, '_')}`,
             });
+            (this as any)._screenshotTaken = true;
         }
     }
 });
@@ -173,6 +177,17 @@ After(async function (this: any, scenario: any) {
                     attachToReport: true
                 });
             }
+        }
+
+        // ✅ Guarantee at least one screenshot per scenario
+        // If no Verify/Check step was found during the scenario, take one final screenshot now
+        if (!this._screenshotTaken && this.page && status === Status.PASSED) {
+            await Helper.captureScreenshot(this, {
+                label: `Scenario End: ${name}`,
+                writeToDisk: false,
+                filePrefix: `SCENARIO-END-${name.replace(/[^a-zA-Z0-9]/g, '_')}`,
+                attachToReport: true
+            });
         }
     }
 
