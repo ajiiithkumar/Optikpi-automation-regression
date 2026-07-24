@@ -9,7 +9,7 @@ import { PlaywrightWorld } from './world';
 let sharedBrowser: Browser | null = null;
 
 const getScenarioScreenshotMode = (): string => {
-    const mode = String(process.env.SCENARIO_SCREENSHOTS || 'always').toLowerCase();
+    const mode = String(process.env.SCENARIO_SCREENSHOTS || 'failed').toLowerCase();
     if (mode === 'always' || mode === 'all') return 'always';
     if (mode === 'never' || mode === 'off' || mode === 'none') return 'never';
     return 'failed';
@@ -142,13 +142,15 @@ AfterStep(async function (this: PlaywrightWorld, { result, pickleStep }: any) {
         });
     }
 
-    // ✅ Capture screenshot for PASSED steps (if you want)
+    // ✅ Capture screenshot ONLY for Verify/Check/Should/Confirm steps when PASSED
+    // This reduces screenshots from ~470 per run down to ~25, shrinking the report ~90%
     else if (status === Status.PASSED) {
-        const stepMode = String(process.env.STEP_SCREENSHOTS || 'always').toLowerCase();
-        if (stepMode === 'always' || stepMode === 'all') {
+        const isVerifyStep = /^(verify|check|should|confirm)/i.test(stepText.trim());
+        if (isVerifyStep) {
+            await this.page.waitForTimeout(300); // Let page settle before screenshot
             await Helper.captureScreenshot(this, {
                 label: `PASSED: ${stepText}`,
-                writeToDisk: false, // Don't clutter disk with passed screenshots
+                writeToDisk: false,
                 filePrefix: `STEP-PASSED-${stepText.replace(/[^a-zA-Z0-9]/g, '_')}`,
             });
         }

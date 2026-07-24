@@ -1,12 +1,12 @@
-Feature: Audience Regression - Criteria & Lifecycle Management
-# Covers regression and functional scenarios for audience creation,
-# editing, publishing, and validation across all criteria types.
-# Users are managed in config/users.json (kept out of the report).
+Feature: Audience Module
+  # Covers regression and functional scenarios for audience creation,
+  # editing, publishing, and validation across all criteria types.
+  # Users are managed in config/users.json (kept out of the report).
 
   # ─────────────────────────────────────────────
   # FUNCTIONAL - Criteria Types
   # ─────────────────────────────────────────────
-@Regression @Audience @REG-AUD-01 @ExistingAudience
+  @Regression @Audience @REG-AUD-01 @ExistingAudience
   Scenario: Publish Audience and verify it appears in the correct tab with Active status
     Given I log in for module "Audience"
     Then I close the announcement popup if it appears
@@ -26,8 +26,8 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Filter the Audience by "Active" status
     Then Filter the Audience with the saved Audience title
     Then Verify the Audience is displayed in the list
- 
-    
+
+
 
   @Regression @Audience @REG-AUD-02
   Scenario: Create Audience with Customer Metric criteria
@@ -52,7 +52,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Filter the Audience by "Draft" status
     Then Filter the Audience with the saved Audience title
     Then Validate the Audience tooltip title matches the saved Audience title
- 
+
   @Regression @Audience @REG-AUD-03
   Scenario: Create Audience with Customer Engagement and Workflow attributes
     Given I log in for module "Audience"
@@ -184,7 +184,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then enter into that Audience
     Then Verify the added user Id are still in the Audience
 
-   @Regression @Audience @REG-AUD-08
+  @Regression @Audience @REG-AUD-08
   Scenario: Create Audience with Event and Occurrence criteria
     Given I log in for module "Audience"
     Then I close the announcement popup if it appears
@@ -292,7 +292,7 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then on the customer property pop up select User Id property and apply
     Then Verify the Preview button is disabled
     Then Verify the incomplete criteria error message is displayed
-    
+
 
   @Regression @Audience @Negative @REG-AUD-13
   Scenario: Entering text in a numeric criteria field shows a validation message
@@ -341,5 +341,5 @@ Feature: Audience Regression - Criteria & Lifecycle Management
     Then Click the 3-dot action menu for the Audience
     Then All expected action options should be visible and clickable
 
-    
+
 
