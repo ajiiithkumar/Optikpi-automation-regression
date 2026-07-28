@@ -131,6 +131,13 @@ AfterStep(async function (this: PlaywrightWorld, { result, pickleStep }: any) {
     }).catch(() => []);
 
     if (uiErrors.length > 0) {
+        // Capture screenshot FIRST so the error state is visible in the report
+        await Helper.captureScreenshot(this, {
+            label: `CRITICAL ERROR: ${stepText}`,
+            writeToDisk: true,
+            filePrefix: `STEP-FAILED-${stepText.replace(/[^a-zA-Z0-9]/g, '_')}`,
+        }).catch(() => {}); // Don't let screenshot failure mask the real error
+        (this as any)._screenshotTaken = true;
         throw new Error(`CRITICAL SYSTEM ERROR: An unexpected UI error was detected during step "${stepText}". Details: ${uiErrors.join(', ')}`);
     }
 

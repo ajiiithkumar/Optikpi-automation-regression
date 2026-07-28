@@ -23,6 +23,8 @@ module.exports = {
     ],
     publishQuiet: true,
     parallel: PARALLEL_THREAD_COUNT,
+    retry: 1, // Retry failed scenarios once to handle transient failures (server spikes, timeouts, etc.)
+
     worldParameters: {
       headless: process.env.HEADLESS !== 'false'
     }
