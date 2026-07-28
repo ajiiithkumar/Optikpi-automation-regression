@@ -141,8 +141,12 @@ AfterStep(async function (this: PlaywrightWorld, { result, pickleStep }: any) {
         throw new Error(`CRITICAL SYSTEM ERROR: An unexpected UI error was detected during step "${stepText}". Details: ${uiErrors.join(', ')}`);
     }
 
-    // ✅ Capture screenshot for FAILED steps (always)
+    // ✅ Capture screenshot + log error for FAILED steps (always)
     if (status === Status.FAILED) {
+        // Log the error message so it's visible in the Extent report
+        const errorMessage = result.message || result.exception?.message || 'Unknown error';
+        ExtentTestManager.logFail(`❌ Step failed: ${errorMessage}`);
+
         await Helper.captureScreenshot(this, {
             label: `FAILED: ${stepText}`,
             writeToDisk: true,

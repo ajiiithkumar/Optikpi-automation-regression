@@ -18,8 +18,8 @@ export class AudiencePage extends BasePage {
         viewDropdown: "//button[@data-testid='audience-select-menu']",
         cardViewBtn: "//button[@data-testid='audience-select-menu-card-view']",
         listViewBtn: "//button[@data-testid='audience-select-menu-list-view']",
-        cardViewContainer: "//button[.//span[normalize-space()='Card']]",
-        listViewContainer: "//button[.//span[normalize-space()='List']]",
+        cardViewContainer: "//button[@data-testid='audience-select-menu-card-view' and @aria-pressed='true']",
+        listViewContainer: "//button[@data-testid='audience-select-menu-list-view' and @aria-pressed='true']",
 
         // Create
         createNewBtn: "//button[@data-testid='create-new-audience-btn']",
@@ -139,12 +139,12 @@ export class AudiencePage extends BasePage {
     // ─── View Toggle ─────────────────────────────────────────────────────────
 
     async switchToCardView() {
-        await this.click(this.sel.viewDropdown);
+        // Dropdown removed from UI — card view button is now directly clickable
         await this.click(this.sel.cardViewBtn);
     }
 
     async switchToListView() {
-        await this.click(this.sel.viewDropdown);
+        // Dropdown removed from UI — list view button is now directly clickable
         await this.click(this.sel.listViewBtn);
     }
 
