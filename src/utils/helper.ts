@@ -283,7 +283,7 @@ const withFileLock = async <T>(fn: () => Promise<T>): Promise<T> => {
                 if (Date.now() - stat.mtimeMs > 3000) {
                     unlinkSync(NAMES_LOCK);
                 }
-            } catch {}
+            } catch { }
             await new Promise(r => setTimeout(r, 100));
         }
     }
@@ -292,9 +292,9 @@ const withFileLock = async <T>(fn: () => Promise<T>): Promise<T> => {
         return await fn();
     } finally {
         if (fd !== null) {
-            try { closeSync(fd); } catch {}
+            try { closeSync(fd); } catch { }
         }
-        try { unlinkSync(NAMES_LOCK); } catch {}
+        try { unlinkSync(NAMES_LOCK); } catch { }
     }
 };
 

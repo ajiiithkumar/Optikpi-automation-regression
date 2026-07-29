@@ -36,7 +36,7 @@ BeforeStep(async function (this: PlaywrightWorld, { pickleStep }: any) {
     // Inject Global Error Observer and Network Listener once per page
     if (this.page && !this._globalErrorListenerAttached) {
         this._globalErrorListenerAttached = true;
-        
+
         // Network Level Listener for 5xx errors
         this.globalApiErrors = [];
         this.page.on('response', response => {
@@ -66,10 +66,10 @@ BeforeStep(async function (this: PlaywrightWorld, { pickleStep }: any) {
             });
             observer.observe(document.body, { childList: true, subtree: true });
         `;
-        
+
         await this.page.addInitScript(initScript);
         // Also evaluate on the current page immediately (in case addInitScript missed the first load)
-        await this.page.evaluate(initScript).catch(() => {});
+        await this.page.evaluate(initScript).catch(() => { });
     }
 });
 
@@ -136,7 +136,7 @@ AfterStep(async function (this: PlaywrightWorld, { result, pickleStep }: any) {
             label: `CRITICAL ERROR: ${stepText}`,
             writeToDisk: true,
             filePrefix: `STEP-FAILED-${stepText.replace(/[^a-zA-Z0-9]/g, '_')}`,
-        }).catch(() => {}); // Don't let screenshot failure mask the real error
+        }).catch(() => { }); // Don't let screenshot failure mask the real error
         (this as any)._screenshotTaken = true;
         throw new Error(`CRITICAL SYSTEM ERROR: An unexpected UI error was detected during step "${stepText}". Details: ${uiErrors.join(', ')}`);
     }
