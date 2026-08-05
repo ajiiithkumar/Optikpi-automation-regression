@@ -18,7 +18,7 @@ export class CampaignPage extends BasePage {
         nameInput:       "//input[@data-testid='campaign-name-input']",
         tagInput:        "//input[@data-testid='campaign-tag-input']",
         createBtn:       "//button[@data-testid='create-campaign-button']",
-        editTitle:       "//h2[@title]",
+        editTitle:       "//h2[contains(@class,'text-2xl')]",
 
         // Goal
         goalClick:       "//div[@data-testid='campaign-goal-Engagement-Click-undefined']",
@@ -209,10 +209,10 @@ export class CampaignPage extends BasePage {
             .first().waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
         await this.pause(1000);
         // Read whatever title the h2 currently has — useful for diagnostics
-        const currentTitle = await this.page.locator('//h2[@title]').first()
-            .getAttribute('title').catch(() => '<no h2 found>');
-        // The <h2 title> in the page header should now reflect the new name
-        const h2 = this.page.locator(`//h2[contains(@title, '${expectedName.trim()}')]`);
+        const currentTitle = await this.page.locator("//h2[contains(@class,'text-2xl')]").first()
+            .innerText().catch(() => '<no h2 found>');
+        // The <h2> in the page header should now reflect the new name
+        const h2 = this.page.locator(`//h2[contains(@class,'text-2xl') and contains(normalize-space(),'${expectedName.trim()}')]`);
         await h2.first().waitFor({ state: 'visible', timeout }).catch(() => {
             throw new Error(
                 `Campaign name NOT updated in DOM.\n` +
