@@ -27,7 +27,8 @@ export class AudiencePage extends BasePage {
         nameInput: "//input[@data-testid='create-audience-modal-popup-input']",
         tagsInput: "//input[@data-testid='create-audience-modal-popup-tag']",
         submitBtn: "//button[@data-testid='create-audience-modal-popup-ok-btn']",
-        editTitle: "//h2[@title]",
+        editTitle: "//h2[contains(@class,'text-2xl')]",
+
 
         // Criteria
         criteria: "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1']",
