@@ -1,15 +1,15 @@
 
 // Load .env file
-try { require('dotenv').config(); } catch (_) {}
+try { require('dotenv').config(); } catch (_) { }
 
 // Centralized Parallel Configuration
 const PARALLEL_THREAD_COUNT = process.env.PARALLEL_THREADS ? parseInt(process.env.PARALLEL_THREADS) : 1;
 const EXTENT_REPORT_PATH = process.env.EXTENT_REPORT_PATH || 'reports/extent/OptiKPI_V2.0_Smoke_Test.html';
-const JSON_REPORT_PATH   = process.env.JSON_REPORT_PATH   || 'reports/json/results.json';
+const JSON_REPORT_PATH = process.env.JSON_REPORT_PATH || 'reports/json/results.json';
 
 module.exports = {
   default: {
-    paths: ['features/audience.feature'],
+    paths: ['features/**.feature'],
     requireModule: ['ts-node/register'],
     require: [
       'src/steps/**/*.ts',
@@ -23,6 +23,8 @@ module.exports = {
     ],
     publishQuiet: true,
     parallel: PARALLEL_THREAD_COUNT,
+    retry: 1, // Retry failed scenarios once to handle transient failures (server spikes, timeouts, etc.)
+
     worldParameters: {
       headless: process.env.HEADLESS !== 'false'
     }

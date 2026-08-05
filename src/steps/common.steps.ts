@@ -37,8 +37,14 @@ const loginIfNeeded = async (page: any, username: string, password: string) => {
     if (!navReady) {
         throw new Error('Timed out waiting for main navigation after login (60s).');
     }
+
     return true;
 };
+
+Then('I close the announcement popup if it appears', async function (this: PlaywrightWorld) {
+    // Handled automatically by Playwright's native page.addLocatorHandler registered in createSession
+    ExtentTestManager.logInfo("Announcement popup auto-handler active.");
+});
 
 const createSession = async (world: PlaywrightWorld, username: string, password: string) => {
     const isHeadless = process.env.HEADLESS === 'true';
@@ -54,6 +60,28 @@ const createSession = async (world: PlaywrightWorld, username: string, password:
     const context = await world.browser.newContext(contextOptions);
     const page = await context.newPage();
     
+    // Playwright native handler: Automatically detects and closes announcement popup whenever it appears
+    await page.addLocatorHandler(
+        page.locator('[data-testid="announcement-modal-close-button"]'),
+        async (closeBtn) => {
+            console.log("[Playwright Auto-Handler] Announcement popup detected! Dispatching direct DOM click events...");
+            // 1. Direct DOM click on close button (bypasses CSS 70% zoom calculation issues)
+            await closeBtn.evaluate((el: HTMLElement) => {
+                el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+                el.click();
+            }).catch(() => {});
+            
+            // 2. Direct DOM click on backdrop overlay (mimics manual click outside)
+            await page.evaluate(() => {
+                const backdrop = document.querySelector('.fixed.inset-0.bg-opacity-75') as HTMLElement;
+                if (backdrop) {
+                    backdrop.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+                    backdrop.click();
+                }
+            }).catch(() => {});
+        }
+    );
+
     // Set global timeouts to 60 seconds (up from the default 30s)
     page.setDefaultTimeout(60000);
     page.setDefaultNavigationTimeout(60000);
@@ -63,7 +91,7 @@ const createSession = async (world: PlaywrightWorld, username: string, password:
             if (document.body) {
                 (document.body.style as any).zoom = '70%';
             }
-        }).catch(() => {});
+        }).catch(() => { });
     }
     if (didLogin || !fs.existsSync(storagePath)) {
         await context.storageState({ path: storagePath });
@@ -102,8 +130,8 @@ async function loginForModule(this: PlaywrightWorld, moduleName: string) {
             if (attempt === 1) {
                 // First attempt: full fresh context
                 if (this.context) {
-                    await this.page!.close().catch(() => {});
-                    await this.context.close().catch(() => {});
+                    await this.page!.close().catch(() => { });
+                    await this.context.close().catch(() => { });
                 }
                 const session = await createSession(this, this.user.username, this.user.password);
                 this.context = session.context;
@@ -116,7 +144,7 @@ async function loginForModule(this: PlaywrightWorld, moduleName: string) {
                     // Attempt 1 threw before assigning this.page — close any orphaned context and start fresh
                     ExtentTestManager.logInfo(`Login retry ${attempt}/${MAX_RETRIES} — page unavailable, creating fresh context`);
                     if (this.context) {
-                        await this.context.close().catch(() => {});
+                        await this.context.close().catch(() => { });
                         this.context = null;
                         this.page = null;
                     }
@@ -186,7 +214,7 @@ When('I navigate to {string}', async function (this: PlaywrightWorld, moduleName
         try {
             await navBar.navigateTo(moduleName);
             await this.page!.waitForLoadState('domcontentloaded');
-            await this.page!.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+            await this.page!.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => { });
             await this.page!.waitForTimeout(1000); // Settle buffer for React/Vue hydration
             ExtentTestManager.logPass(`Navigated to ${moduleName} (attempt ${attempt})`);
             return;
@@ -195,7 +223,7 @@ When('I navigate to {string}', async function (this: PlaywrightWorld, moduleName
             console.log(`[Navigation] Attempt ${attempt} to ${moduleName} failed: ${lastError.message}`);
             if (attempt < maxRetries) {
                 await this.page!.waitForTimeout(2000);
-                await this.page!.reload({ waitUntil: 'networkidle' }).catch(() => {});
+                await this.page!.reload({ waitUntil: 'networkidle' }).catch(() => { });
                 await this.page!.waitForTimeout(2000);
             }
         }

@@ -7,7 +7,7 @@ import { ExtentTestManager } from '../utils/extent-test-manager';
 import { PlaywrightWorld } from '../support/world';
 
 const getAudiencePage = (world: PlaywrightWorld) => new AudiencePage(world.page);
-const getDatePicker   = (world: PlaywrightWorld) => new DateTimePicker(world.page);
+const getDatePicker = (world: PlaywrightWorld) => new DateTimePicker(world.page);
 
 // ─── View Toggle ─────────────────────────────────────────────────────────────
 
@@ -56,7 +56,7 @@ Then('Static tab should load successfully', async function (this: PlaywrightWorl
             console.log(`[Audience] Static tab attempt ${attempt} failed: ${lastError.message}`);
             if (attempt < maxRetries) {
                 await this.page.waitForTimeout(3000);
-                await this.page.reload({ waitUntil: 'networkidle' }).catch(() => {});
+                await this.page.reload({ waitUntil: 'networkidle' }).catch(() => { });
                 await this.page.waitForTimeout(2000);
             }
         }
@@ -175,7 +175,7 @@ Then('Click the "+ Add values" enter a valid User Id and apply', async function 
 
 Then('Check the Preview button 2 records is shown', async function (this: PlaywrightWorld) {
     await getAudiencePage(this).clickPreview2();
-    ExtentTestManager.logPass('Preview 2 button clicked (expected 2 records).');
+    ExtentTestManager.logPass('Preview 2 button clicked (expected 1 records).');
 });
 
 // ─── Save / Publish ──────────────────────────────────────────────────────────
@@ -364,7 +364,7 @@ Then('Filter the Audience by {string} status', async function (this: PlaywrightW
 Then('Log out from the application', async function (this: PlaywrightWorld) {
     const logoutCandidate = this.page.locator("//*[self::button or self::a][contains(translate(normalize-space(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'logout') or contains(translate(normalize-space(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'log out')]").first();
     if (await logoutCandidate.isVisible().catch(() => false)) {
-        await logoutCandidate.click().catch(() => {});
+        await logoutCandidate.click().catch(() => { });
         ExtentTestManager.logPass('Logged out from the application');
         return;
     }

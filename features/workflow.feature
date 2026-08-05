@@ -4,6 +4,7 @@ Feature: Workflow module Test Cases
   @Regression @REG-WORKFLOW-01
   Scenario: Workflow page load
     Given I log in for module "Workflow"
+    Then I close the announcement popup if it appears
     When I navigate to "Workflow"
     Then I should see the "Workflow" page
     Then Click The Active tab
@@ -18,6 +19,7 @@ Feature: Workflow module Test Cases
   @Regression @REG-WORKFLOW-02
   Scenario: Workflow Activation with error validation
     Given I log in for module "Workflow"
+    Then I close the announcement popup if it appears
     When I navigate to "Workflow"
     Then I should see the "Workflow" page
     Then Click The Create New Workflow button
@@ -74,6 +76,7 @@ Feature: Workflow module Test Cases
   @Regression @REG-WORKFLOW-03
   Scenario: Workflow creation with Existing Audience enrollment and Delay node saved as Draft
     Given I log in for module "Workflow"
+    Then I close the announcement popup if it appears
     When I navigate to "Workflow"
     Then I should see the "Workflow" page
     Then Click The Create New Workflow button
@@ -107,3 +110,4 @@ Feature: Workflow module Test Cases
     Then Click the workflow save draft confirm button
     Then Enter the workflow name in the search bar
     Then Verify the workflow name is shown in the list
+

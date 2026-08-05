@@ -18,8 +18,8 @@ export class AudiencePage extends BasePage {
         viewDropdown: "//button[@data-testid='audience-select-menu']",
         cardViewBtn: "//button[@data-testid='audience-select-menu-card-view']",
         listViewBtn: "//button[@data-testid='audience-select-menu-list-view']",
-        cardViewContainer: "//button[.//span[normalize-space()='Card']]",
-        listViewContainer: "//button[.//span[normalize-space()='List']]",
+        cardViewContainer: "//button[@data-testid='audience-select-menu-card-view' and @aria-pressed='true']",
+        listViewContainer: "//button[@data-testid='audience-select-menu-list-view' and @aria-pressed='true']",
 
         // Create
         createNewBtn: "//button[@data-testid='create-new-audience-btn']",
@@ -27,7 +27,8 @@ export class AudiencePage extends BasePage {
         nameInput: "//input[@data-testid='create-audience-modal-popup-input']",
         tagsInput: "//input[@data-testid='create-audience-modal-popup-tag']",
         submitBtn: "//button[@data-testid='create-audience-modal-popup-ok-btn']",
-        editTitle: "//h2[@title]",
+        editTitle: "//h2[contains(@class,'text-2xl')]",
+
 
         // Criteria
         criteria: "//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1']",
@@ -139,12 +140,12 @@ export class AudiencePage extends BasePage {
     // ─── View Toggle ─────────────────────────────────────────────────────────
 
     async switchToCardView() {
-        await this.click(this.sel.viewDropdown);
+        // Dropdown removed from UI — card view button is now directly clickable
         await this.click(this.sel.cardViewBtn);
     }
 
     async switchToListView() {
-        await this.click(this.sel.viewDropdown);
+        // Dropdown removed from UI — list view button is now directly clickable
         await this.click(this.sel.listViewBtn);
     }
 

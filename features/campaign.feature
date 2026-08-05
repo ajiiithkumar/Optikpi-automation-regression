@@ -5,9 +5,10 @@ Feature: Campaign module
   # REGRESSION
   # ─────────────────────────────────────────────
 
-@Regression @Campaign @REG-CAMP-01
+  @Regression @Campaign @REG-CAMP-01
   Scenario: Publish Campaign after completing all steps and verify it appears in Active tab
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -40,6 +41,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-02
   Scenario: Edit Campaign name updates successfully
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -68,6 +70,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-03
   Scenario: Select Engagement goal Click and verify goal is saved correctly
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -79,9 +82,10 @@ Feature: Campaign module
     Then Verify the Click Goal should be set successfully
     Then Verify the goal summary section shows Click as the selected goal
 
-  @Regression @Campaign @REG-CAMP-03
+  @Regression @Campaign @REG-CAMP-03B
   Scenario: Select Engagement goal Open and verify goal is saved correctly
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -96,6 +100,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-04
   Scenario: Select Financial goal and verify goal is saved correctly
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -111,6 +116,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-05
   Scenario: Select an Existing Audience and verify it is applied to the campaign
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -130,6 +136,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-06
   Scenario: Set Control Group percentage and verify it is saved correctly
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -151,6 +158,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-07
   Scenario: Set a Time-Based trigger and verify it is saved correctly
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -172,6 +180,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-08
   Scenario: Set an Event-Based trigger with Login event and verify it is saved
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -193,6 +202,7 @@ Feature: Campaign module
   # @Regression @Campaign @REG-CAMP-09
   # Scenario: Set a System Event trigger and verify it is saved correctly
   #   Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
   #   When I navigate to "Campaign"
   #   Then I should see the "Campaign" page
   #   Then Click the Create New Campaign button
@@ -214,6 +224,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-10
   Scenario: Attempting to set trigger without configuring an event shows a validation error
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -234,35 +245,35 @@ Feature: Campaign module
     Then Verify the validation error message is displayed for trigger
     Then Verify the trigger is not saved and the user remains on the trigger configuration screen
 
-  # @Regression @Campaign @REG-CAMP-11
-  # Scenario: Enable Re-enroll customers toggle and set days configuration
-  #   Given I log in for module "Campaign"
-  #   When I navigate to "Campaign"
-  #   Then I should see the "Campaign" page
-  #   Then Click the Create New Campaign button
-  #   Then Enter the Campaign Name and Campaign Tag
-  #   Then Click the Create campaign button
-  #   Then Verify the Campaign should should Create and navigate to the Edit Campaign page
-  #   Then click the Open Goal button
-  #   Then click the Set Goal button
-  #   Then Verify the Open Goal should be set successfully
-  #   Then click the Existing Audience button
-  #   Then select the audience from the list
-  #   Then click the ok button on the pop up
-  #   Then click the Set Audience button
-  #   Then click the Trigger button
-  #   Then Select the Event-Based trigger option
-  #   Then Select the Login event from the event list
-  #   Then Apply the event trigger configuration
-  #   Then Locate the Re-enroll customers toggle
-  #   Then Enable the Re-enroll customers toggle
-  #   Then Enter the number of days for re-enrollment
-  #   Then click the Set Trigger button
-  #   Then Verify the Re-enroll toggle setting is saved and shown in the trigger summary
+  @Regression @Campaign @REG-CAMP-11
+  Scenario: Enable Re-enroll customers toggle and set days configuration
+    Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
+    When I navigate to "Campaign"
+    Then I should see the "Campaign" page
+    Then Click the Create New Campaign button
+    Then Enter the Campaign Name and Campaign Tag
+    Then Click the Create campaign button
+    Then Verify the Campaign should should Create and navigate to the Edit Campaign page
+    Then click the Open Goal button
+    Then click the Set Goal button
+    Then Verify the Open Goal should be set successfully
+    Then click the Existing Audience button
+    Then select the audience from the list
+    Then click the ok button on the pop up
+    Then click the Set Audience button
+    Then Select the Event-Based trigger option
+    Then Select the Login event from the event list
+    Then Locate the Re-enroll customers toggle
+    Then Enable the Re-enroll customers toggle
+    Then Enter the number of days for re-enrollment
+    Then click the Set Trigger button
+    Then Verify the Re-enroll toggle setting is saved and shown in the trigger summary
 
   @Regression @Campaign @REG-CAMP-12
   Scenario: Add Library Communication content to campaign and verify it is applied
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -289,6 +300,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-13
   Scenario: Add a second Variant to the campaign communication and verify both are visible
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -321,6 +333,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-14
   Scenario: Set Static percentage allocation for A/B variants and verify it is saved
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -356,6 +369,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-15
   Scenario: Set Criteria-Based allocation for variants and verify criteria is applied
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -394,6 +408,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-16
   Scenario: Save Campaign as Draft preserves the goal setting on re-opening
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Create New Campaign button
@@ -416,10 +431,11 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-17
   Scenario: Campaign page loads and all status tabs navigate successfully
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Active tab
-    Then Verify Active tab should load successfully   
+    Then Verify Active tab should load successfully
     Then Click the Completed tab
     Then Verify Completed tab should load successfully
     Then Click the Draft tab
@@ -430,6 +446,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-18
   Scenario: Edit Published Campaign shows Audience and Trigger fields as restricted
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Verify Active tab should load successfully
@@ -446,6 +463,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-19
   Scenario: Duplicate Campaign copies all settings and appears in Draft tab
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the All tab
@@ -465,6 +483,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-20
   Scenario: Delete a Draft Campaign and verify it is removed from all tabs
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Draft tab
@@ -484,6 +503,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-21
   Scenario: Pagination loads correct campaign data on each page
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the All tab
@@ -497,6 +517,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-22
   Scenario: Search Campaign by name returns correct results and clears correctly
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the All tab
@@ -509,6 +530,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-23
   Scenario: Filter campaigns by status and verify only matching campaigns are shown
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the All tab
@@ -523,6 +545,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-24
   Scenario: Campaign History Log displays correct activity entries with timestamps
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the All tab
@@ -537,6 +560,7 @@ Feature: Campaign module
   @Regression @Campaign @REG-CAMP-25
   Scenario: View Campaign Report loads and displays key metrics correctly
     Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
     When I navigate to "Campaign"
     Then I should see the "Campaign" page
     Then Click the Active tab
@@ -547,3 +571,4 @@ Feature: Campaign module
     Then Click the View Report button
     Then Verify the Campaign Report page is displayed
     Then Verify the report data is loaded without any errors
+

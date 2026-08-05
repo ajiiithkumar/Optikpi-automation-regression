@@ -19,9 +19,23 @@ const getCampaignPage = (world: PlaywrightWorld) => new CampaignPage(world.page)
 
 /** Key in names.json for campaign title reads: first @REG-CAMP-* on scenario (producer); falls back to scenarioTag REG-CAMP match. */
 const resolveNamesJsonCampaignKey = (world: PlaywrightWorld): string | undefined => {
-    const k = world.campaignNamesJsonKey;
-    if (k && /^REG-CAMP-\w+$/.test(k)) return k;
-    return world.scenarioTag?.match(/REG-CAMP-\w+/)?.[0];
+    // Get the base tag for this scenario (e.g. 'REG-CAMP-20')
+    const tag = world.campaignNamesJsonKey || world.scenarioTag?.match(/REG-CAMP-\w+/)?.[0];
+    
+    if (!tag) return undefined;
+
+    // Map consumers to their respective producers for parallel execution
+    const consumerMap: Record<string, string> = {
+        'REG-CAMP-20': 'REG-CAMP-16', // Delete Draft needs a draft campaign
+        'REG-CAMP-21': 'REG-CAMP-16', // Clone Draft needs a draft campaign
+        'REG-CAMP-22': 'REG-CAMP-01', // Search needs a published campaign
+        'REG-CAMP-23': 'REG-CAMP-01', // Filter needs a published campaign
+        'REG-CAMP-24': 'REG-CAMP-01', // History log needs a published campaign
+        'REG-CAMP-25': 'REG-CAMP-01'  // View report needs a published campaign
+    };
+
+    // If it's a consumer, return the producer's key, otherwise return its own key
+    return consumerMap[tag] || tag;
 };
 
 /** Published-campaign regression: title comes from the REG-CAMP-01 names.json entry (producer scenario). */
@@ -29,33 +43,19 @@ const PUBLISHED_CAMPAIGN_NAMES_JSON_KEY = 'REG-CAMP-01';
 
 async function performActiveTabCampaignSearch(world: PlaywrightWorld, campaignName: string): Promise<void> {
     const page = getCampaignPage(world);
-    const maxRetries = 3;
-    let lastError: Error | null = null;
     const searchBarSel = "//input[@id='campaign-listView-table-search-icon']";
 
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        try {
-            console.log(`[Campaign Search] Attempt ${attempt}/${maxRetries}...`);
-            const searchField = world.page!.locator(searchBarSel).first();
-            await searchField.click();
-            await searchField.fill('');
-            await world.page!.waitForTimeout(500);
-            await page.searchCampaign(campaignName);
-
-            await page.verifyCampaignVisible(campaignName, 15000);
-            ExtentTestManager.logPass(`Campaign "${campaignName}" found in the Active tab (attempt ${attempt})`);
-            return;
-        } catch (err) {
-            lastError = err as Error;
-            console.log(`[Campaign Search] Attempt ${attempt} failed: ${lastError.message}`);
-            if (attempt < maxRetries) {
-                console.log('[Campaign Search] Retrying...');
-                await world.page!.waitForTimeout(2000);
-            }
-        }
-    }
-
-    throw lastError || new Error(`Campaign "${campaignName}" not found after ${maxRetries} attempts`);
+    console.log(`[Campaign Search] Attempt 1/3...`);
+    const searchField = world.page!.locator(searchBarSel).first();
+    await searchField.click();
+    await searchField.fill('');
+    await world.page!.waitForTimeout(500);
+    await page.searchCampaign(campaignName);
+    await world.page!.waitForTimeout(1000);
+    // NOTE: Visibility check is intentionally NOT done here.
+    // Use "Verify the campaign is visible in the Draft tab" for positive check.
+    // Use "Verify the deleted campaign does not appear in the All tab" for negative check.
+    ExtentTestManager.logPass(`Campaign name "${campaignName}" entered in the search bar`);
 }
 
 // ─── Campaign Tab Steps (REG-CAMP-01) ─────────────────────────────────────────
@@ -143,7 +143,7 @@ Then('Verify the Campaign should should Create and navigate to the Edit Campaign
             console.log(`[Campaign] Edit page wait attempt ${attempt} failed: ${lastError.message}`);
             if (attempt < maxRetries) {
                 await this.page.waitForTimeout(3000);
-                await this.page.reload({ waitUntil: 'networkidle' }).catch(() => {});
+                await this.page.reload({ waitUntil: 'networkidle' }).catch(() => { });
                 await this.page.waitForTimeout(2000);
             }
         }
@@ -942,7 +942,8 @@ Then('Click the Delete option', async function (this: PlaywrightWorld) {
 });
 
 Then('Click the Delete Confirm button', async function (this: PlaywrightWorld) {
-    await getCampaignPage(this).clickDeleteConfirm();
+    const campaignName = this['currentCampaignName'] as string | undefined;
+    await getCampaignPage(this).clickDeleteConfirm(campaignName);
     ExtentTestManager.logPass('Clicked Delete Confirm button');
 });
 

@@ -22,7 +22,7 @@ const dayjs = require('dayjs');
 // ── Run-summary helpers ───────────────────────────────────────────────────────
 
 const SCREENSHOT_DIR = path.join(process.cwd(), 'reports', 'screenshots');
-const SUMMARY_PATH   = path.join(process.cwd(), 'reports', 'run-summary.json');
+const SUMMARY_PATH = path.join(process.cwd(), 'reports', 'run-summary.json');
 
 const formatDuration = (ms) => {
     if (ms == null || !Number.isFinite(ms) || ms < 0) return 'N/A';
@@ -63,21 +63,21 @@ const countScenarioStats = (featureExtentTests) => {
 };
 
 const writeRunSummary = (opts) => {
-    const featureExtentTests   = opts.featureExtentTests  || [];
-    const failedScenarioDetails = opts.failedScenarios    || [];
+    const featureExtentTests = opts.featureExtentTests || [];
+    const failedScenarioDetails = opts.failedScenarios || [];
     const { totalScenarios, passed, failed } = countScenarioStats(featureExtentTests);
     const durationRounded = (opts.durationMs != null && Number.isFinite(opts.durationMs))
         ? Math.round(opts.durationMs) : 0;
 
     const summary = {
-        status:           failed === 0 && passed > 0 ? 'passed' : 'failed',
+        status: failed === 0 && passed > 0 ? 'passed' : 'failed',
         totalScenarios,
         passed,
         failed,
-        duration:         formatDuration(durationRounded),
-        durationMs:       durationRounded,
-        timestamp:        new Date().toLocaleString(),
-        failedScenarios:  failedScenarioDetails,
+        duration: formatDuration(durationRounded),
+        durationMs: durationRounded,
+        timestamp: new Date().toLocaleString(),
+        failedScenarios: failedScenarioDetails,
         failedScreenshots: collectFailedScreenshots(),
     };
 
