@@ -1,7 +1,7 @@
 Feature: Settings module
   # Users are managed in config/users.json (kept out of the report).
 
-  @Regression @REG-SET-01
+  @Regression @Settings @REG-SET-01
   Scenario: Settings page loads successfully
     Given I log in for module "Settings"
     Then I close the announcement popup if it appears

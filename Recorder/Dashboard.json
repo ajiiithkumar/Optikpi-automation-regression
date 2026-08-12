@@ -1,0 +1,1192 @@
+{
+    "title": "Recording 8/12/2026 at 12:11:24 PM",
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 1142,
+            "height": 748,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://demo.optikpi.com/en/dashboard_v2/overview",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://demo.optikpi.com/en/dashboard_v2/overview",
+                    "title": "Optikpi: Dashboard v2"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "main > div > div > div > div.flex-col > div.flex"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div/div[2]/div[1]"
+                ],
+                [
+                    "pierce/main > div > div > div > div.flex-col > div.flex"
+                ]
+            ],
+            "offsetY": 24.76953125,
+            "offsetX": 811.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Dashboard[role=\"button\"]",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "li:nth-of-type(1) > ul > li:nth-of-type(1) span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"sidebar-dashboard-menu\"]/span"
+                ],
+                [
+                    "pierce/li:nth-of-type(1) > ul > li:nth-of-type(1) span"
+                ]
+            ],
+            "offsetY": 3.02734375,
+            "offsetX": 28.03515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Dashboard[role=\"button\"]",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "li:nth-of-type(1) > ul > li:nth-of-type(1) span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"sidebar-dashboard-menu\"]/span"
+                ],
+                [
+                    "pierce/li:nth-of-type(1) > ul > li:nth-of-type(1) span"
+                ]
+            ],
+            "offsetY": 3.02734375,
+            "offsetX": 28.03515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Overview",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-overview'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-overview\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-overview'] > span"
+                ]
+            ],
+            "offsetY": 16.78515625,
+            "offsetX": 43.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Actions",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-actions'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-actions\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-actions'] > span"
+                ]
+            ],
+            "offsetY": 6.78515625,
+            "offsetX": 26.58203125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Engagement",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-engagement'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-engagement\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-engagement'] > span"
+                ],
+                [
+                    "text/Engagement"
+                ]
+            ],
+            "offsetY": 19.78515625,
+            "offsetX": 52.09765625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Business Performance",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-business-performance'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-business-performance\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-business-performance'] > span"
+                ],
+                [
+                    "text/Business Performance"
+                ]
+            ],
+            "offsetY": 4.78515625,
+            "offsetX": 52.86328125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mt-0 > div > div.gap-3 span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown\"]/div/div/span"
+                ],
+                [
+                    "pierce/div.mt-0 > div > div.gap-3 span"
+                ],
+                [
+                    "text/Last 30 days"
+                ]
+            ],
+            "offsetY": 11.19140625,
+            "offsetX": 58.48828125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/This week",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "#headlessui-portal-root span:nth-of-type(1) div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown-this-week\"]/div"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span:nth-of-type(1) div"
+                ],
+                [
+                    "text/This week"
+                ]
+            ],
+            "offsetY": 3.7890625,
+            "offsetX": 90.515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mt-0 > div > div.gap-3 span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown\"]/div/div/span"
+                ],
+                [
+                    "pierce/div.mt-0 > div > div.gap-3 span"
+                ],
+                [
+                    "text/This week"
+                ]
+            ],
+            "offsetY": 6.19140625,
+            "offsetX": 4.98828125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "main > div > div > div"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div"
+                ],
+                [
+                    "pierce/main > div > div > div"
+                ]
+            ],
+            "offsetY": 121.0078125,
+            "offsetX": 56.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Engagement",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-engagement'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-engagement\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-engagement'] > span"
+                ],
+                [
+                    "text/Engagement"
+                ]
+            ],
+            "offsetY": 6.78515625,
+            "offsetX": 41.09765625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Actions",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-actions'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-actions\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-actions'] > span"
+                ],
+                [
+                    "text/Actions"
+                ]
+            ],
+            "offsetY": 21.78515625,
+            "offsetX": 13.58203125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Overview",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-overview'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-overview\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-overview'] > span"
+                ],
+                [
+                    "text/Overview"
+                ]
+            ],
+            "offsetY": 20.78515625,
+            "offsetX": 49.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.relative div.gap-3 > div > div div > div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown\"]/div/div"
+                ],
+                [
+                    "pierce/div.relative div.gap-3 > div > div div > div"
+                ]
+            ],
+            "offsetY": 9.69140625,
+            "offsetX": 28.22265625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Last 7 days"
+                ],
+                [
+                    "[data-testid='date-range-dropdown-last-7-days']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown-last-7-days\"]"
+                ],
+                [
+                    "pierce/[data-testid='date-range-dropdown-last-7-days']"
+                ]
+            ],
+            "offsetY": 2.84375,
+            "offsetX": 108.515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mt-0 > div > div.gap-3 span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown\"]/div/div/span"
+                ],
+                [
+                    "pierce/div.mt-0 > div > div.gap-3 span"
+                ],
+                [
+                    "text/Last 7 days"
+                ]
+            ],
+            "offsetY": 11.19140625,
+            "offsetX": 57.41015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Last 30 days",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "span:nth-of-type(4) div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown-last-30-days\"]/div"
+                ],
+                [
+                    "pierce/span:nth-of-type(4) div"
+                ],
+                [
+                    "text/Last 30 days"
+                ]
+            ],
+            "offsetY": 11.89453125,
+            "offsetX": 94.515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.relative div.gap-2 > span"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div/div[1]/div[2]/div/div[1]/span"
+                ],
+                [
+                    "pierce/div.relative div.gap-2 > span"
+                ],
+                [
+                    "text/Jul 14, 2026"
+                ]
+            ],
+            "offsetY": 14.85546875,
+            "offsetX": 269.09375,
+            "duration": 1114.0999999046326
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mt-0 > div > div.gap-3 span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown\"]/div/div/span"
+                ],
+                [
+                    "pierce/div.mt-0 > div > div.gap-3 span"
+                ],
+                [
+                    "text/Last 30 days"
+                ]
+            ],
+            "offsetY": 3.19140625,
+            "offsetX": 58.48828125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Last month",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "span:nth-of-type(5) div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown-last-month\"]/div"
+                ],
+                [
+                    "pierce/span:nth-of-type(5) div"
+                ],
+                [
+                    "text/Last month"
+                ]
+            ],
+            "offsetY": 8.9296875,
+            "offsetX": 78.515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mt-0 > div > div.gap-3 span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown\"]/div/div/span"
+                ],
+                [
+                    "pierce/div.mt-0 > div > div.gap-3 span"
+                ],
+                [
+                    "text/Last month"
+                ]
+            ],
+            "offsetY": 7.19140625,
+            "offsetX": 62.5703125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Last quarter",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "span:nth-of-type(6) div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown-last-quarter\"]/div"
+                ],
+                [
+                    "pierce/span:nth-of-type(6) div"
+                ],
+                [
+                    "text/Last quarter"
+                ]
+            ],
+            "offsetY": 6.96484375,
+            "offsetX": 86.515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mt-0 > div"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div/div[1]/div[2]/div"
+                ],
+                [
+                    "pierce/div.mt-0 > div"
+                ],
+                [
+                    "text/Apr 1, 2026 - Jun 30, 2026 (UTC+05:30)Last"
+                ]
+            ],
+            "offsetY": 39.69140625,
+            "offsetX": 245.9296875
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.relative div.gap-2 > span"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div/div[1]/div[2]/div/div[1]/span"
+                ],
+                [
+                    "pierce/div.relative div.gap-2 > span"
+                ],
+                [
+                    "text/Apr 1, 2026 -"
+                ]
+            ],
+            "offsetY": 4.85546875,
+            "offsetX": 188.9296875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.relative div.gap-2 > span"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div/div[1]/div[2]/div/div[1]/span"
+                ],
+                [
+                    "pierce/div.relative div.gap-2 > span"
+                ],
+                [
+                    "text/Apr 1, 2026 -"
+                ]
+            ],
+            "offsetY": 4.85546875,
+            "offsetX": 188.9296875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.relative div.gap-3 > div > div div > div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown\"]/div/div"
+                ],
+                [
+                    "pierce/div.relative div.gap-3 > div > div div > div"
+                ]
+            ],
+            "offsetY": 10.69140625,
+            "offsetX": 58.38671875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Custom",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "span:nth-of-type(7) div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown-custom\"]/div"
+                ],
+                [
+                    "pierce/span:nth-of-type(7) div"
+                ]
+            ],
+            "offsetY": 10,
+            "offsetX": 81.515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "[data-testid='dateTimePicker-modal-absolute-date-2026-07-01'] > time"
+                ],
+                [
+                    "xpath///*[@data-testid=\"dateTimePicker-modal-absolute-date-2026-07-01\"]/time"
+                ],
+                [
+                    "pierce/[data-testid='dateTimePicker-modal-absolute-date-2026-07-01'] > time"
+                ]
+            ],
+            "offsetY": 6.45703125,
+            "offsetX": 18.55859375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.border-r [data-testid='dateTimePicker-modal-absolute-date-2026-07-31'] > time"
+                ],
+                [
+                    "xpath///*[@data-testid=\"dateTimePicker-modal-absolute-date-2026-07-31\"]/time"
+                ],
+                [
+                    "pierce/div.border-r [data-testid='dateTimePicker-modal-absolute-date-2026-07-31'] > time"
+                ]
+            ],
+            "offsetY": 6.9140625,
+            "offsetX": 17.4921875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Apply"
+                ],
+                [
+                    "[data-testid='dateTimePicker-modal-apply-button']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"dateTimePicker-modal-apply-button\"]"
+                ],
+                [
+                    "pierce/[data-testid='dateTimePicker-modal-apply-button']"
+                ],
+                [
+                    "text/Apply"
+                ]
+            ],
+            "offsetY": 25.625,
+            "offsetX": 45.91796875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "main > div > div > div > div.flex-col > div.flex"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div/div[2]/div[1]"
+                ],
+                [
+                    "pierce/main > div > div > div > div.flex-col > div.flex"
+                ]
+            ],
+            "offsetY": 13.76953125,
+            "offsetX": 1003.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Actions",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-actions'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-actions\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-actions'] > span"
+                ]
+            ],
+            "offsetY": 20.78515625,
+            "offsetX": 22.58203125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Engagement",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-engagement'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-engagement\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-engagement'] > span"
+                ],
+                [
+                    "text/Engagement"
+                ]
+            ],
+            "offsetY": 17.78515625,
+            "offsetX": 58.09765625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Business Performance",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-business-performance'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-business-performance\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-business-performance'] > span"
+                ],
+                [
+                    "text/Business Performance"
+                ]
+            ],
+            "offsetY": 7.78515625,
+            "offsetX": 60.86328125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mt-0 > div > div.gap-3 span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"date-range-dropdown\"]/div/div/span"
+                ],
+                [
+                    "pierce/div.mt-0 > div > div.gap-3 span"
+                ]
+            ],
+            "offsetY": 1.19140625,
+            "offsetX": 44.73828125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "main > div > div > div > div.relative"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div/div[1]"
+                ],
+                [
+                    "pierce/main > div > div > div > div.relative"
+                ]
+            ],
+            "offsetY": 79.0078125,
+            "offsetX": 811.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Filter",
+                    "aria/[role=\"image\"]"
+                ],
+                [
+                    "div.items-end > div.flex svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"dashboard-filter-btn\"]/div/svg"
+                ],
+                [
+                    "pierce/div.items-end > div.flex svg"
+                ]
+            ],
+            "offsetY": 9.79296875,
+            "offsetX": 2.625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Select audience"
+                ],
+                [
+                    "[data-testid='dashboard-filter-select-audience-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"dashboard-filter-select-audience-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='dashboard-filter-select-audience-btn']"
+                ]
+            ],
+            "offsetY": 4.7890625,
+            "offsetX": 141.76953125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "div.min-h-0 > div > div input"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r25o:\"]/form/div[2]/div/div/div/div/input"
+                ],
+                [
+                    "pierce/div.min-h-0 > div > div input"
+                ]
+            ],
+            "offsetY": 26.01953125,
+            "offsetX": 133.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "div.min-h-0 > div > div input"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r25o:\"]/form/div[2]/div/div/div/div/input"
+                ],
+                [
+                    "pierce/div.min-h-0 > div > div input"
+                ]
+            ],
+            "offsetY": 32.01953125,
+            "offsetX": 93.015625
+        },
+        {
+            "type": "change",
+            "value": "test",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "div.min-h-0 > div > div input"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r25o:\"]/form/div[2]/div/div/div/div/input"
+                ],
+                [
+                    "pierce/div.min-h-0 > div > div input"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "[data-testid='existing-audience-radio-6a2679d2abce52867fbff298-label']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"existing-audience-radio-6a2679d2abce52867fbff298-label\"]"
+                ],
+                [
+                    "pierce/[data-testid='existing-audience-radio-6a2679d2abce52867fbff298-label']"
+                ],
+                [
+                    "text/Test08-06"
+                ]
+            ],
+            "offsetY": 14.03515625,
+            "offsetX": 20.03125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Test08-06"
+                ],
+                [
+                    "[data-testid='existing-audience-radio-6a2679d2abce52867fbff298']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"existing-audience-radio-6a2679d2abce52867fbff298\"]"
+                ],
+                [
+                    "pierce/[data-testid='existing-audience-radio-6a2679d2abce52867fbff298']"
+                ]
+            ],
+            "offsetY": 12.04296875,
+            "offsetX": 44.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Ok",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "#headlessui-portal-root > div:nth-of-type(2) [data-testid='flyout-confirm-btn'] > div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"flyout-confirm-btn\"]/div"
+                ],
+                [
+                    "pierce/#headlessui-portal-root > div:nth-of-type(2) [data-testid='flyout-confirm-btn'] > div"
+                ],
+                [
+                    "text/Ok"
+                ]
+            ],
+            "offsetY": 11.49609375,
+            "offsetX": 6.953125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Apply",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-testid='flyout-confirm-btn'] > div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"flyout-confirm-btn\"]/div"
+                ],
+                [
+                    "pierce/[data-testid='flyout-confirm-btn'] > div"
+                ],
+                [
+                    "text/Apply"
+                ]
+            ],
+            "offsetY": 1.49609375,
+            "offsetX": 21.7421875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Engagement",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-engagement'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-engagement\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-engagement'] > span"
+                ],
+                [
+                    "text/Engagement"
+                ]
+            ],
+            "offsetY": 11.78515625,
+            "offsetX": 73.09765625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Filter"
+                ],
+                [
+                    "[data-testid='dashboard-filter-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"dashboard-filter-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='dashboard-filter-btn']"
+                ]
+            ],
+            "offsetY": 17.04296875,
+            "offsetX": 12.859375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Reset filters",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-testid='common-flyout-reset-btn'] > div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"common-flyout-reset-btn\"]/div"
+                ],
+                [
+                    "pierce/[data-testid='common-flyout-reset-btn'] > div"
+                ],
+                [
+                    "text/Reset filters"
+                ]
+            ],
+            "offsetY": 5.49609375,
+            "offsetX": 50.03125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mt-0 > div"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div/div[1]/div[2]/div"
+                ],
+                [
+                    "pierce/div.mt-0 > div"
+                ],
+                [
+                    "text/Jul 1, 2026 - Jul 31, 2026 (UTC+05:30)Custom"
+                ]
+            ],
+            "offsetY": 40.69140625,
+            "offsetX": 255.01171875,
+            "duration": 1157.0999999046326
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "main > div > div > div > div.flex-col > div.flex"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div/div[2]/div[1]"
+                ],
+                [
+                    "pierce/main > div > div > div > div.flex-col > div.flex"
+                ],
+                [
+                    "text/engagementOverviewActionsEngagementBusiness PerformanceFilter"
+                ]
+            ],
+            "offsetY": 11.76953125,
+            "offsetX": 952.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Business Performance",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-business-performance'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-business-performance\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-business-performance'] > span"
+                ],
+                [
+                    "text/Business Performance"
+                ]
+            ],
+            "offsetY": 10.78515625,
+            "offsetX": 40.86328125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Overview",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-overview'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-overview\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-overview'] > span"
+                ],
+                [
+                    "text/Overview"
+                ]
+            ],
+            "offsetY": 12.78515625,
+            "offsetX": 31.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Actions",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-actions'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-actions\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-actions'] > span"
+                ]
+            ],
+            "offsetY": 1.78515625,
+            "offsetX": 36.58203125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Engagement",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='dashboard_v2-tab-engagement'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"dashboard_v2-tab-engagement\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='dashboard_v2-tab-engagement'] > span"
+                ],
+                [
+                    "text/Engagement"
+                ]
+            ],
+            "offsetY": 10.78515625,
+            "offsetX": 80.09765625
+        }
+    ]
+}

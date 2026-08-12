@@ -18,7 +18,8 @@ export class WorkflowPage extends BasePage {
         nameInput:          "//input[@data-testid='workflow-name-input']",
         tagInput:           "//input[@data-testid='workflow-tag-input']",
         createBtn:          "//button[@data-testid='create-workflow-button']",
-        editTitle:          "//h2[@title]",
+        editTitle:          "//h2[contains(@class,'text-2xl')]",
+
 
         // Enrollment
         setupEnrollment:       "//button[@data-testid='node-setup-btn']",

@@ -171,9 +171,19 @@ module.exports = class ExtentCucumberJSAdapterWrapper extends Formatter {
         const featureUriToTest = new Map();
         const scenariOutlineIdToTest = new Map();
 
-        this.eventDataCollector
-            .getTestCaseAttempts()
-            .filter((t) => !t.attempt)
+        // For retried scenarios, we want the LAST attempt (final result).
+        // The old filter `.filter((t) => !t.attempt)` only kept attempt 0 (always the first/failed attempt).
+        const allAttempts = this.eventDataCollector.getTestCaseAttempts();
+        const lastAttemptMap = new Map();
+        allAttempts.forEach((t) => {
+            const key = t.testCase.id;
+            const prev = lastAttemptMap.get(key);
+            if (!prev || (t.attempt || 0) > (prev.attempt || 0)) {
+                lastAttemptMap.set(key, t);
+            }
+        });
+
+        Array.from(lastAttemptMap.values())
             .forEach((testCaseAttempt) => {
                 const { gherkinDocument, pickle } = testCaseAttempt;
                 const testCaseId = pickle.astNodeIds[0];

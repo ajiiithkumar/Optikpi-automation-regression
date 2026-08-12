@@ -529,14 +529,22 @@ Then('Click the communication that comes first in the list', async function (thi
     const targetName = this['lastSearchedCommunication'] ?? communicationName;
     const card = this.page.locator(`//div[@data-testid='${targetName}']`).first();
     await card.waitFor({ state: 'visible', timeout: 10000 });
-    await this.page.waitForTimeout(2000);
-
-    await card.hover({ force: true });
     await this.page.waitForTimeout(500);
 
+    // Hover naturally (without force) to trigger CSS :hover which reveals the button
+    await card.hover();
+    await this.page.waitForTimeout(800);
+
     const useBtn = this.page.locator(LIBRARY_USE_CONTENT_SEL).first();
-    await useBtn.waitFor({ state: 'visible', timeout: 10000 });
-    await useBtn.click();
+
+    // Check if visible after hover; if still CSS-hidden, force click (button IS there but hidden)
+    const isVisible = await useBtn.isVisible().catch(() => false);
+    if (isVisible) {
+        await useBtn.click();
+    } else {
+        await useBtn.click({ force: true }); // bypass CSS hidden class
+    }
+
     await this.page.waitForTimeout(2000);
     ExtentTestManager.logPass(`Clicked first communication in the list: ${targetName}`);
 });

@@ -1,4 +1,5 @@
 import { BasePage } from './base.page';
+import { Locator } from 'playwright';
 
 /**
  * LoginPage — encapsulates login form selectors and the login flow.
@@ -20,9 +21,9 @@ export class LoginPage extends BasePage {
 
     readonly baseUrl = 'https://demo.optikpi.com/en';
 
-    /** Navigate to the base URL. */
+    /** Navigate to the base URL and wait for the page to fully load (React hydrated). */
     async goto() {
-        await this.page.goto(this.baseUrl, { waitUntil: 'domcontentloaded' });
+        await this.page.goto(this.baseUrl, { waitUntil: 'load' });
     }
 
     /** Check if the login form is visible. */
@@ -30,30 +31,57 @@ export class LoginPage extends BasePage {
         return this.isVisible(this.sel.emailInput, 5000);
     }
 
+    /**
+     * Fill a form field with automatic retry.
+     *
+     * React controlled inputs can be reset by the framework mid-fill.
+     * Strategy: fill() → verify value → if mismatch, retry up to maxAttempts.
+     * Last resort: pressSequentially (types char-by-char, bypasses React value reset).
+     */
+    private async fillWithRetry(locator: Locator, value: string, maxAttempts = 3): Promise<void> {
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+            await locator.click().catch(() => {});
+            await locator.fill(value);
+            await this.page.waitForTimeout(300);
+
+            const current = await locator.inputValue().catch(() => '');
+            if (current === value) {
+                if (attempt > 1) {
+                    console.log(`[Login] fillWithRetry: value set on attempt ${attempt}`);
+                }
+                return;
+            }
+            console.log(`[Login] fillWithRetry attempt ${attempt}/${maxAttempts}: expected "${value.substring(0, 3)}***" got "${current.substring(0, 3)}***"`);
+            await this.page.waitForTimeout(300);
+        }
+
+        // Last resort: type character-by-character (cannot be intercepted by React)
+        console.log(`[Login] fillWithRetry: falling back to pressSequentially`);
+        await locator.click({ clickCount: 3 }).catch(() => {}); // triple-click selects all existing text
+        await locator.pressSequentially(value, { delay: 60 });
+    }
+
     /** Fill in credentials and submit the login form. */
     async login(username: string, password: string) {
         const emailLoc = this.page.locator(this.sel.emailInput);
         await emailLoc.waitFor({ state: 'visible', timeout: 30000 });
-        await emailLoc.click().catch(() => {});
-        await emailLoc.fill(username);
-        
-        // Handle React hydration race condition where email input gets cleared during re-render
-        if ((await emailLoc.inputValue()) !== username) {
-            await this.pause(500);
-            await emailLoc.fill(username);
-        }
+        await this.fillWithRetry(emailLoc, username);
 
         const passLoc = this.page.locator(this.sel.passwordInput);
         await passLoc.waitFor({ state: 'visible', timeout: 10000 });
-        await passLoc.click().catch(() => {});
-        await passLoc.fill(password);
+        await this.fillWithRetry(passLoc, password);
 
-        if ((await passLoc.inputValue()) !== password) {
-            await this.pause(500);
-            await passLoc.fill(password);
+        // ── Pre-submit verification ───────────────────────────────────────────
+        // React can re-render and clear the email field AFTER the password is
+        // filled. Check email value one final time before clicking Sign in.
+        const emailBeforeSubmit = await emailLoc.inputValue().catch(() => '');
+        if (emailBeforeSubmit !== username) {
+            console.log(`[Login] Email was cleared after password fill (got: "${emailBeforeSubmit}") — re-filling`);
+            await this.fillWithRetry(emailLoc, username);
         }
 
-        await this.pause(1000);
+        await this.pause(500);
+
         const submit = this.page.locator(this.sel.submitButton);
         await submit.waitFor({ state: 'attached', timeout: 30000 });
 

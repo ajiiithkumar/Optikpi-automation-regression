@@ -1,7 +1,7 @@
 Feature: Workflow module Test Cases
   # Users are managed in config/users.json (kept out of the report).
 
-  @Regression @REG-WORKFLOW-01
+  @Regression @Workflow @REG-WORKFLOW-01
   Scenario: Workflow page load
     Given I log in for module "Workflow"
     Then I close the announcement popup if it appears
@@ -16,7 +16,7 @@ Feature: Workflow module Test Cases
     Then Click The All tab
     Then Verify Workflow All tab should load successfully
 
-  @Regression @REG-WORKFLOW-02
+  @Regression @Workflow @REG-WORKFLOW-02
   Scenario: Workflow Activation with error validation
     Given I log in for module "Workflow"
     Then I close the announcement popup if it appears
@@ -73,7 +73,7 @@ Feature: Workflow module Test Cases
     Then Enter the workflow name in the search bar
     Then Verify the workflow name is shown in the list
 
-  @Regression @REG-WORKFLOW-03
+  @Regression @Workflow @REG-WORKFLOW-03
   Scenario: Workflow creation with Existing Audience enrollment and Delay node saved as Draft
     Given I log in for module "Workflow"
     Then I close the announcement popup if it appears
@@ -110,4 +110,3 @@ Feature: Workflow module Test Cases
     Then Click the workflow save draft confirm button
     Then Enter the workflow name in the search bar
     Then Verify the workflow name is shown in the list
-
