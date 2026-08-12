@@ -43,7 +43,7 @@ jobs:
       - name: Run Audience and Campaign regression suite
         id: run-tests
         continue-on-error: true
-        run: npm run test:tag -- "@Audience or @Campaign"
+        run: npm run test:tag -- "@Regression"
 
       - name: Upload test reports
         if: always()

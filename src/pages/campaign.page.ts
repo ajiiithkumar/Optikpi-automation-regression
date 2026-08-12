@@ -99,7 +99,8 @@ export class CampaignPage extends BasePage {
         
 
         // Campaign Details / Edit Name
-        campaignEditbtn: "//h2[@title] | //button[@data-testid='campaign-edit-settings-btn'] | //*[contains(@data-testid,'campaign-performance-report')]",
+        campaignEditbtn: "//button[@data-testid='campaign-edit-settings-btn'] | //*[contains(@data-testid,'campaign-performance-report')]",
+
         editNameBtn:          "//button[contains(@data-testid,'edit-name') or contains(@aria-label,'Edit name') or contains(normalize-space(),'Edit name')]",
         nameEditInput:        "//input[@data-testid='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
         saveNameBtn:          "//button[@data-testid='create-campaign-button' and contains(normalize-space(),'Update campaign')]",
