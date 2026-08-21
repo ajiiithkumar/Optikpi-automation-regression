@@ -1,0 +1,4168 @@
+{
+    "title": "Recording 8/13/2026 at 6:03:36 PM",
+    "steps": [
+        {
+            "type": "setViewport",
+            "width": 1252,
+            "height": 748,
+            "deviceScaleFactor": 1,
+            "isMobile": false,
+            "hasTouch": false,
+            "isLandscape": false
+        },
+        {
+            "type": "navigate",
+            "url": "https://demo.optikpi.com/en/audience/list/all",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://demo.optikpi.com/en/audience/list/all",
+                    "title": "Optikpi: Audience"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "main > div > div > div.sm\\:items-center"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[4]"
+                ],
+                [
+                    "pierce/main > div > div > div.sm\\:items-center"
+                ]
+            ],
+            "offsetY": 11.7890625,
+            "offsetX": 999.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Audience[role=\"button\"]",
+                    "aria/[role=\"graphics-symbol\"]"
+                ],
+                [
+                    "li:nth-of-type(1) li:nth-of-type(2) path"
+                ],
+                [
+                    "xpath///*[@data-testid=\"sidebar-audience-icon\"]/path"
+                ],
+                [
+                    "pierce/li:nth-of-type(1) li:nth-of-type(2) path"
+                ]
+            ],
+            "offsetY": 12.052734375,
+            "offsetX": 18.013019561767578
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Create new audience",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "div.flex > span div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-new-audience-btn\"]/div"
+                ],
+                [
+                    "pierce/div.flex > span div"
+                ],
+                [
+                    "text/Create new audience"
+                ]
+            ],
+            "offsetY": 7.26953125,
+            "offsetX": 152.03125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "html > body > div:nth-of-type(1) > main > div > div > ul > [data-testid='modal-btn'] div.font-normal"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-create-from-scratch-modal-btn\"]/div/div/div[2]"
+                ],
+                [
+                    "pierce/html > body > div:nth-of-type(1) > main > div > div > ul > [data-testid='modal-btn'] div.font-normal"
+                ],
+                [
+                    "text/Create a customer"
+                ]
+            ],
+            "offsetY": 30.5390625,
+            "offsetX": 151.78125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Audience name"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-input']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-input\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-input']"
+                ]
+            ],
+            "offsetY": 10.8671875,
+            "offsetX": 79.890625
+        },
+        {
+            "type": "change",
+            "value": "Test 13-08",
+            "selectors": [
+                [
+                    "aria/Audience name"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-input']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-input\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-input']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "change",
+            "value": "qa",
+            "selectors": [
+                [
+                    "aria/Add tags"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-tag']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-tag\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-tag']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Add tags"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-tag']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-tag\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-tag']"
+                ]
+            ],
+            "offsetY": 22.64453125,
+            "offsetX": 75.6484375
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Create"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-ok-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-ok-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-ok-btn']"
+                ]
+            ],
+            "offsetY": 17.921875,
+            "offsetX": 63.88671875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.px-6 > div.flex-col > div > div > div div > div > div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-ruleBuilder-criteriaIcon-group-1\"]/div/div/div"
+                ],
+                [
+                    "pierce/div.px-6 > div.flex-col > div > div > div div > div > div"
+                ],
+                [
+                    "text/Criteria"
+                ]
+            ],
+            "offsetY": 7.15625,
+            "offsetX": 2.28515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Event performed",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "#headlessui-portal-root span:nth-of-type(1) div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-ruleBuilder-criteriaIcon-group-1-event-performed\"]/div"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span:nth-of-type(1) div"
+                ],
+                [
+                    "text/Event performed"
+                ]
+            ],
+            "offsetY": 2.03125,
+            "offsetX": 34.265625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/event",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "div.w-max span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-ruleBuilder-event-performed-group-1-event-btn-1\"]/span"
+                ],
+                [
+                    "pierce/div.w-max span"
+                ],
+                [
+                    "text/event"
+                ]
+            ],
+            "offsetY": 10.4140625,
+            "offsetX": 26.828125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "html > body > #headlessui-portal-root > div:nth-of-type(2) > div > #headlessui-dialog-\\:rs4\\: > div.overflow-hidden > div > div > #headlessui-dialog-panel-\\:rsa\\: > div > div.flex-1 > div.flex-1 > div > div:nth-of-type(2) > #headlessui-disclosure-panel-\\:rse\\: > div > div:nth-of-type(3) > fieldset > div > span > button > [data-testid='login']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"login\"]"
+                ],
+                [
+                    "pierce/html > body > #headlessui-portal-root > div:nth-of-type(2) > div > #headlessui-dialog-\\:rs4\\: > div.overflow-hidden > div > div > #headlessui-dialog-panel-\\:rsa\\: > div > div.flex-1 > div.flex-1 > div > div:nth-of-type(2) > #headlessui-disclosure-panel-\\:rse\\: > div > div:nth-of-type(3) > fieldset > div > span > button > [data-testid='login']"
+                ],
+                [
+                    "text/Login"
+                ]
+            ],
+            "offsetY": 12.77734375,
+            "offsetX": 27.53125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Login[role=\"radio\"]"
+                ],
+                [
+                    "html > body > #headlessui-portal-root > div:nth-of-type(2) > div > #headlessui-dialog-\\:rs4\\: > div.overflow-hidden > div > div > #headlessui-dialog-panel-\\:rsa\\: > div > div.flex-1 > div.flex-1 > div > div:nth-of-type(2) > #headlessui-disclosure-panel-\\:rse\\: > div > div:nth-of-type(3) > fieldset > div > span > button > [data-testid='login']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"login\"]"
+                ],
+                [
+                    "pierce/html > body > #headlessui-portal-root > div:nth-of-type(2) > div > #headlessui-dialog-\\:rs4\\: > div.overflow-hidden > div > div > #headlessui-dialog-panel-\\:rsa\\: > div > div.flex-1 > div.flex-1 > div > div:nth-of-type(2) > #headlessui-disclosure-panel-\\:rse\\: > div > div:nth-of-type(3) > fieldset > div > span > button > [data-testid='login']"
+                ]
+            ],
+            "offsetY": 8.7734375,
+            "offsetX": 55.51953125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "[data-testid='audience-ruleBuilder-event-performed-group-1-dateTimePickerModal-rangeValue-Btn-1']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-ruleBuilder-event-performed-group-1-dateTimePickerModal-rangeValue-Btn-1\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-ruleBuilder-event-performed-group-1-dateTimePickerModal-rangeValue-Btn-1']"
+                ],
+                [
+                    "text/Today"
+                ]
+            ],
+            "offsetY": 5.00390625,
+            "offsetX": 24.0625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "[data-testid='dateTimePicker-modal-relative-today'] > li"
+                ],
+                [
+                    "xpath///*[@data-testid=\"dateTimePicker-modal-relative-today\"]/li"
+                ],
+                [
+                    "pierce/[data-testid='dateTimePicker-modal-relative-today'] > li"
+                ]
+            ],
+            "offsetY": 13.9921875,
+            "offsetX": 50.890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Apply"
+                ],
+                [
+                    "[data-testid='dateTimePicker-modal-apply-button']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"dateTimePicker-modal-apply-button\"]"
+                ],
+                [
+                    "pierce/[data-testid='dateTimePicker-modal-apply-button']"
+                ],
+                [
+                    "text/Apply"
+                ]
+            ],
+            "offsetY": 22.81640625,
+            "offsetX": 57.734375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.md\\:w-4\\/12 div.text-sm"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-ruleBuilder-previewButton\"]/div[2]"
+                ],
+                [
+                    "pierce/div.md\\:w-4\\/12 div.text-sm"
+                ]
+            ],
+            "offsetY": 4.61328125,
+            "offsetX": 18.41796875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Publish now"
+                ],
+                [
+                    "[data-testid='audience-create-publish-now-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-create-publish-now-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-create-publish-now-btn']"
+                ],
+                [
+                    "text/Publish now"
+                ]
+            ],
+            "offsetY": 27.59765625,
+            "offsetX": 72.9140625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Confirm"
+                ],
+                [
+                    "[data-testid='audience-publish-create-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-publish-create-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-publish-create-btn']"
+                ]
+            ],
+            "offsetY": 36.90625,
+            "offsetX": 96.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "[data-testid='audience-type--modal-scheduled-input-radio'] div.font-normal"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-type--modal-scheduled-input-radio\"]/div[2]/div[2]"
+                ],
+                [
+                    "pierce/[data-testid='audience-type--modal-scheduled-input-radio'] div.font-normal"
+                ],
+                [
+                    "text/Updates the audience"
+                ]
+            ],
+            "offsetY": 3.88671875,
+            "offsetX": 260.02734375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Confirm"
+                ],
+                [
+                    "[data-testid='audience-type-modal-confirm-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-type-modal-confirm-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-type-modal-confirm-btn']"
+                ]
+            ],
+            "offsetY": 9.203125,
+            "offsetX": 95.8828125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.w-ful span.block"
+                ],
+                [
+                    "xpath///*[@data-testid=\"schedule-audience-modal-dropdown-btn\"]/span[1]"
+                ],
+                [
+                    "pierce/div.w-ful span.block"
+                ]
+            ],
+            "offsetY": 13.09765625,
+            "offsetX": 165.8671875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#headlessui-portal-root div.flex-row > div > div.flex span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"schedule-audience-modal-dateTimeSelection\"]/span"
+                ],
+                [
+                    "pierce/#headlessui-portal-root div.flex-row > div > div.flex span"
+                ],
+                [
+                    "text/13/08/2026 06:05"
+                ]
+            ],
+            "offsetY": 17.890625,
+            "offsetX": 80.6171875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#headlessui-portal-root > div:nth-of-type(3) span.block"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-dateTimeUtil-dropdown-btn\"]/span[1]"
+                ],
+                [
+                    "pierce/#headlessui-portal-root > div:nth-of-type(3) span.block"
+                ]
+            ],
+            "offsetY": 9.203125,
+            "offsetX": 30.8984375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/06:15 PM",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-testid='audience-dateTimeUtil-dropdown-btn-06\\:15-pm'] > span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-dateTimeUtil-dropdown-btn-06:15-pm\"]/span"
+                ],
+                [
+                    "pierce/[data-testid='audience-dateTimeUtil-dropdown-btn-06\\:15-pm'] > span"
+                ],
+                [
+                    "text/06:15 PM"
+                ]
+            ],
+            "offsetY": 2.27734375,
+            "offsetX": 33.8984375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Apply"
+                ],
+                [
+                    "[data-testid='audience-dateTimeUtil-modal-apply-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-dateTimeUtil-modal-apply-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-dateTimeUtil-modal-apply-btn']"
+                ],
+                [
+                    "text/Apply"
+                ]
+            ],
+            "offsetY": 16.23828125,
+            "offsetX": 73.87890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/UTC+05:30"
+                ],
+                [
+                    "[data-testid='schedule-audience-modal-timeZoneDropdown-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"schedule-audience-modal-timeZoneDropdown-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='schedule-audience-modal-timeZoneDropdown-btn']"
+                ]
+            ],
+            "offsetY": 17.68359375,
+            "offsetX": 176.859375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.pt-2 span.font-semibold"
+                ],
+                [
+                    "xpath///*[@data-testid=\"schedule-audience-modal-timeZoneDropdown-btn-UTC+05:30\"]/span[1]"
+                ],
+                [
+                    "pierce/div.pt-2 span.font-semibold"
+                ]
+            ],
+            "offsetY": 7.73828125,
+            "offsetX": 113.8671875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Confirm Schedule"
+                ],
+                [
+                    "[data-testid='schedule-audience-modal-confirm-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"schedule-audience-modal-confirm-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='schedule-audience-modal-confirm-btn']"
+                ],
+                [
+                    "text/Confirm Schedule"
+                ]
+            ],
+            "offsetY": 27.6953125,
+            "offsetX": 110.234375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(1) > td.py-4 svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-dropdownIcon-1\"]/div/svg"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.py-4 svg"
+                ]
+            ],
+            "offsetY": 1.31640625,
+            "offsetX": 7.12890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#headlessui-portal-root span:nth-of-type(2) > span.py-2"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-menu-items-:r137:\"]/div/span[2]/span[1]"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span:nth-of-type(2) > span.py-2"
+                ]
+            ],
+            "offsetY": 40.2578125,
+            "offsetX": 60.5
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#headlessui-portal-root span:nth-of-type(2) > span.py-2"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-menu-items-:r137:\"]/div/span[2]/span[1]"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span:nth-of-type(2) > span.py-2"
+                ]
+            ],
+            "offsetY": 40.2578125,
+            "offsetX": 60.5
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "#headlessui-portal-root span:nth-of-type(2) > span.py-2"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-menu-items-:r137:\"]/div/span[2]/span[1]"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span:nth-of-type(2) > span.py-2"
+                ]
+            ],
+            "offsetY": 19.2578125,
+            "offsetX": 94.5
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#headlessui-portal-root span:nth-of-type(2) > span.py-2"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-menu-items-:r137:\"]/div/span[2]/span[1]"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span:nth-of-type(2) > span.py-2"
+                ]
+            ],
+            "offsetY": 19.2578125,
+            "offsetX": 94.5
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#headlessui-portal-root span:nth-of-type(2) > span.py-2"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-menu-items-:r137:\"]/div/span[2]/span[1]"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span:nth-of-type(2) > span.py-2"
+                ]
+            ],
+            "offsetY": 19.2578125,
+            "offsetX": 94.5
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#headlessui-portal-root span:nth-of-type(2) > span.py-2"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-menu-items-:r137:\"]/div/span[2]/span[1]"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span:nth-of-type(2) > span.py-2"
+                ]
+            ],
+            "offsetY": 24.2578125,
+            "offsetX": 94.5
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "main > div > div"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div"
+                ],
+                [
+                    "pierce/main > div > div"
+                ]
+            ],
+            "offsetY": 191,
+            "offsetX": 764.0078125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Scheduled audience Update every: Hour Starting at: 13/08/2026 06:05 PM Time zone: UTC+05:30",
+                    "aria/[role=\"graphics-symbol\"]"
+                ],
+                [
+                    "tr:nth-of-type(1) > td:nth-of-type(4) path"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[1]/td[4]/div/span/svg/path"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td:nth-of-type(4) path"
+                ]
+            ],
+            "offsetY": 1.408203125,
+            "offsetX": 11.1953125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Scheduled audience Update every: Hour Starting at: 13/08/2026 06:05 PM Time zone: UTC+05:30",
+                    "aria/[role=\"image\"]"
+                ],
+                [
+                    "tr:nth-of-type(1) > td:nth-of-type(4) svg"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[1]/td[4]/div/span/svg"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td:nth-of-type(4) svg"
+                ]
+            ],
+            "offsetY": 17.07421875,
+            "offsetX": 5.6953125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Scheduled audience Update every: Hour Starting at: 13/08/2026 06:05 PM Time zone: UTC+05:30",
+                    "aria/[role=\"image\"]"
+                ],
+                [
+                    "tr:nth-of-type(1) > td:nth-of-type(4) svg"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[1]/td[4]/div/span/svg"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td:nth-of-type(4) svg"
+                ]
+            ],
+            "offsetY": 14.07421875,
+            "offsetX": 5.6953125
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(1) > td.leading-\\[18px\\] span:nth-of-type(2)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[1]/td[3]/div/label/span[2]"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.leading-\\[18px\\] span:nth-of-type(2)"
+                ]
+            ],
+            "offsetY": 4.07421875,
+            "offsetX": 27.44921875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "tbody > tr:nth-of-type(1)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[1]"
+                ],
+                [
+                    "pierce/tbody > tr:nth-of-type(1)"
+                ]
+            ],
+            "offsetY": 38.66015625,
+            "offsetX": 10.765625,
+            "duration": 1136
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Control"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "c"
+        },
+        {
+            "type": "keyUp",
+            "key": "Control",
+            "target": "main"
+        },
+        {
+            "type": "keyUp",
+            "key": "c",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "offsetY": 22.50390625,
+            "offsetX": 120.7265625
+        },
+        {
+            "type": "change",
+            "value": "\tTest 13-08",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "td.leading-\\[18px\\] span:nth-of-type(2)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr/td[3]/div/label/span[2]"
+                ],
+                [
+                    "pierce/td.leading-\\[18px\\] span:nth-of-type(2)"
+                ],
+                [
+                    "text/Active"
+                ]
+            ],
+            "offsetY": 15.76171875,
+            "offsetX": 27.54296875
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Scheduled audience Update every: Hour Starting at: 13/08/2026 06:05 PM Time zone: UTC+05:30",
+                    "aria/[role=\"image\"]"
+                ],
+                [
+                    "td:nth-of-type(4) svg"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr/td[4]/div/span/svg"
+                ],
+                [
+                    "pierce/td:nth-of-type(4) svg"
+                ]
+            ],
+            "offsetY": 12.76171875,
+            "offsetX": 4.7890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/0",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "td:nth-of-type(5) > span"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr/td[5]/span"
+                ],
+                [
+                    "pierce/td:nth-of-type(5) > span"
+                ]
+            ],
+            "offsetY": 16.76171875,
+            "offsetX": 4.78515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mt-3 > div > div.w-full button > svg"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[1]/div[2]/div/div[3]/div/div/div/button/svg"
+                ],
+                [
+                    "pierce/div.mt-3 > div > div.w-full button > svg"
+                ]
+            ],
+            "offsetY": 6.01171875,
+            "offsetX": 12.21875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Create new audience",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "div.border-gray-200 div.flex > span div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-new-audience-btn\"]/div"
+                ],
+                [
+                    "pierce/div.border-gray-200 div.flex > span div"
+                ],
+                [
+                    "text/Create new audience"
+                ]
+            ],
+            "offsetY": 11.26953125,
+            "offsetX": 128.03125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "[data-testid='audience-create-from-scratch-modal-btn'] > div div.flex"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-create-from-scratch-modal-btn\"]/div/div/div[3]"
+                ],
+                [
+                    "pierce/[data-testid='audience-create-from-scratch-modal-btn'] > div div.flex"
+                ]
+            ],
+            "offsetY": 14.5625,
+            "offsetX": 171.78125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Audience name"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-input']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-input\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-input']"
+                ]
+            ],
+            "offsetY": 19.8671875,
+            "offsetX": 69.890625
+        },
+        {
+            "type": "change",
+            "value": "B",
+            "selectors": [
+                [
+                    "aria/Audience name"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-input']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-input\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-input']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyUp",
+            "key": "b",
+            "target": "main"
+        },
+        {
+            "type": "change",
+            "value": "Bulk aud",
+            "selectors": [
+                [
+                    "aria/Audience name"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-input']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-input\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-input']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "change",
+            "value": "qa",
+            "selectors": [
+                [
+                    "aria/Add tags"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-tag']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-tag\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-tag']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Add tags"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-tag']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-tag\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-tag']"
+                ]
+            ],
+            "offsetY": 23.64453125,
+            "offsetX": 71.6484375
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Create"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-ok-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-ok-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-ok-btn']"
+                ]
+            ],
+            "offsetY": 19.921875,
+            "offsetX": 51.88671875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.md\\:w-8\\/12 div.flex-col > div"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div[1]/div[2]/div[1]/div[2]/div/div[1]/div[2]/div"
+                ],
+                [
+                    "pierce/div.md\\:w-8\\/12 div.flex-col > div"
+                ]
+            ],
+            "offsetY": 17.38671875,
+            "offsetX": 274.78515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Criteria",
+                    "aria/[role=\"image\"]"
+                ],
+                [
+                    "div.px-6 > div.flex-col svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-ruleBuilder-criteriaIcon-group-1\"]/div/div/svg"
+                ],
+                [
+                    "pierce/div.px-6 > div.flex-col svg"
+                ]
+            ],
+            "offsetY": 4.1640625,
+            "offsetX": 0.28515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Customer properties",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "span:nth-of-type(2) div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-ruleBuilder-criteriaIcon-group-1-customer-properties\"]/div"
+                ],
+                [
+                    "pierce/span:nth-of-type(2) div"
+                ],
+                [
+                    "text/Customer properties"
+                ]
+            ],
+            "offsetY": 11.06640625,
+            "offsetX": 59.265625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/customer property",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "div.false span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-ruleBuilder-customer-properties-group-1-customer property-btn-1\"]/span"
+                ],
+                [
+                    "pierce/div.false span"
+                ],
+                [
+                    "text/customer property"
+                ]
+            ],
+            "offsetY": 11.4140625,
+            "offsetX": 50.890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "html > body > #headlessui-portal-root > div:nth-of-type(2) > div > #headlessui-dialog-\\:r17n\\: > div.overflow-hidden > div > div > #headlessui-dialog-panel-\\:r17t\\: > div > div.flex-1 > div.flex-1 > div > div:nth-of-type(2) > #headlessui-disclosure-panel-\\:r181\\: > div > div:nth-of-type(8) > fieldset > div > span > button > [data-testid='user_id']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"user_id\"]"
+                ],
+                [
+                    "pierce/html > body > #headlessui-portal-root > div:nth-of-type(2) > div > #headlessui-dialog-\\:r17n\\: > div.overflow-hidden > div > div > #headlessui-dialog-panel-\\:r17t\\: > div > div.flex-1 > div.flex-1 > div > div:nth-of-type(2) > #headlessui-disclosure-panel-\\:r181\\: > div > div:nth-of-type(8) > fieldset > div > span > button > [data-testid='user_id']"
+                ],
+                [
+                    "text/User Id"
+                ]
+            ],
+            "offsetY": 19.23046875,
+            "offsetX": 27.53125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/User Id[role=\"radio\"]"
+                ],
+                [
+                    "html > body > #headlessui-portal-root > div:nth-of-type(2) > div > #headlessui-dialog-\\:r17n\\: > div.overflow-hidden > div > div > #headlessui-dialog-panel-\\:r17t\\: > div > div.flex-1 > div.flex-1 > div > div:nth-of-type(2) > #headlessui-disclosure-panel-\\:r181\\: > div > div:nth-of-type(8) > fieldset > div > span > button > [data-testid='user_id']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"user_id\"]"
+                ],
+                [
+                    "pierce/html > body > #headlessui-portal-root > div:nth-of-type(2) > div > #headlessui-dialog-\\:r17n\\: > div.overflow-hidden > div > div > #headlessui-dialog-panel-\\:r17t\\: > div > div.flex-1 > div.flex-1 > div > div:nth-of-type(2) > #headlessui-disclosure-panel-\\:r181\\: > div > div:nth-of-type(8) > fieldset > div > span > button > [data-testid='user_id']"
+                ]
+            ],
+            "offsetY": 15.2265625,
+            "offsetX": 55.51953125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/condition",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "div.justify-start > div.w-max span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-ruleBuilder-customer-properties-group-1-condition-btn-1\"]/span"
+                ],
+                [
+                    "pierce/div.justify-start > div.w-max span"
+                ]
+            ],
+            "offsetY": 3.44921875,
+            "offsetX": 57.1015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "html > body > #headlessui-portal-root > div:nth-of-type(2) > div > #headlessui-dialog-\\:r18i\\: > div.overflow-hidden > div > div > #headlessui-dialog-panel-\\:r18o\\: > div > div.flex-1 > div.flex-1 > div > div.mb-4 > #headlessui-disclosure-panel-\\:r18r\\: > div > div:nth-of-type(6) > fieldset > div > span > button > [data-testid='is-not-empty']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"is-not-empty\"]"
+                ],
+                [
+                    "pierce/html > body > #headlessui-portal-root > div:nth-of-type(2) > div > #headlessui-dialog-\\:r18i\\: > div.overflow-hidden > div > div > #headlessui-dialog-panel-\\:r18o\\: > div > div.flex-1 > div.flex-1 > div > div.mb-4 > #headlessui-disclosure-panel-\\:r18r\\: > div > div:nth-of-type(6) > fieldset > div > span > button > [data-testid='is-not-empty']"
+                ],
+                [
+                    "text/Is Not Empty"
+                ]
+            ],
+            "offsetY": 14.41796875,
+            "offsetX": 34.53125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Is Not Empty[role=\"radio\"]"
+                ],
+                [
+                    "html > body > #headlessui-portal-root > div:nth-of-type(2) > div > #headlessui-dialog-\\:r18i\\: > div.overflow-hidden > div > div > #headlessui-dialog-panel-\\:r18o\\: > div > div.flex-1 > div.flex-1 > div > div.mb-4 > #headlessui-disclosure-panel-\\:r18r\\: > div > div:nth-of-type(6) > fieldset > div > span > button > [data-testid='is-not-empty']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"is-not-empty\"]"
+                ],
+                [
+                    "pierce/html > body > #headlessui-portal-root > div:nth-of-type(2) > div > #headlessui-dialog-\\:r18i\\: > div.overflow-hidden > div > div > #headlessui-dialog-panel-\\:r18o\\: > div > div.flex-1 > div.flex-1 > div > div.mb-4 > #headlessui-disclosure-panel-\\:r18r\\: > div > div:nth-of-type(6) > fieldset > div > span > button > [data-testid='is-not-empty']"
+                ]
+            ],
+            "offsetY": 10.4140625,
+            "offsetX": 62.51953125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.my-6 svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-ruleBuilder-preview-refresh-button\"]/svg"
+                ],
+                [
+                    "pierce/div.my-6 svg"
+                ]
+            ],
+            "offsetY": 2.83203125,
+            "offsetX": 10.7109375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "[data-testid='audience-ruleBuilder-preview-totalCustomers-viewall-button']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-ruleBuilder-preview-totalCustomers-viewall-button\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-ruleBuilder-preview-totalCustomers-viewall-button']"
+                ],
+                [
+                    "text/View all"
+                ]
+            ],
+            "offsetY": 11.1171875,
+            "offsetX": 12.5625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/6813"
+                ],
+                [
+                    "[data-testid='audience-customerList-pagination-button-pageNumber-10']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-customerList-pagination-button-pageNumber-10\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-customerList-pagination-button-pageNumber-10']"
+                ],
+                [
+                    "text/6813"
+                ]
+            ],
+            "offsetY": 18.29296875,
+            "offsetX": 19.3671875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "input"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r192:\"]/div/div[1]/div[1]/div/div[2]/div/div/div/input"
+                ],
+                [
+                    "pierce/input"
+                ]
+            ],
+            "offsetY": 39.015625,
+            "offsetX": 111.2109375
+        },
+        {
+            "type": "change",
+            "value": "user_333",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "input"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r192:\"]/div/div[1]/div[1]/div/div[2]/div/div/div/input"
+                ],
+                [
+                    "pierce/input"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "td:nth-of-type(6)"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r192:\"]/div/div[1]/div[2]/div/div/div[1]/table/tbody/tr/td[6]"
+                ],
+                [
+                    "pierce/td:nth-of-type(6)"
+                ]
+            ],
+            "offsetY": 8.796875,
+            "offsetX": 27.31640625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.h-\\[700px\\]"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r192:\"]/div/div[1]/div[2]/div/div/div[1]"
+                ],
+                [
+                    "pierce/div.h-\\[700px\\]"
+                ]
+            ],
+            "offsetY": 140.78125,
+            "offsetX": 429.2578125
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Bala"
+                ],
+                [
+                    "td:nth-of-type(2)"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r192:\"]/div/div[1]/div[2]/div/div/div[1]/table/tbody/tr/td[2]"
+                ],
+                [
+                    "pierce/td:nth-of-type(2)"
+                ],
+                [
+                    "text/Bala"
+                ]
+            ],
+            "offsetY": 23.796875,
+            "offsetX": 8.44140625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.h-\\[700px\\]"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r192:\"]/div/div[1]/div[2]/div/div/div[1]"
+                ],
+                [
+                    "pierce/div.h-\\[700px\\]"
+                ]
+            ],
+            "offsetY": 161.78125,
+            "offsetX": 294.2578125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Back to editor"
+                ],
+                [
+                    "[data-testid='audience-flyout-backToEditor-button']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-flyout-backToEditor-button\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-flyout-backToEditor-button']"
+                ],
+                [
+                    "text/Back to editor"
+                ]
+            ],
+            "offsetY": 15.22265625,
+            "offsetX": 60.83984375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Publish now"
+                ],
+                [
+                    "[data-testid='audience-create-publish-now-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-create-publish-now-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-create-publish-now-btn']"
+                ],
+                [
+                    "text/Publish now"
+                ]
+            ],
+            "offsetY": 19.59765625,
+            "offsetX": 32.9140625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Confirm",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "#headlessui-portal-root div.mt-5 div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-publish-create-btn\"]/div"
+                ],
+                [
+                    "pierce/#headlessui-portal-root div.mt-5 div"
+                ],
+                [
+                    "text/Confirm"
+                ]
+            ],
+            "offsetY": 5.6640625,
+            "offsetX": 90.78125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "[data-testid='audience-type-modal-static-input-radio'] div.font-normal"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-type-modal-static-input-radio\"]/div[2]/div[2]"
+                ],
+                [
+                    "pierce/[data-testid='audience-type-modal-static-input-radio'] div.font-normal"
+                ]
+            ],
+            "offsetY": 17.42578125,
+            "offsetX": 240.02734375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Confirm",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-testid='audience-type-modal-confirm-btn'] > div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-type-modal-confirm-btn\"]/div"
+                ],
+                [
+                    "pierce/[data-testid='audience-type-modal-confirm-btn'] > div"
+                ],
+                [
+                    "text/Confirm"
+                ]
+            ],
+            "offsetY": 1.953125,
+            "offsetX": 111.6484375
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(1) > td.leading-\\[18px\\] span:nth-of-type(2)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[1]/td[3]/div/label/span[2]"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.leading-\\[18px\\] span:nth-of-type(2)"
+                ],
+                [
+                    "text/In progress"
+                ]
+            ],
+            "offsetY": 11.07421875,
+            "offsetX": 33.44921875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(1) > td.transition-opacity"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[1]/td[8]"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.transition-opacity"
+                ]
+            ],
+            "offsetY": 22.66015625,
+            "offsetX": 138.8515625
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(1) > td.py-4 svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-dropdownIcon-1\"]/div/svg"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.py-4 svg"
+                ]
+            ],
+            "offsetY": 7.31640625,
+            "offsetX": 0.12890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(1) > td.py-4 svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-dropdownIcon-1\"]/div/svg"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.py-4 svg"
+                ]
+            ],
+            "offsetY": 7.31640625,
+            "offsetX": 5.12890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(1) > td.py-4 svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-dropdownIcon-1\"]/div/svg"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.py-4 svg"
+                ]
+            ],
+            "offsetY": 7.31640625,
+            "offsetX": 5.12890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Bulk aud"
+                ],
+                [
+                    "tr:nth-of-type(1) > td.text-\\[\\#475467\\]"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[1]/td[2]"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.text-\\[\\#475467\\]"
+                ]
+            ],
+            "offsetY": 38.66015625,
+            "offsetX": 14.78515625,
+            "duration": 889.8000000007451
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Control"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "c"
+        },
+        {
+            "type": "keyUp",
+            "key": "Control",
+            "target": "main"
+        },
+        {
+            "type": "keyUp",
+            "key": "c",
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Control"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "offsetY": 23.50390625,
+            "offsetX": 76.7265625
+        },
+        {
+            "type": "change",
+            "value": "Bulk aud",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyUp",
+            "key": "Control",
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "td.leading-\\[18px\\] span:nth-of-type(2)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr/td[3]/div/label/span[2]"
+                ],
+                [
+                    "pierce/td.leading-\\[18px\\] span:nth-of-type(2)"
+                ],
+                [
+                    "text/Active"
+                ]
+            ],
+            "offsetY": 6.76171875,
+            "offsetX": 22.54296875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Static[role=\"cell\"]",
+                    "aria/[role=\"image\"]"
+                ],
+                [
+                    "td:nth-of-type(4) svg"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr/td[4]/div/span/svg"
+                ],
+                [
+                    "pierce/td:nth-of-type(4) svg"
+                ]
+            ],
+            "offsetY": 10.76171875,
+            "offsetX": 15.7890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Static[role=\"cell\"]",
+                    "aria/[role=\"image\"]"
+                ],
+                [
+                    "td:nth-of-type(4) svg"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr/td[4]/div/span/svg"
+                ],
+                [
+                    "pierce/td:nth-of-type(4) svg"
+                ]
+            ],
+            "offsetY": 10.76171875,
+            "offsetX": 15.7890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Static[role=\"cell\"]",
+                    "aria/[role=\"image\"]"
+                ],
+                [
+                    "td:nth-of-type(4) svg"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr/td[4]/div/span/svg"
+                ],
+                [
+                    "pierce/td:nth-of-type(4) svg"
+                ]
+            ],
+            "offsetY": 10.76171875,
+            "offsetX": 15.7890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "td.py-4 svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-dropdownIcon-1\"]/div/svg"
+                ],
+                [
+                    "pierce/td.py-4 svg"
+                ]
+            ],
+            "offsetY": 4.00390625,
+            "offsetX": 7.73828125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "td.py-4 svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-dropdownIcon-1\"]/div/svg"
+                ],
+                [
+                    "pierce/td.py-4 svg"
+                ]
+            ],
+            "offsetY": 4.00390625,
+            "offsetX": 7.73828125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mt-3 > div > div.w-full button > svg"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[1]/div[2]/div/div[3]/div/div/div/button/svg"
+                ],
+                [
+                    "pierce/div.mt-3 > div > div.w-full button > svg"
+                ]
+            ],
+            "offsetY": 10.01171875,
+            "offsetX": 8.21875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "offsetY": 38.50390625,
+            "offsetX": 164.7265625
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Control"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "AltGraph"
+        },
+        {
+            "type": "keyUp",
+            "key": "Control",
+            "target": "main"
+        },
+        {
+            "type": "keyUp",
+            "key": "AltGraph",
+            "target": "main"
+        },
+        {
+            "type": "change",
+            "value": "Bulk aud",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "td.py-4 svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-dropdownIcon-1\"]/div/svg"
+                ],
+                [
+                    "pierce/td.py-4 svg"
+                ]
+            ],
+            "offsetY": 9.00390625,
+            "offsetX": 7.73828125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Download Customer List",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "span:nth-of-type(3) div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-dropdownIcon-1-download-customer-list\"]/div"
+                ],
+                [
+                    "pierce/span:nth-of-type(3) div"
+                ],
+                [
+                    "text/Download Customer"
+                ]
+            ],
+            "offsetY": 17.3515625,
+            "offsetX": 128.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.pt-16 > div > div > label > span"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1gf:\"]/div[1]/div/div/label/span"
+                ],
+                [
+                    "pierce/div.pt-16 > div > div > label > span"
+                ],
+                [
+                    "text/Select all"
+                ]
+            ],
+            "offsetY": 9.88671875,
+            "offsetX": 52.89453125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/[role=\"form\"]",
+                    "aria/Select all"
+                ],
+                [
+                    "div.pt-16 > div > div > label > input"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1gf:\"]/div[1]/div/div/label/input"
+                ],
+                [
+                    "pierce/div.pt-16 > div > div > label > input"
+                ]
+            ],
+            "offsetY": 7.89453125,
+            "offsetX": 78.890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Generate",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "#headlessui-portal-root span div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"modal-submit-button\"]/div"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span div"
+                ],
+                [
+                    "text/Generate"
+                ]
+            ],
+            "offsetY": 1.68359375,
+            "offsetX": 97.25
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mt-5 > span"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1gf:\"]/div[2]/span"
+                ],
+                [
+                    "pierce/div.mt-5 > span"
+                ]
+            ],
+            "offsetY": 12.89453125,
+            "offsetX": 108.484375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "main > div > div > div.sm\\:items-center"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[4]"
+                ],
+                [
+                    "pierce/main > div > div > div.sm\\:items-center"
+                ]
+            ],
+            "offsetY": 35.7890625,
+            "offsetX": 1017.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mt-3 > div > div.w-full button > svg"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[1]/div[2]/div/div[3]/div/div/div/button/svg"
+                ],
+                [
+                    "pierce/div.mt-3 > div > div.w-full button > svg"
+                ]
+            ],
+            "offsetY": 10.01171875,
+            "offsetX": 13.21875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.flex > div div > span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-new-audience-dropdown-btn\"]/div/span"
+                ],
+                [
+                    "pierce/div.flex > div div > span"
+                ]
+            ],
+            "offsetY": 10.51953125,
+            "offsetX": 39.9609375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Retention Audience",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "#headlessui-portal-root span:nth-of-type(2) div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-new-audience-dropdown-btn-retention-audience\"]/div"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span:nth-of-type(2) div"
+                ],
+                [
+                    "text/Retention Audience"
+                ]
+            ],
+            "offsetY": 12.81640625,
+            "offsetX": 97.265625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Audience name"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-input']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-input\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-input']"
+                ]
+            ],
+            "offsetY": 43.8671875,
+            "offsetX": 152.890625
+        },
+        {
+            "type": "change",
+            "value": "CSV T",
+            "selectors": [
+                [
+                    "aria/Audience name"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-input']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-input\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-input']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyUp",
+            "key": "t",
+            "target": "main"
+        },
+        {
+            "type": "change",
+            "value": "CSV Test",
+            "selectors": [
+                [
+                    "aria/Audience name"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-input']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-input\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-input']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "change",
+            "value": "qa",
+            "selectors": [
+                [
+                    "aria/Add tags"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-tag']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-tag\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-tag']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mb-8 > div"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1i8:\"]/div[3]/div"
+                ],
+                [
+                    "pierce/div.mb-8 > div"
+                ]
+            ],
+            "offsetY": 43.88671875,
+            "offsetX": 147.890625
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Create"
+                ],
+                [
+                    "[data-testid='create-audience-modal-popup-ok-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-audience-modal-popup-ok-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='create-audience-modal-popup-ok-btn']"
+                ]
+            ],
+            "offsetY": 19.921875,
+            "offsetX": 126.88671875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.pt-0 > div > div div"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1if:\"]/div[1]/div/div/label/div"
+                ],
+                [
+                    "pierce/div.pt-0 > div > div div"
+                ]
+            ],
+            "offsetY": 43.30633544921875,
+            "offsetX": 23.21014404296875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#headlessui-portal-root label"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1if:\"]/div[1]/div/div/label"
+                ],
+                [
+                    "pierce/#headlessui-portal-root label"
+                ],
+                [
+                    "text/Click to upload or drag and drop.CSV"
+                ]
+            ],
+            "offsetY": 59.366455078125,
+            "offsetX": 200.43963623046875
+        },
+        {
+            "type": "change",
+            "value": "C:\\fakepath\\6a7dba264a0744498bf658fe_1786624674_000000000000.csv",
+            "selectors": [
+                [
+                    "#selectFile"
+                ],
+                [
+                    "xpath///*[@id=\"selectFile\"]"
+                ],
+                [
+                    "pierce/#selectFile"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "#headlessui-portal-root span.flex"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1if:\"]/div[1]/div/div/div/div/span[2]"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span.flex"
+                ],
+                [
+                    "text/13.66 MB"
+                ]
+            ],
+            "offsetY": 16.875,
+            "offsetX": 115.6484375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#headlessui-portal-root span.flex"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1if:\"]/div[1]/div/div/div/div/span[2]"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span.flex"
+                ],
+                [
+                    "text/13.66 MB"
+                ]
+            ],
+            "offsetY": 16.875,
+            "offsetX": 115.6484375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.pt-0 > div > div"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1if:\"]/div[1]/div/div"
+                ],
+                [
+                    "pierce/div.pt-0 > div > div"
+                ]
+            ],
+            "offsetY": 66.12109375,
+            "offsetX": 280.890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Upload",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "#headlessui-portal-root span div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"modal-submit-button\"]/div"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span div"
+                ]
+            ],
+            "offsetY": 17.40625,
+            "offsetX": 86.25
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Upload",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "#headlessui-portal-root span div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"modal-submit-button\"]/div"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span div"
+                ]
+            ],
+            "offsetY": 3.3984375,
+            "offsetX": 51.25
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/In progress"
+                ],
+                [
+                    "tr:nth-of-type(1) > td.leading-\\[18px\\]"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[1]/td[3]"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.leading-\\[18px\\]"
+                ]
+            ],
+            "offsetY": 19.66015625,
+            "offsetX": 83.69140625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(1) > td.leading-\\[18px\\] span:nth-of-type(2)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[1]/td[3]/div/label/span[2]"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.leading-\\[18px\\] span:nth-of-type(2)"
+                ],
+                [
+                    "text/In progress"
+                ]
+            ],
+            "offsetY": 4.07421875,
+            "offsetX": 45.44921875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/CSV Test"
+                ],
+                [
+                    "tr:nth-of-type(1) > td.text-\\[\\#475467\\]"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[1]/td[2]"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.text-\\[\\#475467\\]"
+                ]
+            ],
+            "offsetY": 37.66015625,
+            "offsetX": 20.78515625,
+            "duration": 803.2000000029802
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Control"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "c"
+        },
+        {
+            "type": "keyUp",
+            "key": "Control",
+            "target": "main"
+        },
+        {
+            "type": "keyUp",
+            "key": "c",
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Control"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "offsetY": 27.50390625,
+            "offsetX": 64.7265625
+        },
+        {
+            "type": "change",
+            "value": "CSV Test",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyUp",
+            "key": "Control",
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "td.leading-\\[18px\\] span:nth-of-type(2)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr/td[3]/div/label/span[2]"
+                ],
+                [
+                    "pierce/td.leading-\\[18px\\] span:nth-of-type(2)"
+                ],
+                [
+                    "text/In progress"
+                ]
+            ],
+            "offsetY": 0.76171875,
+            "offsetX": 14.54296875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "td.leading-\\[18px\\] span:nth-of-type(2)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr/td[3]/div/label/span[2]"
+                ],
+                [
+                    "pierce/td.leading-\\[18px\\] span:nth-of-type(2)"
+                ],
+                [
+                    "text/In progress"
+                ]
+            ],
+            "offsetY": 0.76171875,
+            "offsetX": 14.54296875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Active"
+                ],
+                [
+                    "td.leading-\\[18px\\]"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr/td[3]"
+                ],
+                [
+                    "pierce/td.leading-\\[18px\\]"
+                ]
+            ],
+            "offsetY": 41.66015625,
+            "offsetX": 10.78515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/View Report[role=\"button\"]",
+                    "aria/[role=\"image\"]"
+                ],
+                [
+                    "td.text-right svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-reportIcon-1\"]/svg"
+                ],
+                [
+                    "pierce/td.text-right svg"
+                ]
+            ],
+            "offsetY": 8.25,
+            "offsetX": 10.75
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "div:nth-of-type(1) > div.font-semibold"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[2]/div/div[1]/div[2]"
+                ],
+                [
+                    "pierce/div:nth-of-type(1) > div.font-semibold"
+                ],
+                [
+                    "text/68,121"
+                ]
+            ],
+            "offsetY": 24.77734375,
+            "offsetX": 78.76953125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div:nth-of-type(1) > div.font-semibold"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[2]/div/div[1]/div[2]"
+                ],
+                [
+                    "pierce/div:nth-of-type(1) > div.font-semibold"
+                ],
+                [
+                    "text/68,121"
+                ]
+            ],
+            "offsetY": 24.77734375,
+            "offsetX": 78.76953125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.justify-center > div > div:nth-of-type(1)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[2]/div/div[1]"
+                ],
+                [
+                    "pierce/div.justify-center > div > div:nth-of-type(1)"
+                ],
+                [
+                    "text/Total audience68,121"
+                ]
+            ],
+            "offsetY": 102.77734375,
+            "offsetX": 206.765625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Download list",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-testid='audience-report-download-list-btn'] > div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-report-download-list-btn\"]/div"
+                ],
+                [
+                    "pierce/[data-testid='audience-report-download-list-btn'] > div"
+                ],
+                [
+                    "text/Download list"
+                ]
+            ],
+            "offsetY": 3.859375,
+            "offsetX": 49.3046875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.pt-16 > div > div > label"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1is:\"]/div[1]/div/div/label"
+                ],
+                [
+                    "pierce/div.pt-16 > div > div > label"
+                ]
+            ],
+            "offsetY": 8.87109375,
+            "offsetX": 88.890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Select all"
+                ],
+                [
+                    "div.pt-16 > div > div > label > input"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1is:\"]/div[1]/div/div/label/input"
+                ],
+                [
+                    "pierce/div.pt-16 > div > div > label > input"
+                ]
+            ],
+            "offsetY": 2.89453125,
+            "offsetX": 88.890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Generate",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "#headlessui-portal-root span div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"modal-submit-button\"]/div"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span div"
+                ],
+                [
+                    "text/Generate"
+                ]
+            ],
+            "offsetY": 0.68359375,
+            "offsetX": 63.25
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.lg\\:flex-row"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[1]"
+                ],
+                [
+                    "pierce/div.lg\\:flex-row"
+                ]
+            ],
+            "offsetY": 65.03125,
+            "offsetX": 858.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.p-4"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[3]"
+                ],
+                [
+                    "pierce/div.p-4"
+                ]
+            ],
+            "offsetY": 5.5546875,
+            "offsetX": 404.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Audience",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "li:nth-of-type(1) li:nth-of-type(2) span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"sidebar-audience-menu\"]/span"
+                ],
+                [
+                    "pierce/li:nth-of-type(1) li:nth-of-type(2) span"
+                ]
+            ],
+            "offsetY": 9.05078125,
+            "offsetX": 6.03515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/View Report[role=\"button\"]",
+                    "aria/[role=\"graphics-symbol\"]"
+                ],
+                [
+                    "tr:nth-of-type(1) > td.text-right path"
+                ],
+                [
+                    "xpath///*[@id=\"Icon\"]"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.text-right path"
+                ]
+            ],
+            "offsetY": 0.229949951171875,
+            "offsetX": 12.70751953125
+        },
+        {
+            "type": "navigate",
+            "url": "https://demo.optikpi.com/en/audience/list/all?page=1",
+            "assertedEvents": [
+                {
+                    "type": "navigation",
+                    "url": "https://demo.optikpi.com/en/audience/list/all?page=1",
+                    "title": "Optikpi: Audience"
+                }
+            ]
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(1) > td.py-4 > div > div.relative > div div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-dropdownIcon-1\"]/div"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.py-4 > div > div.relative > div div"
+                ]
+            ],
+            "offsetY": 20.31640625,
+            "offsetX": 6.71875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "#headlessui-menu-items-\\:r1n0\\: > div"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-menu-items-:r1n0:\"]/div"
+                ],
+                [
+                    "pierce/#headlessui-menu-items-\\:r1n0\\: > div"
+                ]
+            ],
+            "offsetY": 172.265625,
+            "offsetX": 77,
+            "duration": 464.19999999925494
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/View history log"
+                ],
+                [
+                    "[data-testid='audience-listView-tableList-dropdownIcon-1-view-history-log']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-dropdownIcon-1-view-history-log\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-tableList-dropdownIcon-1-view-history-log']"
+                ]
+            ],
+            "offsetY": 34.44140625,
+            "offsetX": 91.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(1) span > span.block"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1or:\"]/form/div[2]/table/tbody/tr[1]/td[2]/span/span[1]"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) span > span.block"
+                ]
+            ],
+            "offsetY": 8.80859375,
+            "offsetX": 37.90234375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Create"
+                ],
+                [
+                    "tr:nth-of-type(2) > td.max-w-\\[200px\\]"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1or:\"]/form/div[2]/table/tbody/tr[2]/td[2]"
+                ],
+                [
+                    "pierce/tr:nth-of-type(2) > td.max-w-\\[200px\\]"
+                ]
+            ],
+            "offsetY": 10.19921875,
+            "offsetX": 60.8984375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "form > div.relative svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"common-flyout-close-btn\"]/div/svg"
+                ],
+                [
+                    "pierce/form > div.relative svg"
+                ]
+            ],
+            "offsetY": 16.50390625,
+            "offsetX": 9.98046875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(1) > td.py-4 svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-dropdownIcon-1\"]/div/svg"
+                ],
+                [
+                    "pierce/tr:nth-of-type(1) > td.py-4 svg"
+                ]
+            ],
+            "offsetY": 9.31640625,
+            "offsetX": 6.71875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Create new campaign",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "span:nth-of-type(7) div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-dropdownIcon-1-create-new-campaign\"]/div"
+                ],
+                [
+                    "pierce/span:nth-of-type(7) div"
+                ],
+                [
+                    "text/Create new campaign"
+                ]
+            ],
+            "offsetY": 13.5234375,
+            "offsetX": 102.015625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Campaign name"
+                ],
+                [
+                    "[data-testid='campaign-name-input']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-name-input\"]"
+                ],
+                [
+                    "pierce/[data-testid='campaign-name-input']"
+                ]
+            ],
+            "offsetY": 26.08203125,
+            "offsetX": 225.890625
+        },
+        {
+            "type": "change",
+            "value": "Test C",
+            "selectors": [
+                [
+                    "aria/Campaign name"
+                ],
+                [
+                    "[data-testid='campaign-name-input']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-name-input\"]"
+                ],
+                [
+                    "pierce/[data-testid='campaign-name-input']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyUp",
+            "key": "c",
+            "target": "main"
+        },
+        {
+            "type": "change",
+            "value": "Test Cam1",
+            "selectors": [
+                [
+                    "aria/Campaign name"
+                ],
+                [
+                    "[data-testid='campaign-name-input']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-name-input\"]"
+                ],
+                [
+                    "pierce/[data-testid='campaign-name-input']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "change",
+            "value": "q",
+            "selectors": [
+                [
+                    "aria/Add tags"
+                ],
+                [
+                    "[data-testid='campaign-tag-input']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-tag-input\"]"
+                ],
+                [
+                    "pierce/[data-testid='campaign-tag-input']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.mb-8 > div"
+                ],
+                [
+                    "xpath///*[@id=\"headlessui-dialog-panel-:r1pb:\"]/div[4]/div"
+                ],
+                [
+                    "pierce/div.mb-8 > div"
+                ]
+            ],
+            "offsetY": 67.6484375,
+            "offsetX": 140.890625
+        },
+        {
+            "type": "change",
+            "value": "qa",
+            "selectors": [
+                [
+                    "aria/Add tags"
+                ],
+                [
+                    "[data-testid='campaign-tag-input']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-tag-input\"]"
+                ],
+                [
+                    "pierce/[data-testid='campaign-tag-input']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Create campaign[role=\"button\"]",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-testid='create-campaign-button'] > div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"create-campaign-button\"]/div"
+                ],
+                [
+                    "pierce/[data-testid='create-campaign-button'] > div"
+                ]
+            ],
+            "offsetY": 19.43359375,
+            "offsetX": 88.65234375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Click[role=\"image\"]"
+                ],
+                [
+                    "span:nth-of-type(2) img"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-goal-Engagement-Click-undefined\"]/img"
+                ],
+                [
+                    "pierce/span:nth-of-type(2) img"
+                ]
+            ],
+            "offsetY": 26.671875,
+            "offsetX": 76.0859375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Set goal",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "div.md\\:w-8\\/12 > div:nth-of-type(1) > div div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-stepper-set-goal-button\"]/div"
+                ],
+                [
+                    "pierce/div.md\\:w-8\\/12 > div:nth-of-type(1) > div div"
+                ],
+                [
+                    "text/Set goal"
+                ]
+            ],
+            "offsetY": 12.83984375,
+            "offsetX": 38.8125
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.p-4 span > span > span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-stepper-form-audience\"]/div/div[2]/div/ul/li/span/span/span"
+                ],
+                [
+                    "pierce/div.p-4 span > span > span"
+                ],
+                [
+                    "text/CSV Test"
+                ]
+            ],
+            "offsetY": 9.53125,
+            "offsetX": 41.53515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.p-4 span > span > span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-stepper-form-audience\"]/div/div[2]/div/ul/li/span/span/span"
+                ],
+                [
+                    "pierce/div.p-4 span > span > span"
+                ],
+                [
+                    "text/CSV Test"
+                ]
+            ],
+            "offsetY": 9.53125,
+            "offsetX": 41.53515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.p-4 span > span > span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-stepper-form-audience\"]/div/div[2]/div/ul/li/span/span/span"
+                ],
+                [
+                    "pierce/div.p-4 span > span > span"
+                ],
+                [
+                    "text/CSV Test"
+                ]
+            ],
+            "offsetY": 9.53125,
+            "offsetX": 41.53515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "[data-testid='campaign-stepper-form-audience'] > div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-stepper-form-audience\"]/div"
+                ],
+                [
+                    "pierce/[data-testid='campaign-stepper-form-audience'] > div"
+                ]
+            ],
+            "offsetY": 183.65625,
+            "offsetX": 71.78125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Preview audience",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-testid='campaign-stepper-form-audience'] div.gap-4 div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-preview-audience-btn\"]/div"
+                ],
+                [
+                    "pierce/[data-testid='campaign-stepper-form-audience'] div.gap-4 div"
+                ],
+                [
+                    "text/Preview audience"
+                ]
+            ],
+            "offsetY": 11.5546875,
+            "offsetX": 19.796875
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "[data-testid='campaign-audience-preview-activeCustomers-68043']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-audience-preview-activeCustomers-68043\"]"
+                ],
+                [
+                    "pierce/[data-testid='campaign-audience-preview-activeCustomers-68043']"
+                ]
+            ],
+            "offsetY": 14.15234375,
+            "offsetX": 31.6328125
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Set audience",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "div.md\\:w-8\\/12 > div:nth-of-type(2) > div div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-stepper-set-audience-button\"]/div"
+                ],
+                [
+                    "pierce/div.md\\:w-8\\/12 > div:nth-of-type(2) > div div"
+                ],
+                [
+                    "text/Set audience"
+                ]
+            ],
+            "offsetY": 14.11328125,
+            "offsetX": 51.9765625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Time-based trigger",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-test-id='campaign-tab-time-based-trigger'] > span"
+                ],
+                [
+                    "xpath///*[@data-test-id=\"campaign-tab-time-based-trigger\"]/span"
+                ],
+                [
+                    "pierce/[data-test-id='campaign-tab-time-based-trigger'] > span"
+                ]
+            ],
+            "offsetY": 22.9296875,
+            "offsetX": 125.765625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/13/08/2026 06:15 PM",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-testid='campaign-stepper-form-trigger'] > div > div:nth-of-type(2) div.undefined span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-timer-trigger-startDate-select\"]/span"
+                ],
+                [
+                    "pierce/[data-testid='campaign-stepper-form-trigger'] > div > div:nth-of-type(2) div.undefined span"
+                ],
+                [
+                    "text/13/08/2026 06:15"
+                ]
+            ],
+            "offsetY": 3.69140625,
+            "offsetX": 117.56640625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/13",
+                    "aria/[role=\"time\"]"
+                ],
+                [
+                    "[data-testid='audience-dateTimeSelection-modal-date-2026-08-13'] > time"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-dateTimeSelection-modal-date-2026-08-13\"]/time"
+                ],
+                [
+                    "pierce/[data-testid='audience-dateTimeSelection-modal-date-2026-08-13'] > time"
+                ]
+            ],
+            "offsetY": 15.625,
+            "offsetX": 17.8984375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/06:15 PM",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "[data-testid='audience-dateTimeUtil-dropdown-btn-06\\:15-pm'] > span"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-dateTimeUtil-dropdown-btn-06:15-pm\"]/span"
+                ],
+                [
+                    "pierce/[data-testid='audience-dateTimeUtil-dropdown-btn-06\\:15-pm'] > span"
+                ]
+            ],
+            "offsetY": 0.27734375,
+            "offsetX": 43.8984375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Apply"
+                ],
+                [
+                    "[data-testid='audience-dateTimeUtil-modal-apply-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-dateTimeUtil-modal-apply-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-dateTimeUtil-modal-apply-btn']"
+                ],
+                [
+                    "text/Apply"
+                ]
+            ],
+            "offsetY": 26.23828125,
+            "offsetX": 81.87890625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Set trigger",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "div.md\\:w-8\\/12 > div:nth-of-type(3) > div div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-stepper-set-trigger-button\"]/div"
+                ],
+                [
+                    "pierce/div.md\\:w-8\\/12 > div:nth-of-type(3) > div div"
+                ],
+                [
+                    "text/Set trigger"
+                ]
+            ],
+            "offsetY": 1.38671875,
+            "offsetX": 39.296875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Choose content"
+                ],
+                [
+                    "[data-testid='campaign-choose-content-btn']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-choose-content-btn\"]"
+                ],
+                [
+                    "pierce/[data-testid='campaign-choose-content-btn']"
+                ]
+            ],
+            "offsetY": 6.98046875,
+            "offsetX": 73.8671875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Use this content"
+                ],
+                [
+                    "div.mt-4 > div > div > div:nth-of-type(1) [data-testid='campaign-communication-list-hover']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-communication-list-hover\"]"
+                ],
+                [
+                    "pierce/div.mt-4 > div > div > div:nth-of-type(1) [data-testid='campaign-communication-list-hover']"
+                ]
+            ],
+            "offsetY": 84.65625,
+            "offsetX": 182.94921875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Set communication",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "div.md\\:w-8\\/12 > div:nth-of-type(4) > div div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-stepper-set-communication-button\"]/div"
+                ],
+                [
+                    "pierce/div.md\\:w-8\\/12 > div:nth-of-type(4) > div div"
+                ],
+                [
+                    "text/Set communication"
+                ]
+            ],
+            "offsetY": 7.41015625,
+            "offsetX": 110.41796875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Save draft"
+                ],
+                [
+                    "[data-testid='campaign-save-draft-button']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"campaign-save-draft-button\"]"
+                ],
+                [
+                    "pierce/[data-testid='campaign-save-draft-button']"
+                ]
+            ],
+            "offsetY": 6.6015625,
+            "offsetX": 75.12109375
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Confirm",
+                    "aria/[role=\"generic\"]"
+                ],
+                [
+                    "#headlessui-portal-root span div"
+                ],
+                [
+                    "xpath///*[@data-testid=\"modal-submit-button\"]/div"
+                ],
+                [
+                    "pierce/#headlessui-portal-root span div"
+                ],
+                [
+                    "text/Confirm"
+                ]
+            ],
+            "offsetY": 2.64453125,
+            "offsetX": 113.25
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Audience"
+                ],
+                [
+                    "[data-testid='sidebar-audience-menu']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"sidebar-audience-menu\"]"
+                ],
+                [
+                    "pierce/[data-testid='sidebar-audience-menu']"
+                ]
+            ],
+            "offsetY": 10.04296875,
+            "offsetX": 29.00390625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "offsetY": 7.50390625,
+            "offsetX": 152.7265625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.border > div.border-b"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[1]"
+                ],
+                [
+                    "pierce/div.border > div.border-b"
+                ],
+                [
+                    "text/All audiencesSearchSearchFiltersHide"
+                ]
+            ],
+            "offsetY": 66.50390625,
+            "offsetX": 731.765625
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(4) span > span:nth-of-type(1)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[4]/td[2]/span/span[1]"
+                ],
+                [
+                    "pierce/tr:nth-of-type(4) span > span:nth-of-type(1)"
+                ],
+                [
+                    "text/Audience-1785927922208-2..."
+                ]
+            ],
+            "offsetY": 3.9140625,
+            "offsetX": 119.78515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(4) span > span:nth-of-type(1)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[4]/td[2]/span/span[1]"
+                ],
+                [
+                    "pierce/tr:nth-of-type(4) span > span:nth-of-type(1)"
+                ],
+                [
+                    "text/Audience-1785927922208-2..."
+                ]
+            ],
+            "offsetY": 3.9140625,
+            "offsetX": 119.78515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "tr:nth-of-type(4) span > span:nth-of-type(1)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr[4]/td[2]/span/span[1]"
+                ],
+                [
+                    "pierce/tr:nth-of-type(4) span > span:nth-of-type(1)"
+                ],
+                [
+                    "text/Audience-1785927922208-2..."
+                ]
+            ],
+            "offsetY": 3.9140625,
+            "offsetX": 119.78515625
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Control"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "c"
+        },
+        {
+            "type": "keyUp",
+            "key": "Control",
+            "target": "main"
+        },
+        {
+            "type": "keyUp",
+            "key": "c",
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Control"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "offsetY": 20.75390625,
+            "offsetX": 77.7265625
+        },
+        {
+            "type": "change",
+            "value": "Audience-1785927922208-2...",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyUp",
+            "key": "Control",
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "change",
+            "value": "Audience-1785927922208-2",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "main > div > div > div.border span > span:nth-of-type(1)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr/td[2]/span/span[1]"
+                ],
+                [
+                    "pierce/main > div > div > div.border span > span:nth-of-type(1)"
+                ],
+                [
+                    "text/Audience-1785927922208-2..."
+                ]
+            ],
+            "offsetY": 8.17578125,
+            "offsetX": 146.78515625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "main > div > div > div.border span > span:nth-of-type(1)"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div/div/div/table/tbody/tr/td[2]/span/span[1]"
+                ],
+                [
+                    "pierce/main > div > div > div.border span > span:nth-of-type(1)"
+                ],
+                [
+                    "text/Audience-1785927922208-2..."
+                ]
+            ],
+            "offsetY": 8.17578125,
+            "offsetX": 146.78515625
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "offsetY": 22.75390625,
+            "offsetX": 75.7265625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.border > div:nth-of-type(2) > div"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div"
+                ],
+                [
+                    "pierce/div.border > div:nth-of-type(2) > div"
+                ]
+            ],
+            "offsetY": 172.51953125,
+            "offsetX": 969.765625
+        },
+        {
+            "type": "doubleClick",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "offsetY": 35.75390625,
+            "offsetX": 57.7265625
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "offsetY": 35.75390625,
+            "offsetX": 57.7265625
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Control"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "offsetY": 35.75390625,
+            "offsetX": 57.7265625
+        },
+        {
+            "type": "change",
+            "value": "Audience-1785927922208-224420930341",
+            "selectors": [
+                [
+                    "aria/Search"
+                ],
+                [
+                    "[data-testid='audience-listView-searchInput']"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-searchInput\"]"
+                ],
+                [
+                    "pierce/[data-testid='audience-listView-searchInput']"
+                ]
+            ],
+            "target": "main"
+        },
+        {
+            "type": "keyUp",
+            "key": "Control",
+            "target": "main"
+        },
+        {
+            "type": "keyDown",
+            "target": "main",
+            "key": "Enter"
+        },
+        {
+            "type": "keyUp",
+            "key": "Enter",
+            "target": "main"
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "td.py-4 svg"
+                ],
+                [
+                    "xpath///*[@data-testid=\"audience-listView-tableList-dropdownIcon-1\"]/div/svg"
+                ],
+                [
+                    "pierce/td.py-4 svg"
+                ]
+            ],
+            "offsetY": 11.25390625,
+            "offsetX": 6.71875
+        },
+        {
+            "type": "click",
+            "target": "main",
+            "selectors": [
+                [
+                    "div.border > div:nth-of-type(2) > div"
+                ],
+                [
+                    "xpath//html/body/div[1]/main/div/div/div[5]/div[2]/div"
+                ],
+                [
+                    "pierce/div.border > div:nth-of-type(2) > div"
+                ]
+            ],
+            "offsetY": 223.51953125,
+            "offsetX": 685.765625
+        }
+    ]
+}

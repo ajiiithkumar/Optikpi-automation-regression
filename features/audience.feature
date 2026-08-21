@@ -1,4 +1,4 @@
-Feature: Audience Module
+﻿Feature: Audience Module
   # Covers regression and functional scenarios for audience creation,
   # editing, publishing, and validation across all criteria types.
   # Users are managed in config/users.json (kept out of the report).
@@ -343,3 +343,89 @@ Feature: Audience Module
 
 
 
+
+
+
+  @Regression @Audience @REG-AUD-16
+  Scenario: Static Audience with is-not-empty User ID criteria
+    Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
+    When I navigate to "Audience"
+    Then I should see the "Audience" page
+    Then Click the Create new Audience button
+    Then Click the Create from scratch option
+    Then I should see the Create Audience page
+    Then Fill in the Audience details and save
+    Then It should enter into the edit page of the created Audience
+    Then Click the customer property option on Criteria
+    Then on the customer property pop up select User Id property and apply
+    Then Click the is-not-empty condition
+    Then Click the Preview button
+    Then check the Customer count
+    Then Click Preview View All to open customer list
+    Then Wait for the customer list flyout to fully load
+    Then Search and verify customers are visible in the preview list flyout
+    Then Click Back to Editor from the customer list flyout
+    Then Click the Publish button and Confirm the Publish Static Audience
+    Then Static tab should load successfully
+    Then Filter the Audience with the saved Audience title
+    Then Verify the Audience is displayed in the list
+    Then Validate the Audience tooltip title matches the saved Audience title
+
+  @Regression @Audience @REG-AUD-17
+  Scenario: Bulk Audience Customer List Download and CSV Retention Audience creation
+    Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
+    When I navigate to "Audience"
+    Then I should see the "Audience" page
+    Then Filter the Audience with the saved Audience title from "REG-AUD-16"
+    Then Click the three-dot menu on the first audience row
+    Then Click Download Customer List from the menu
+    Then Click the modal submit button and wait for the download to complete
+    Then Click Create Retention Audience from the dropdown
+    Then I should see the Create Audience page
+    Then Fill in the Audience details and save
+    Then Upload the sample CSV file to the audience
+    Then Click the modal submit button
+    Then Poll until the CSV audience status is "Active"
+
+  @Regression @Audience @REG-AUD-18
+  Scenario: Create Campaign from Audience three-dot menu
+    Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
+    When I navigate to "Audience"
+    Then I should see the "Audience" page
+    Then Filter the Audience with the saved Audience title from "REG-AUD-17"
+    Then Save the total customer count for the filtered audience
+    Then Click the three-dot menu on the first audience row
+    Then Click Create New Campaign from the audience three-dot menu
+    Then Enter the Campaign Name and Campaign Tag
+    Then Click the Create campaign button
+    Then Verify the Campaign should should Create and navigate to the Edit Campaign page
+    Then click the Click Goal button
+    Then click the Set Goal button
+    Then Verify the Click Goal should be set successfully
+    Then Click the Preview button in the Campaign Audience section
+    Then Verify the preview customer count matches the saved audience count
+  @Regression @Audience @REG-AUD-19
+  Scenario: View History Log from Audience three-dot menu
+    Given I log in for module "Audience"
+    Given an Audience exists in the list
+    Then I close the announcement popup if it appears
+    When I navigate to "Audience"
+    Then I should see the "Audience" page
+    Then Filter the Audience with the existing Audience title
+    Then Click the three-dot menu on the first audience row
+    Then Click View History Log from the audience three-dot menu
+    Then Verify the history log panel is visible with entries
+
+  @Regression @Audience @REG-AUD-20
+  Scenario: View Report icon opens Audience report page
+    Given I log in for module "Audience"
+    Then I close the announcement popup if it appears
+    When I navigate to "Audience"
+    Then I should see the "Audience" page
+    Then Filter the Audience with the saved Audience title from "REG-AUD-16"
+    Then Click the report icon on the first audience row
+    Then Verify the audience report page loads successfully
+    Then Search and verify the user ID in the report page list

@@ -1,4 +1,4 @@
-import { BasePage } from './base.page';
+﻿import { BasePage } from './base.page';
 
 /**
  * CampaignPage — encapsulates all Campaign module selectors and actions.
@@ -43,6 +43,9 @@ export class CampaignPage extends BasePage {
         controlGroupInput:    "//input[@data-testid='workflow-control-group-percentage']",
         controlGroupSummary:  "//*[contains(@data-testid,'control-group') or contains(normalize-space(),'Control group')]",
         editAudienceBtn:      "//span[contains(@class,'flex justify-center items-center gap-1 rounded-lg group') and normalize-space()='Edit audience']",
+        campaignAudiencePreviewBtn: "[data-testid='campaign-preview-audience-btn']",
+        campaignAudiencePreviewCount: "[data-testid^='campaign-audience-preview-activeCustomers-']",
+        campaignAudienceExcludedCount: "[data-testid^='campaign-audience-preview-unsubscribedCustomers-']",
 
         // Trigger
         triggerStartDate:  "//button[@data-testid='campaign-timer-trigger-startDate-select']",
@@ -379,6 +382,27 @@ export class CampaignPage extends BasePage {
     async confirmAudienceSelection() {
         await this.click(this.sel.existingAudienceOk);
         await this.pause(1000);
+    }
+
+        async clickCampaignAudiencePreview() {
+        await this.page.locator(this.sel.campaignAudiencePreviewBtn).first().click();
+        await this.pause(2000);
+    }
+    
+    async getCampaignAudiencePreviewCount(): Promise<number> {
+        const countLocator = this.page.locator(this.sel.campaignAudiencePreviewCount).first();
+        await countLocator.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+        const text = (await countLocator.textContent())?.trim() || '0';
+        const num = parseInt(text.replace(/[^0-9]/g, ''), 10);
+        return isNaN(num) ? 0 : num;
+    }
+
+    async getCampaignAudienceExcludedCount(): Promise<number> {
+        const countLocator = this.page.locator(this.sel.campaignAudienceExcludedCount).first();
+        await countLocator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+        const text = (await countLocator.textContent())?.trim() || '0';
+        const num = parseInt(text.replace(/[^0-9]/g, ''), 10);
+        return isNaN(num) ? 0 : num;
     }
 
     async clickSetAudience() {
