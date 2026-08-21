@@ -1034,25 +1034,30 @@ export class AudiencePage extends BasePage {
     }
 
     async searchAndVerifyUserInReportList(userId: string): Promise<boolean> {
-        await this.page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-        await this.pause(1000);
-        const lastPageBtn = this.page.locator("button[class*='page']:not([class*='prev']):not([class*='next']), .pagination button").last();
-        if (await lastPageBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
-            await lastPageBtn.click().catch(() => {});
-            await this.pause(3000);
-        }
-        const searchInput = this.page.locator(
-            "input[placeholder*='Search'], input[placeholder*='search'], [aria-label*='Search'], input[type='text']"
-        ).first();
-        await searchInput.waitFor({ state: 'visible', timeout: 15000 });
+        // Use the specific testid provided for the search input
+        const searchInput = this.page.getByTestId('search-data');
+        
+        // Give the page plenty of time to load the search box initially
+        await searchInput.waitFor({ state: 'visible', timeout: 20000 });
         await searchInput.scrollIntoViewIfNeeded();
+        
+        console.log(`[Search] Entering userId: ${userId}`);
         await searchInput.fill('');
         await searchInput.fill(userId);
         await searchInput.press('Enter');
-        await this.pause(3000);
-        const rows = this.page.locator('td:has-text("' + userId + '")');
-        const rowCount = await rows.count().catch(() => 0);
-        return rowCount > 0;
+        
+        // Wait dynamically for the user row to appear instead of hardcoded pause
+        console.log(`[Search] Waiting for user row to appear in the table...`);
+        const userRow = this.page.locator(`td:has-text("${userId}")`).first();
+        
+        try {
+            // Give the server plenty of time to fetch and render the filtered list
+            await userRow.waitFor({ state: 'visible', timeout: 30000 });
+            return true;
+        } catch (e) {
+            console.error(`[Search] User ${userId} did not appear in time.`);
+            return false;
+        }
     }
 
 }
