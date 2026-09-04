@@ -1,4 +1,4 @@
-
+﻿
 import { Given, When, Then } from '@cucumber/cucumber';
 import { CampaignPage } from '../pages/campaign.page';
 import { NavigationBar } from '../pages/components/navigation-bar.component';
@@ -166,7 +166,7 @@ Then('click the Set Goal button', async function (this: PlaywrightWorld) {
 
 Then('Verify the Click Goal should be set successfully', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).verifyGoalIsSet();
-    ExtentTestManager.logPass('Verified Goal value is set to 100');
+    ExtentTestManager.logPass('Verified Click Goal is set successfully');
 });
 //1
 Then('click the Open Goal button', async function (this: PlaywrightWorld) {
@@ -1106,4 +1106,26 @@ Then('Verify the Campaign Report page is displayed', async function (this: Playw
 Then('Verify the report data is loaded without any errors', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).pause(3000);
     ExtentTestManager.logPass('Report data is loaded without errors');
+});
+
+Then('Click the Preview button in the Campaign Audience section', async function (this: PlaywrightWorld) {
+    const campaignPage = getCampaignPage(this);
+    await campaignPage.clickCampaignAudiencePreview();
+    ExtentTestManager.logPass('Clicked the Preview button in the Campaign Audience section');
+});
+
+Then('Verify the preview customer count matches the saved audience count', async function (this: PlaywrightWorld) {
+    const savedCount = this['savedAudienceCount'];
+    if (savedCount === undefined) throw new Error('savedAudienceCount is not set. Run "Save the total customer count for the filtered audience" first.');
+    
+    const campaignPage = getCampaignPage(this);
+    const reachCount = await campaignPage.getCampaignAudiencePreviewCount();
+    const excludedCount = await campaignPage.getCampaignAudienceExcludedCount();
+    
+    const totalPreviewCount = reachCount + excludedCount;
+    
+    if (savedCount !== totalPreviewCount) {
+        throw new Error(`Customer count mismatch. List: ${savedCount}, Campaign Summary (Reach + Excluded): ${totalPreviewCount} (${reachCount} + ${excludedCount})`);
+    }
+    ExtentTestManager.logPass(`Verified campaign summary count (${reachCount} + ${excludedCount} = ${totalPreviewCount}) matches saved list count (${savedCount})`);
 });
