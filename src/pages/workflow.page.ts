@@ -1,7 +1,7 @@
 import { BasePage } from './base.page';
 
 /**
- * WorkflowPage — encapsulates all Workflow module selectors and actions.
+ * WorkflowPage â€” encapsulates all Workflow module selectors and actions.
  */
 export class WorkflowPage extends BasePage {
 
@@ -13,52 +13,52 @@ export class WorkflowPage extends BasePage {
         allTab:      "//button[@data-test-id='workflow-tab-all']",
 
         // Creation
-        createNewBtn:       "//a[@data-testid='setup-new-workflow-btn']",
-        createFromScratch:  "//div[@data-testid='workflow-create-card-scratch-btn'] | //*[normalize-space()='Create from scratch' and not(ancestor::li)]",
-        nameInput:          "//input[@data-testid='workflow-name-input']",
-        tagInput:           "//input[@data-testid='workflow-tag-input']",
-        createBtn:          "//button[@data-testid='create-workflow-button']",
+        createNewBtn:       "//a[@data-testid='setup-new-workflow-btn' or @data-test-id='setup-new-workflow-btn']",
+        createFromScratch:  "//div[@data-testid='workflow-create-card-scratch-btn' or @data-test-id='workflow-create-card-scratch-btn'] | //*[normalize-space()='Create from scratch' and not(ancestor::li)]",
+        nameInput:          "//input[@data-testid='workflow-name-input' or @data-test-id='workflow-name-input']",
+        tagInput:           "//input[@data-testid='workflow-tag-input' or @data-test-id='workflow-tag-input']",
+        createBtn:          "//button[@data-testid='create-workflow-button' or @data-test-id='create-workflow-button']",
         editTitle:          "//h2[contains(@class,'text-2xl')]",
 
 
         // Enrollment
-        setupEnrollment:       "//button[@data-testid='node-setup-btn']",
-        newAudienceBtn:        "//button[@data-testid='newAudience']",
-        existingAudienceBtn:   "//button[@data-testid='existingAudience']",
-        liveEventBtn:          "//button[@data-testid='liveEvent']",
-        newAudienceCriteria:   "//button[@data-testid='Criteria']",
-        audiencePreview:       "//button[@data-testid='audience-refresh-button']",
-        addToEnrollmentBtn:    "//button[@data-testid='workflow-add-criteria-btn']",
-        dashboardBackBtn:      "//button[@data-testid='dashboard-back-button']",
-        existingAudienceDropdown:     "//button[@data-testid='workflow-existing-audience-dropdown']",
-        existingAudiencePartOfBtn:    "//button[@data-testid='workflow-existing-audience-dropdown-part-of-an-audience']",
-        existingAudienceOkBtn:        "//button[@data-testid='flyout-confirm-btn']",
+        setupEnrollment:       "//button[@data-testid='node-setup-btn' or @data-test-id='node-setup-btn']",
+        newAudienceBtn:        "//button[@data-testid='newAudience' or @data-test-id='newAudience']",
+        existingAudienceBtn:   "//button[@data-testid='existingAudience' or @data-test-id='existingAudience']",
+        liveEventBtn:          "//button[@data-testid='liveEvent' or @data-test-id='liveEvent']",
+        newAudienceCriteria:   "//button[@data-testid='Criteria' or @data-test-id='Criteria']",
+        audiencePreview:       "//button[@data-testid='audience-refresh-button' or @data-test-id='audience-refresh-button']",
+        addToEnrollmentBtn:    "//button[@data-testid='workflow-add-criteria-btn' or @data-test-id='workflow-add-criteria-btn']",
+        dashboardBackBtn:      "//button[@data-testid='dashboard-back-button' or @data-test-id='dashboard-back-button']",
+        existingAudienceDropdown:     "//button[@data-testid='workflow-existing-audience-dropdown' or @data-test-id='workflow-existing-audience-dropdown']",
+        existingAudiencePartOfBtn:    "//button[@data-testid='workflow-existing-audience-dropdown-part-of-an-audience' or @data-test-id='workflow-existing-audience-dropdown-part-of-an-audience']",
+        existingAudienceOkBtn:        "//button[@data-testid='flyout-confirm-btn' or @data-test-id='flyout-confirm-btn']",
         existingAudienceSearch:       "//input[@name='search-input-box']",
 
         // Node controls
-        nodeApplyBtn:       "//button[@data-testid='workflow-node-apply-button']",
-        cancelBtn:          "//button[@data-testid='close-node-flyout-btn']",
-        addNodeDropdown:    "//button[@data-testid='add-node-dropdown']",
-        addActionNode:      "//button[@data-testid='add-node-dropdown-add-action']",
-        addDelayNode:       "//button[@data-testid='add-node-dropdown-add-delay']",
-        addExitNode:        "//button[@data-testid='add-node-dropdown-exit-flow']",
+        nodeApplyBtn:       "//button[@data-testid='workflow-node-apply-button' or @data-test-id='workflow-node-apply-button']",
+        cancelBtn:          "//button[@data-testid='close-node-flyout-btn' or @data-test-id='close-node-flyout-btn']",
+        addNodeDropdown:    "//button[@data-testid='add-node-dropdown' or @data-test-id='add-node-dropdown']",
+        addActionNode:      "//button[@data-testid='add-node-dropdown-add-action' or @data-test-id='add-node-dropdown-add-action']",
+        addDelayNode:       "//button[@data-testid='add-node-dropdown-add-delay' or @data-test-id='add-node-dropdown-add-delay']",
+        addExitNode:        "//button[@data-testid='add-node-dropdown-exit-flow' or @data-test-id='add-node-dropdown-exit-flow']",
        selectLiveEventOption:   "//button[@title='Add event']",
-        liveEventOption:    "//button[@data-testid='liveEvent']",
+        liveEventOption:    "//button[@data-testid='liveEvent' or @data-test-id='liveEvent']",
         
-        loginEventOption:   "//*[@data-testid='login']",
-        librarySearch:      "//input[@data-testid='library-search-input' or @placeholder='Search']",
-        libraryUseContent:  "//button[@data-testid='library-use-this-content-btn' or contains(normalize-space(),'Use this content')]",
-        actionAddContent:   "//button[@data-testid='workflow-actions-communication-add-content-btn']",
+        loginEventOption:   "//*[@data-testid='login' or @data-test-id='login']",
+        librarySearch:      "//input[@data-testid='library-search-input' or @data-test-id='library-search-input' or @placeholder='Search']",
+        libraryUseContent:  "//button[@data-testid='library-use-this-content-btn' or @data-test-id='library-use-this-content-btn' or contains(normalize-space(),'Use this content')]",
+        actionAddContent:   "//button[@data-testid='workflow-actions-communication-add-content-btn' or @data-test-id='workflow-actions-communication-add-content-btn']",
         exitMarkAsGoal:     "//button[@role='switch']",
-        nodeEditBtn:        "//button[@data-testid='node-operations-dropdown-edit']",
-        headerThreeDotBtn:  "//button[@data-testid='workflow-header-operations-dropdown']",
-        headerEditBtn:      "//button[@data-testid='workflow-operations-dropdown-edit']",
+        nodeEditBtn:        "//button[@data-testid='node-operations-dropdown-edit' or @data-test-id='node-operations-dropdown-edit']",
+        headerThreeDotBtn:  "//button[@data-testid='workflow-header-operations-dropdown' or @data-test-id='workflow-header-operations-dropdown']",
+        headerEditBtn:      "//button[@data-testid='workflow-operations-dropdown-edit' or @data-test-id='workflow-operations-dropdown-edit']",
 
         // Publish & Draft
-        saveDraftBtn:        "//button[@data-testid='workflow-save-draft-button']",
-        saveDraftConfirm:    "//button[@data-testid='modal-submit-button']",
-        publishBtn:          "//button[@data-testid='workflow-publish-button']",
-        publishConfirm:      "//button[@data-testid='modal-submit-button']",
+        saveDraftBtn:        "//button[@data-testid='workflow-save-draft-button' or @data-test-id='workflow-save-draft-button']",
+        saveDraftConfirm:    "//button[@data-testid='modal-submit-button' or @data-test-id='modal-submit-button']",
+        publishBtn:          "//button[@data-testid='workflow-publish-button' or @data-test-id='workflow-publish-button']",
+        publishConfirm:      "//button[@data-testid='modal-submit-button' or @data-test-id='modal-submit-button']",
 
         // Panel
         zoomOutBtn:  "//button[@title='Zoom out']",
@@ -70,18 +70,18 @@ export class WorkflowPage extends BasePage {
         // Filter & Search
         filterBtn:       "//button[text()='Filters']",
         filterActive:    "//input[@id='active']",
-        filterApplyBtn:  "//button[@data-testid='workflow-filters-apply-button']",
+        filterApplyBtn:  "//button[@data-testid='workflow-filters-apply-button' or @data-test-id='workflow-filters-apply-button']",
         filterSearch:    "//input[@name='search-input-box']",
     };
 
-    // ─── Tabs ────────────────────────────────────────────────────────────────
+    // â”€â”€â”€ Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     async clickActiveTab()   { await this.click(this.sel.activeTab); }
     async clickInactiveTab() { await this.click(this.sel.inactiveTab); }
     async clickDraftTab()    { await this.click(this.sel.draftTab); }
     async clickAllTab()      { await this.click(this.sel.allTab); }
 
-    // ─── Creation ────────────────────────────────────────────────────────────
+    // â”€â”€â”€ Creation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     async clickCreateNew() {
         await this.click(this.sel.createNewBtn);
@@ -115,7 +115,7 @@ export class WorkflowPage extends BasePage {
         await this.waitForVisible(this.sel.editTitle, timeout);
     }
 
-    // ─── Panel ───────────────────────────────────────────────────────────────
+    // â”€â”€â”€ Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     async zoomOut(times = 3) {
         const btn = this.page.locator(this.sel.zoomOutBtn).first();
@@ -141,7 +141,7 @@ export class WorkflowPage extends BasePage {
         }
     }
 
-    // ─── Enrollment ──────────────────────────────────────────────────────────
+    // â”€â”€â”€ Enrollment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     async clickSetupEnrollment()  { await this.click(this.sel.setupEnrollment); }
     async clickNewAudience()      { await this.click(this.sel.newAudienceBtn); }
@@ -200,7 +200,7 @@ export class WorkflowPage extends BasePage {
         return parseInt(text.trim(), 10);
     }
 
-    // ─── Node Actions ────────────────────────────────────────────────────────
+    // â”€â”€â”€ Node Actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     async clickNodeApply() {
         const btn = this.page.locator(this.sel.nodeApplyBtn).first();
@@ -265,7 +265,7 @@ export class WorkflowPage extends BasePage {
     }
 
     async clickFirstCommunication(name: string): Promise<void> {
-        const card = this.page.locator(`//div[@data-testid='${name}']`).first();
+        const card = this.page.locator(`//div[@data-testid='${name}' or @data-test-id='${name}']`).first();
         await card.waitFor({ state: 'visible', timeout: 10000 });
         await this.pause(2000);
         await card.hover({ force: true });
@@ -278,7 +278,7 @@ export class WorkflowPage extends BasePage {
     async clickCancel()       { await this.click(this.sel.cancelBtn); await this.pause(1000); }
 
     async clickNodeEdit(nodeIndex: string) {
-        const nodeSelector = `(//button[@data-testid='node-operations-dropdown'])[${nodeIndex}]`;
+        const nodeSelector = `(//button[@data-testid='node-operations-dropdown' or @data-test-id='node-operations-dropdown'])[${nodeIndex}]`;
         await this.click(nodeSelector);
         await this.click(this.sel.nodeEditBtn);
         await this.pause(2000);
@@ -310,7 +310,7 @@ export class WorkflowPage extends BasePage {
         return this.page.locator(this.sel.exitMarkAsGoal).first().getAttribute('aria-checked');
     }
 
-    // ─── Save / Publish ──────────────────────────────────────────────────────
+    // â”€â”€â”€ Save / Publish â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     async saveDraft() {
         await this.click(this.sel.saveDraftBtn);
@@ -340,7 +340,7 @@ export class WorkflowPage extends BasePage {
         await this.pause(2000);
     }
 
-    // ─── Error Handling ──────────────────────────────────────────────────────
+    // â”€â”€â”€ Error Handling â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     async checkAndCloseErrorPopup(): Promise<{ found: boolean; message: string }> {
         await this.pause(2000);
@@ -366,12 +366,12 @@ export class WorkflowPage extends BasePage {
         return { found: true, message: errorText.replace(/\n/g, ' ').trim() };
     }
 
-    // ─── Dates ───────────────────────────────────────────────────────────────
+    // â”€â”€â”€ Dates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     async clickStartDate() { await this.click(this.sel.startDate); await this.pause(1000); }
     async clickEndDate()   { await this.click(this.sel.endDate); await this.pause(1000); }
 
-    // ─── Filter & Search ─────────────────────────────────────────────────────
+    // â”€â”€â”€ Filter & Search â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     async clickFilterBtn()     { await this.click(this.sel.filterBtn); await this.pause(1000); }
     async clickFilterActive()  { await this.click(this.sel.filterActive); }

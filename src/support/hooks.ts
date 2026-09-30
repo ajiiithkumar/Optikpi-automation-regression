@@ -1,4 +1,4 @@
-
+﻿
 import { After, AfterAll, AfterStep, Before, BeforeStep, Status } from '@cucumber/cucumber';
 import { chromium, Browser, BrowserContext, Page } from 'playwright';
 import { ExtentTestManager } from '../utils/extent-test-manager';
@@ -28,8 +28,8 @@ const shouldCaptureStep = (status: any): boolean => {
 
 BeforeStep(async function (this: PlaywrightWorld, { pickleStep }: any) {
     if (this.limitReached) {
-        console.log(`[LimitReached] ⏭️ Skipping step: ${pickleStep.text}`);
-        ExtentTestManager.logInfo(`⏭️ Skipped (limit reached): ${pickleStep.text}`);
+        console.log(`[LimitReached] â­ï¸ Skipping step: ${pickleStep.text}`);
+        ExtentTestManager.logInfo(`â­ï¸ Skipped (limit reached): ${pickleStep.text}`);
         return 'skipped';
     }
 
@@ -141,11 +141,11 @@ AfterStep(async function (this: PlaywrightWorld, { result, pickleStep }: any) {
         throw new Error(`CRITICAL SYSTEM ERROR: An unexpected UI error was detected during step "${stepText}". Details: ${uiErrors.join(', ')}`);
     }
 
-    // ✅ Capture screenshot + log error for FAILED steps (always)
+    // âœ… Capture screenshot + log error for FAILED steps (always)
     if (status === Status.FAILED) {
         // Log the error message so it's visible in the Extent report
         const errorMessage = result.message || result.exception?.message || 'Unknown error';
-        ExtentTestManager.logFail(`❌ Step failed: ${errorMessage}`);
+        ExtentTestManager.logFail(`âŒ Step failed: ${errorMessage}`);
 
         await Helper.captureScreenshot(this, {
             label: `FAILED: ${stepText}`,
@@ -155,10 +155,10 @@ AfterStep(async function (this: PlaywrightWorld, { result, pickleStep }: any) {
         (this as any)._screenshotTaken = true;
     }
 
-    // ✅ Capture screenshot for Verify/Check/Should/Confirm steps + specific named steps
+    // âœ… Capture screenshot for Verify/Check/Should/Confirm steps + specific named steps
     else if (status === Status.PASSED) {
         const isVerifyStep =
-            /^(verify|check|should|confirm|all expected|a field)/i.test(stepText.trim()) ||
+            /^(verify|validate|check|should|confirm|all expected|a field|filter|poll|search|save|then i should|then verify)/i.test(stepText.trim()) ||
             /\b(visible and clickable|validation message|should be displayed|should be visible)\b/i.test(stepText);
         if (isVerifyStep) {
             await this.page.waitForTimeout(300); // Let page settle before screenshot
@@ -190,7 +190,7 @@ After(async function (this: any, scenario: any) {
             }
         }
 
-        // ✅ Guarantee at least one screenshot per scenario
+        // âœ… Guarantee at least one screenshot per scenario
         // If no Verify/Check step was found during the scenario, take one final screenshot now
         if (!this._screenshotTaken && this.page && status === Status.PASSED) {
             await Helper.captureScreenshot(this, {

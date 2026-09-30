@@ -1,20 +1,20 @@
 import { BasePage } from '../base.page';
 
 /**
- * DateTimePicker — shared component for date/time selection used
+ * DateTimePicker â€” shared component for date/time selection used
  * in Audience schedule, Campaign trigger, and Workflow start/end dates.
  */
 export class DateTimePicker extends BasePage {
 
     private readonly sel = {
-        startingAt:       "//div[@data-testid='schedule-audience-modal-dateTimeSelection']",
-        timeDropdown:     "//button[@data-testid='audience-dateTimeUtil-dropdown-btn']",
+        startingAt:       "//div[@data-testid='schedule-audience-modal-dateTimeSelection' or @data-test-id='schedule-audience-modal-dateTimeSelection']",
+        timeDropdown:     "//button[@data-testid='audience-dateTimeUtil-dropdown-btn' or @data-test-id='audience-dateTimeUtil-dropdown-btn']",
         monthLabel:       "//div[contains(@class,'text-tertiary') and contains(@class,'font-semibold')]",
-        nextMonthBtn:     "//button[@data-testid='audience-dateTimeSelection-modal-nextMonth-btn']",
-        prevMonthBtn:     "//button[@data-testid='audience-dateTimeSelection-modal-previousMonth-btn']",
-        applyBtn:         "//button[@data-testid='audience-dateTimeUtil-modal-apply-btn']",
+        nextMonthBtn:     "//button[@data-testid='audience-dateTimeSelection-modal-nextMonth-btn' or @data-test-id='audience-dateTimeSelection-modal-nextMonth-btn']",
+        prevMonthBtn:     "//button[@data-testid='audience-dateTimeSelection-modal-previousMonth-btn' or @data-test-id='audience-dateTimeSelection-modal-previousMonth-btn']",
+        applyBtn:         "//button[@data-testid='audience-dateTimeUtil-modal-apply-btn' or @data-test-id='audience-dateTimeUtil-modal-apply-btn']",
         validationError:  "//*[normalize-space()='Please select a valid date in the future.']",
-        updateScheduleBtn: "//button[@data-testid='schedule-audience-modal-confirm-btn']",
+        updateScheduleBtn: "//button[@data-testid='schedule-audience-modal-confirm-btn' or @data-test-id='schedule-audience-modal-confirm-btn']",
     };
 
     /** Open the "Starting at" date picker. */
@@ -46,7 +46,7 @@ export class DateTimePicker extends BasePage {
         const mm = String(month + 1).padStart(2, '0');
         const dd = String(day).padStart(2, '0');
         const testId = `audience-dateTimeSelection-modal-date-${year}-${mm}-${dd}`;
-        const dateBtn = this.page.locator(`//button[@data-testid='${testId}']`).first();
+        const dateBtn = this.page.locator(`//button[@data-testid='${testId}' or @data-test-id='${testId}']`).first();
 
         const visible = await dateBtn.isVisible({ timeout: 5000 }).catch(() => false);
         if (visible) {
@@ -66,7 +66,7 @@ export class DateTimePicker extends BasePage {
         await this.pause(1000);
 
         // Approach: scan ALL visible time options in the dropdown and click a future one.
-        // This is timezone-agnostic — works in any container timezone.
+        // This is timezone-agnostic â€” works in any container timezone.
         const timeOptionSel = "//li[contains(@class,'cursor-pointer')] | //div[contains(@class,'cursor-pointer')]//span | //*[matches(normalize-space(),'^\\d{2}:\\d{2}\\s*(AM|PM)$')]";
         
         // Fallback: try to find time options by pattern matching in the dropdown

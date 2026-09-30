@@ -1,8 +1,8 @@
-import { setWorldConstructor, setDefaultTimeout, World, IWorldOptions } from '@cucumber/cucumber';
+﻿import { setWorldConstructor, setDefaultTimeout, World, IWorldOptions } from '@cucumber/cucumber';
 import { Browser, BrowserContext, Page } from 'playwright';
 
 // Increase default step timeout to 120 seconds
-setDefaultTimeout(120 * 1000);
+setDefaultTimeout(300 * 1000); // 5 minutes - needed for polling steps
 
 export class PlaywrightWorld extends World {
     browser: Browser | null = null;

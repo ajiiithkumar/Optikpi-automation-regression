@@ -40,7 +40,7 @@ jobs:
       - name: Write users config from secret
         run: echo '${{ secrets.USERS_CONFIG_JSON }}' > data/users-config/users.json
 
-      - name: Run Audience and Campaign regression suite
+      - name: Run regression suite
         id: run-tests
         continue-on-error: true
         run: npm run test:tag -- "@Regression"

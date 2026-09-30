@@ -14,129 +14,132 @@ export class CampaignPage extends BasePage {
         allTab:          "//button[@data-test-id='campaign-tab-all']",
 
         // Creation
-        createNewBtn:    "//button[@data-testid='create-new-campaign-button']",
-        nameInput:       "//input[@data-testid='campaign-name-input']",
-        tagInput:        "//input[@data-testid='campaign-tag-input']",
-        createBtn:       "//button[@data-testid='create-campaign-button']",
+        createNewBtn:    "//button[@data-testid='create-new-campaign-button' or @data-test-id='create-new-campaign-button']",
+        nameInput:       "//input[@data-testid='campaign-name-input' or @data-test-id='campaign-name-input']",
+        tagInput:        "//input[@data-testid='campaign-tag-input' or @data-test-id='campaign-tag-input']",
+        createBtn:       "//button[@data-testid='create-campaign-button' or @data-test-id='create-campaign-button']",
         editTitle:       "//h2[contains(@class,'text-2xl')]",
 
         // Goal
-        goalClick:       "//div[@data-testid='campaign-goal-Engagement-Click-undefined']",
-        goalOpen:        "//div[@data-testid='campaign-goal-Engagement-Open-undefined']",
-        setGoalBtn:      "//button[@data-testid='campaign-stepper-set-goal-button']",
+        goalClick:       "//div[@data-testid='campaign-goal-Engagement-Click-undefined' or @data-test-id='campaign-goal-Engagement-Click-undefined']",
+        goalOpen:        "//div[@data-testid='campaign-goal-Engagement-Open-undefined' or @data-test-id='campaign-goal-Engagement-Open-undefined']",
+        setGoalBtn:      "//button[@data-testid='campaign-stepper-set-goal-button' or @data-test-id='campaign-stepper-set-goal-button']",
         editGoal:        "//button[normalize-space()='Edit goal'] | //span[normalize-space()='Edit goal']",
         financialTab:    "//button[@data-test-id='campaign-tab-financial']",
         goalDeposit_not_selected:   "//div[contains(@data-testid,'campaign-goal-Financial-Deposit-undefined')]",
-        goalSummary:     "//button[@data-testid='campaign-goal-preview-click']",
+        goalSummary:     "//button[@data-testid='campaign-goal-preview-click' or @data-test-id='campaign-goal-preview-click']",
         /** Goal set — Engagement Open shows inline preview (post–goal-picker UI). */
-        goalPreviewOpen: "//button[@data-testid='campaign-goal-preview-open']",
-        goalPreviewOpenSummary: "//div[contains(@class,'bg-disabledBackground')][.//span[contains(normalize-space(),'Your campaign goal is')] and .//button[@data-testid='campaign-goal-preview-open']]",
+        goalPreviewOpen: "//button[@data-testid='campaign-goal-preview-open' or @data-test-id='campaign-goal-preview-open']",
+        goalPreviewOpenSummary: "//div[contains(@class,'bg-disabledBackground')][.//span[contains(normalize-space(),'Your campaign goal is')] and .//button[@data-testid='campaign-goal-preview-open' or @data-test-id='campaign-goal-preview-open']]",
 
         // Audience
         newAudienceTab:       "//button[@data-test-id='campaign-tab-new-audience']",
         existingAudienceTab:  "//button[@data-test-id='campaign-tab-existing-audience']",
         selectExistingBtn:    "//button[contains(normalize-space(),'Select existing audience')]",
-        existingAudienceOk:   "//button[@data-testid='flyout-confirm-btn']",
-        setAudienceBtn:       "//button[@data-testid='campaign-stepper-set-audience-button']",
+        existingAudienceOk:   "//button[@data-testid='flyout-confirm-btn' or @data-test-id='flyout-confirm-btn']",
+        setAudienceBtn:       "//button[@data-testid='campaign-stepper-set-audience-button' or @data-test-id='campaign-stepper-set-audience-button']",
         audienceSummary:      "//div[@class='flex items-center flex-wrap justify-start p-2.5 rounded text-tertiary bg-disabledBackground']",
         estimatedReach:       "//*[contains(@data-testid,'estimated-reach') or contains(normalize-space(),'Estimated reach') or contains(normalize-space(),'estimated')]",
-        controlGroupInput:    "//input[@data-testid='workflow-control-group-percentage']",
+        controlGroupInput:    "//input[@data-testid='workflow-control-group-percentage' or @data-test-id='workflow-control-group-percentage']",
         controlGroupSummary:  "//*[contains(@data-testid,'control-group') or contains(normalize-space(),'Control group')]",
         editAudienceBtn:      "//span[contains(@class,'flex justify-center items-center gap-1 rounded-lg group') and normalize-space()='Edit audience']",
+        campaignAudiencePreviewBtn: "[data-testid='campaign-preview-audience-btn']",
+        campaignAudiencePreviewCount: "[data-testid^='campaign-audience-preview-activeCustomers-']",
+        campaignAudienceExcludedCount: "[data-testid^='campaign-audience-preview-unsubscribedCustomers-']",
 
         // Trigger
-        triggerStartDate:  "//button[@data-testid='campaign-timer-trigger-startDate-select']",
-        setTriggerBtn:     "//button[@data-testid='campaign-stepper-set-trigger-button']",
+        triggerStartDate:  "//button[@data-testid='campaign-timer-trigger-startDate-select' or @data-test-id='campaign-timer-trigger-startDate-select']",
+        setTriggerBtn:     "//button[@data-testid='campaign-stepper-set-trigger-button' or @data-test-id='campaign-stepper-set-trigger-button']",
         triggerSummary:    "//div[@class='flex items-center flex-wrap justify-start p-2.5 rounded text-tertiary border border-warningDark bg-warning gap-1 text-sm whitespace-pre']",
         eventBasedOption:  "//button[@data-test-id='campaign-tab-event-trigger']",
         systemEventOption: "//button[@data-test-id='campaign-tab-systemevent']",
         eventList:         "//div[contains(@data-testid,'trigger-event-list') or contains(@class,'event-list')]",
-        loginEvent:        "//input[@data-testid='login']",
+        loginEvent:        "//input[@data-testid='login' or @data-test-id='login']",
         addSimpleEvent:    "//button[@title='Add event' and contains(normalize-space(),'simple event')]",
-        Add_live_event_Btn: "//button[@data-testid='add-system-event-btn']",
-        applyTriggerBtn:   "//button[@data-testid='trigger-apply-btn' or contains(normalize-space(),'Apply')]",
+        Add_live_event_Btn: "//button[@data-testid='add-system-event-btn' or @data-test-id='add-system-event-btn']",
+        applyTriggerBtn:   "//button[@data-testid='trigger-apply-btn' or @data-test-id='trigger-apply-btn' or contains(normalize-space(),'Apply')]",
         triggerValidationError: "//*[contains(normalize-space(),'Trigger dates or Event rules are not set properly. Please update the dates or rules to finish campaign setup.') or contains(normalize-space(),'Trigger dates are not set properly. Please update the dates to finish campaign setup.')]",
         editTriggerBtn:    "//button[contains(@data-testid,'edit-trigger') or (contains(@class,'edit') and ancestor::*[contains(@class,'trigger')])]",
         reenrollToggle:    "//button[contains(@data-testid,'reenroll-toggle') or contains(@aria-label,'Re-enroll')] | //div[contains(normalize-space(),'Re-enroll')]//button[@role='switch'] | //button[following-sibling::*[contains(normalize-space(),'Re-enroll')]]",
         reenrollDaysInput: "//input[contains(@data-testid,'reenroll-days') or contains(@placeholder,'days') or @placeholder='Value']",
   
         // Communication
-        chooseContentBtn:     "//button[@data-testid='campaign-choose-content-btn']",
-        setCommunicationBtn:  "//button[@data-testid='campaign-stepper-set-communication-button']",
+        chooseContentBtn:     "//button[@data-testid='campaign-choose-content-btn' or @data-test-id='campaign-choose-content-btn']",
+        setCommunicationBtn:  "//button[@data-testid='campaign-stepper-set-communication-button' or @data-test-id='campaign-stepper-set-communication-button']",
         contentSummary:       "//div[contains(@class,'bg-disabledBackground') and contains(@class,'items-center') and contains(@class,'flex-wrap')]",
-        addVariantBtn:        "//button[@data-testid='campaign-add-content-variant-button']",
+        addVariantBtn:        "//button[@data-testid='campaign-add-content-variant-button' or @data-test-id='campaign-add-content-variant-button']",
         chooseContentVariant: "//button[contains(@data-testid,'choose-content-variant') or contains(@data-testid,'campaign-choose-content-btn')]",
         variantA:             "//button[contains(normalize-space(),'Version A') or contains(normalize-space(),'Variant A')]",
         variantB:             "//button[contains(normalize-space(),'Version B') or contains(normalize-space(),'Variant B')]",
         staticAllocation:     "//button[contains(@data-test-id,'campaign-tab-a-b-testing-with-static-allocation') or contains(normalize-space(),'A/B testing with Static Allocation')]",
         criteriaAllocation:   "//button[contains(@data-test-id,'campaign-tab-criteriabasedallocation') or contains(normalize-space(),'Criteria-based Allocation')]",
-        variantAInput:        "//input[@data-testid='campaign-version-percentage']",
-        variantBInput:        "//input[@data-testid='campaign-version-percentage']",
+        variantAInput:        "//input[@data-testid='campaign-version-percentage' or @data-test-id='campaign-version-percentage']",
+        variantBInput:        "//input[@data-testid='campaign-version-percentage' or @data-test-id='campaign-version-percentage']",
         totalAllocationSummary: "//div[contains(@class,'bg-disabledBackground') and .//button[normalize-space()='Static allocation'] and .//button[contains(normalize-space(),'Version A')] and .//button[contains(normalize-space(),'Version B')]]",
         addCriteriaBtn:       "//button[contains(@data-testid,'add-criteria') or contains(normalize-space(),'Add Criteria')]",
-        addCriteriaBtnVariantA:       "//button[@data-testid='add-criteria-dropdown-A']",
-        addCriteriaCustomerProperties: "//button[@data-testid='add-criteria-dropdown-A-customer-properties']",
-        criteriaCustomerPropertyBtn:   "//button[@data-testid='audience-ruleBuilder-customer-properties--customer property-btn-1']",
-        criteriaConditionBtn:          "//button[@data-testid='audience-ruleBuilder-customer-properties--condition-btn-1']",
-        criteriaValuesBtn:             "//button[@data-testid='audience-ruleBuilder-customer-properties--values-btn-1-1']",
-        criteriaUserIdInput:           "//input[@data-testid='user_id']",
-        criteriaIsOneOfBtn:            "//input[@data-testid='is-one-of']",
+        addCriteriaBtnVariantA:       "//button[@data-testid='add-criteria-dropdown-A' or @data-test-id='add-criteria-dropdown-A']",
+        addCriteriaCustomerProperties: "//button[@data-testid='add-criteria-dropdown-A-customer-properties' or @data-test-id='add-criteria-dropdown-A-customer-properties']",
+        criteriaCustomerPropertyBtn:   "//button[@data-testid='audience-ruleBuilder-customer-properties--customer property-btn-1' or @data-test-id='audience-ruleBuilder-customer-properties--customer property-btn-1']",
+        criteriaConditionBtn:          "//button[@data-testid='audience-ruleBuilder-customer-properties--condition-btn-1' or @data-test-id='audience-ruleBuilder-customer-properties--condition-btn-1']",
+        criteriaValuesBtn:             "//button[@data-testid='audience-ruleBuilder-customer-properties--values-btn-1-1' or @data-test-id='audience-ruleBuilder-customer-properties--values-btn-1-1']",
+        criteriaUserIdInput:           "//input[@data-testid='user_id' or @data-test-id='user_id']",
+        criteriaIsOneOfBtn:            "//input[@data-testid='is-one-of' or @data-test-id='is-one-of']",
         criteriaSearchField:           "//input[@id='search-data']",
-        criteriaAddValuesBtn:          "//button[@data-testid='commonProfile-add-values-btn']",
-        defaultVariantRadioB:          "//input[@data-testid='default-variant-radio-B']",
+        criteriaAddValuesBtn:          "//button[@data-testid='commonProfile-add-values-btn' or @data-test-id='commonProfile-add-values-btn']",
+        defaultVariantRadioB:          "//input[@data-testid='default-variant-radio-B' or @data-test-id='default-variant-radio-B']",
         criteriaSummary:               "//div[contains(@class,'bg-disabledBackground') and .//button[normalize-space()='Criteria-based Allocation']]",
 
         // Publish / Draft
-        publishBtn:        "//button[@data-testid='campaign-publish-button']",
-        publishConfirm:    "//button[@data-testid='modal-submit-button']",
-        saveDraftBtn:      "//button[@data-testid='campaign-save-draft-button']",
-        saveDraftConfirm:  "//button[@data-testid='modal-submit-button']",
+        publishBtn:        "//button[@data-testid='campaign-publish-button' or @data-test-id='campaign-publish-button']",
+        publishConfirm:    "//button[@data-testid='modal-submit-button' or @data-test-id='modal-submit-button']",
+        saveDraftBtn:      "//button[@data-testid='campaign-save-draft-button' or @data-test-id='campaign-save-draft-button']",
+        saveDraftConfirm:  "//button[@data-testid='modal-submit-button' or @data-test-id='modal-submit-button']",
         headlessModal:     "//*[@id='headlessui-portal-root']//form",
 
         // Search
-        searchIcon: "//button[@data-testid='campaign-listView-table-search-icon']",
+        searchIcon: "//button[@data-testid='campaign-listView-table-search-icon' or @data-test-id='campaign-listView-table-search-icon']",
         searchBar:  "//input[@id='campaign-listView-table-search-icon']",
         
 
         // Campaign Details / Edit Name
-        campaignEditbtn: "//button[@data-testid='campaign-edit-settings-btn'] | //*[contains(@data-testid,'campaign-performance-report')]",
+        campaignEditbtn: "//button[@data-testid='campaign-edit-settings-btn' or @data-test-id='campaign-edit-settings-btn'] | //*[contains(@data-testid,'campaign-performance-report')]",
 
         editNameBtn:          "//button[contains(@data-testid,'edit-name') or contains(@aria-label,'Edit name') or contains(normalize-space(),'Edit name')]",
-        nameEditInput:        "//input[@data-testid='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
-        saveNameBtn:          "//button[@data-testid='create-campaign-button' and contains(normalize-space(),'Update campaign')]",
+        nameEditInput:        "//input[@data-testid='campaign-name-input' or @data-test-id='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
+        saveNameBtn:          "//button[@data-testid='create-campaign-button' or @data-test-id='create-campaign-button' and contains(normalize-space(),'Update campaign')]",
         backToListBtn:        "//button[contains(@data-testid,'back-to-list') or contains(@aria-label,'Back')] | //a[contains(@href,'/campaign')]",
 
         // Campaign row / list
         campaignRow:          "//tr[contains(@class,'campaign-row')] | //div[contains(@class,'campaign-card')]",
-        dropdownIcon:         "//button[@data-testid='campaign-list-view-table-dropdown-icon']",
-        dropdownEditSettings: "//button[@data-testid='campaign-list-view-table-dropdown-icon-edit-settings']",
+        dropdownIcon:         "//button[@data-testid='campaign-list-view-table-dropdown-icon' or @data-test-id='campaign-list-view-table-dropdown-icon']",
+        dropdownEditSettings: "//button[@data-testid='campaign-list-view-table-dropdown-icon-edit-settings' or @data-test-id='campaign-list-view-table-dropdown-icon-edit-settings']",
         threeDotMenu:         "//button[contains(@data-testid,'campaign-action-menu') or contains(@aria-label,'Actions') or contains(@class,'action-menu')]",
-        duplicateOption:  "//button[@data-testid='campaign-list-view-table-dropdown-icon-duplicate']",
+        duplicateOption:  "//button[@data-testid='campaign-list-view-table-dropdown-icon-duplicate' or @data-test-id='campaign-list-view-table-dropdown-icon-duplicate']",
         /** Duplicate modal — campaign name field (portal / dialog). */
-        duplicateModalNameInput : "//input[@data-testid='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
-        deleteOption:     "//button[@data-testid='campaign-list-view-table-dropdown-icon-delete-campaign']",
-        duplicateConfirm: "//button[@data-testid='workflow-action-button']",
-        deleteConfirm:    "//button[@data-testid='workflow-action-button']",
+        duplicateModalNameInput : "//input[@data-testid='campaign-name-input' or @data-test-id='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
+        deleteOption:     "//button[@data-testid='campaign-list-view-table-dropdown-icon-delete-campaign' or @data-test-id='campaign-list-view-table-dropdown-icon-delete-campaign']",
+        duplicateConfirm: "//button[@data-testid='workflow-action-button' or @data-test-id='workflow-action-button']",
+        deleteConfirm:    "//button[@data-testid='workflow-action-button' or @data-test-id='workflow-action-button']",
         deleteConfirmInput: "//*[@id='headlessui-portal-root']//input[@type='text' or not(@type)]",
         successToast:     "//*[contains(@class,'toast') or contains(@class,'notification') or contains(@class,'Toastify')][string-length(normalize-space()) > 0]",
 
         // Pagination
-        nextPageBtn:     "//button[@data-testid='campaign-pagination-next-btn']",
-        prevPageBtn:     "//button[@data-testid='campaign-pagination-previous-btn']",
+        nextPageBtn:     "//button[@data-testid='campaign-pagination-next-btn' or @data-test-id='campaign-pagination-next-btn']",
+        prevPageBtn:     "//button[@data-testid='campaign-pagination-previous-btn' or @data-test-id='campaign-pagination-previous-btn']",
 
         // Filter
-        filterBtn:       "//button[@data-testid='campaign-listView-table-filter-icon']",
-        clearFilterBtn:  "//button[@data-testid='campaign-filters-reset-button']",
+        filterBtn:       "//button[@data-testid='campaign-listView-table-filter-icon' or @data-test-id='campaign-listView-table-filter-icon']",
+        clearFilterBtn:  "//button[@data-testid='campaign-filters-reset-button' or @data-test-id='campaign-filters-reset-button']",
         clearFilterChip: "//*[contains(@data-testid,'-clear-button')]",
 
         // History Log — option in the 3-dot dropdown on the campaign list row
-        historyLogBtn:   "//button[@data-testid='campaign-list-view-table-dropdown-icon-view-history-log']",
+        historyLogBtn:   "//button[@data-testid='campaign-list-view-table-dropdown-icon-view-history-log' or @data-test-id='campaign-list-view-table-dropdown-icon-view-history-log']",
         historyLogEntry: "//form//tbody//tr",
 
         // Report — option in the 3-dot dropdown on the campaign list row
-        viewReportBtn:   "//button[@data-testid='campaign-list-view-table-dropdown-icon-view-full-report']",
+        viewReportBtn:   "//button[@data-testid='campaign-list-view-table-dropdown-icon-view-full-report' or @data-test-id='campaign-list-view-table-dropdown-icon-view-full-report']",
         reportPage:      "//*[contains(@data-testid,'campaign-performance-report')]",
-        reportSummaryTab: "//button[@data-testid='campaign-performance-report-summary']",
+        reportSummaryTab: "//button[@data-testid='campaign-performance-report-summary' or @data-test-id='campaign-performance-report-summary']",
     };
 
     // ─── Tab Actions ─────────────────────────────────────────────────────────
@@ -340,7 +343,7 @@ export class CampaignPage extends BasePage {
             return (await previewOpen.innerText().catch(() => '')).trim();
         }
         const previewClick = this.page.locator(
-            "//div[contains(@class,'bg-disabledBackground')][.//span[contains(normalize-space(),'Your campaign goal is')] and .//button[@data-testid='campaign-goal-preview-click']]"
+            "//div[contains(@class,'bg-disabledBackground')][.//span[contains(normalize-space(),'Your campaign goal is')] and .//button[@data-testid='campaign-goal-preview-click' or @data-test-id='campaign-goal-preview-click']]"
         ).first();
         if (await previewClick.isVisible({ timeout: 2000 }).catch(() => false)) {
             return (await previewClick.innerText().catch(() => '')).trim();
@@ -379,6 +382,27 @@ export class CampaignPage extends BasePage {
     async confirmAudienceSelection() {
         await this.click(this.sel.existingAudienceOk);
         await this.pause(1000);
+    }
+
+        async clickCampaignAudiencePreview() {
+        await this.page.locator(this.sel.campaignAudiencePreviewBtn).first().click();
+        await this.pause(2000);
+    }
+    
+    async getCampaignAudiencePreviewCount(): Promise<number> {
+        const countLocator = this.page.locator(this.sel.campaignAudiencePreviewCount).first();
+        await countLocator.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+        const text = (await countLocator.textContent())?.trim() || '0';
+        const num = parseInt(text.replace(/[^0-9]/g, ''), 10);
+        return isNaN(num) ? 0 : num;
+    }
+
+    async getCampaignAudienceExcludedCount(): Promise<number> {
+        const countLocator = this.page.locator(this.sel.campaignAudienceExcludedCount).first();
+        await countLocator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+        const text = (await countLocator.textContent())?.trim() || '0';
+        const num = parseInt(text.replace(/[^0-9]/g, ''), 10);
+        return isNaN(num) ? 0 : num;
     }
 
     async clickSetAudience() {
