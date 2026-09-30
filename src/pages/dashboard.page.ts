@@ -1,7 +1,7 @@
 import { BasePage } from './base.page';
 
 /**
- * DashboardPage — encapsulates Dashboard selectors and actions.
+ * DashboardPage â€” encapsulates Dashboard selectors and actions.
  */
 export class DashboardPage extends BasePage {
 
@@ -14,8 +14,8 @@ export class DashboardPage extends BasePage {
         loader:    "//*[contains(@class,'loader') or contains(@class,'spinner') or @aria-busy='true']",
 
         // Date filter
-        dateFilter:       "//button[@data-testid='date-range-dropdown']",
-        dateLast30Days:   "//button[@data-testid='date-range-dropdown-last-30-days']",
+        dateFilter:       "//button[@data-testid='date-range-dropdown' or @data-test-id='date-range-dropdown']",
+        dateLast30Days:   "//button[@data-testid='date-range-dropdown-last-30-days' or @data-test-id='date-range-dropdown-last-30-days']",
 
         // Tabs
         tabBusinessPerformance: "//button[@data-test-id='dashboard-tab-business-performance']",
@@ -34,7 +34,7 @@ export class DashboardPage extends BasePage {
         Notification:           { tabSel: this.sel.tabNotification,        pathHint: 'notification',         contentSel: this.sel.notificationScheduledAudiences },
     };
 
-    // ─── Ready / Loader ──────────────────────────────────────────────────────
+    // â”€â”€â”€ Ready / Loader â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /** Wait for dashboard to be fully ready (loader hidden, KPI cards visible). */
     async waitForReady() {
@@ -51,7 +51,7 @@ export class DashboardPage extends BasePage {
         await this.page.locator(this.sel.loader).waitFor({ state: 'hidden', timeout: 30000 }).catch(() => {});
     }
 
-    // ─── KPI ─────────────────────────────────────────────────────────────────
+    // â”€â”€â”€ KPI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /** Get a snapshot of KPI card texts (pipe-separated). */
     async getKpiSnapshot(): Promise<string> {
@@ -64,7 +64,7 @@ export class DashboardPage extends BasePage {
         return '';
     }
 
-    // ─── Date Filter ─────────────────────────────────────────────────────────
+    // â”€â”€â”€ Date Filter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /** Click the date filter dropdown and select "Last 30 days". Returns true if selected. */
     async applyLast30DaysFilter(): Promise<boolean> {
@@ -87,7 +87,7 @@ export class DashboardPage extends BasePage {
         return false;
     }
 
-    // ─── Tabs ────────────────────────────────────────────────────────────────
+    // â”€â”€â”€ Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /** Open a dashboard tab by label ('Business Performance', 'Marketing', 'Notification'). */
     async openTab(label: string) {
@@ -117,9 +117,9 @@ export class DashboardPage extends BasePage {
         await this.page.locator(entry.contentSel).first().waitFor({ state: 'visible', timeout: 20000 });
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // Dashboard v2 (/dashboard_v2/{tab})
-    // ─────────────────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private readonly v2Tab: Record<string, string> = {
         'Overview':             "[data-test-id='dashboard_v2-tab-overview']",
@@ -166,7 +166,7 @@ export class DashboardPage extends BasePage {
         resetBtn:       "[data-testid='common-flyout-reset-btn']",
     };
 
-    // ─── v2 Date Utilities ────────────────────────────────────────────────────
+    // â”€â”€â”€ v2 Date Utilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /** Format a Date as "MMM D, YYYY" matching the Dashboard v2 UI format. */
     formatDateLabel(d: Date): string {
@@ -179,8 +179,8 @@ export class DashboardPage extends BasePage {
      * Dynamically calculate the expected start/end dates for a preset option.
      * Dates match what the Dashboard v2 UI displays (no hardcoded values).
      *
-     * "Last 30 days" logic: today − 29 days → today (30 days inclusive).
-     * Verified from recorder: on Aug 12 the range showed Jul 14 (Aug 12 − 29 = Jul 14).
+     * "Last 30 days" logic: today âˆ’ 29 days â†’ today (30 days inclusive).
+     * Verified from recorder: on Aug 12 the range showed Jul 14 (Aug 12 âˆ’ 29 = Jul 14).
      */
     calculateExpectedRange(option: string): { start: string; end: string; label: string } {
         const today = new Date();
@@ -194,7 +194,7 @@ export class DashboardPage extends BasePage {
 
         switch (option) {
             case 'This week': {
-                const dayOfWeek = today.getDay(); // 0=Sun, 1=Mon …
+                const dayOfWeek = today.getDay(); // 0=Sun, 1=Mon â€¦
                 const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
                 const monday = new Date(today);
                 monday.setDate(today.getDate() + diffToMonday);
@@ -228,7 +228,7 @@ export class DashboardPage extends BasePage {
         }
     }
 
-    // ─── v2 Tab Navigation ───────────────────────────────────────────────────
+    // â”€â”€â”€ v2 Tab Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /** Click a v2 tab and wait for the URL to update and network to settle. */
     async navigateToV2Tab(label: string) {
@@ -251,7 +251,7 @@ export class DashboardPage extends BasePage {
         await this.waitForNetworkIdle();
     }
 
-    // ─── v2 Date Range ───────────────────────────────────────────────────────
+    // â”€â”€â”€ v2 Date Range â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /** Open the date range dropdown. */
     private async openDateRangeDropdown() {
@@ -277,7 +277,7 @@ export class DashboardPage extends BasePage {
         if (byIdVisible) {
             await byId.click();
         } else {
-            // Fallback: exact text — covers any testid naming discrepancies
+            // Fallback: exact text â€” covers any testid naming discrepancies
             const byText = this.page.getByText(option, { exact: true }).first();
             await byText.waitFor({ state: 'visible', timeout: 5000 });
             await byText.click();
@@ -350,7 +350,7 @@ export class DashboardPage extends BasePage {
         await this.waitForNetworkIdle();
     }
 
-    // ─── v2 Filter ───────────────────────────────────────────────────────────
+    // â”€â”€â”€ v2 Filter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /** Click the filter button to open or re-open the filter panel. */
     async openDashboardFilter() {
@@ -422,7 +422,7 @@ export class DashboardPage extends BasePage {
 
     /**
      * Click Apply in the filter flyout to apply the selected filters.
-     * Called after selectAudienceInFilter — the audience sub-flyout is already closed.
+     * Called after selectAudienceInFilter â€” the audience sub-flyout is already closed.
      */
     async applyDashboardFilter() {
         const applyBtn = this.page.locator(this.v2Filter.confirmBtn)

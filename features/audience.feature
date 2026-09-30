@@ -1,4 +1,4 @@
-﻿Feature: Audience Module
+Feature: Audience Module
   # Covers regression and functional scenarios for audience creation,
   # editing, publishing, and validation across all criteria types.
   # Users are managed in config/users.json (kept out of the report).
@@ -321,7 +321,7 @@
     Then I close the announcement popup if it appears
     When I navigate to "Audience"
     Then I should see the "Audience" page
-    Then Live tab should load successfully
+    Then RFM tab should load successfully
     Then On Schedule tab should load successfully
     Then Static tab should load successfully
     Then Click the card view icon
