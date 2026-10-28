@@ -141,7 +141,7 @@ export class DashboardPage extends BasePage {
         /** The <span> INSIDE the dropdown button that shows the current label text. */
         dropdownLabel: "[data-testid='date-range-dropdown'] span",
         /** A separate date-range display span in the dashboard header. */
-        headerSpan:    "div.relative div.gap-2 > span",
+        headerSpan:    "div.relative div.gap-2 > span, button[data-testid='date-range-dropdown'] ~ span, div.flex.items-center.gap-2 > span, [data-testid='date-range-header-text'], span:has-text('UTC')",
         /** data-testid suffix for each preset option. */
         presets: {
             'This week':    'date-range-dropdown-this-week',

@@ -12,7 +12,7 @@ export class NavigationBar extends BasePage {
         navLibrary:   "//*[self::a or self::button][.//span[normalize-space()='Library'] or normalize-space()='Library']",
         navCampaign:  "//*[self::a or self::button][.//span[normalize-space()='Campaign'] or normalize-space()='Campaign']",
         navWorkflow:  "//*[self::a or self::button][.//span[normalize-space()='Workflow'] or normalize-space()='Workflow']",
-        closeBody:    "//body[contains(@class,'__className_f367f3')]",
+        closeBody:    "body",
     };
 
     private readonly navMap: Record<string, { nav: string; pathHint: string }> = {
@@ -33,13 +33,13 @@ export class NavigationBar extends BasePage {
         for (let attempt = 1; attempt <= 2; attempt++) {
             try {
                 await navLocator.waitFor({ state: 'visible', timeout: 30000 });
-                await this.pause(2000);
+                await this.pause(500);
                 await navLocator.click();
-                await this.waitForNetworkIdle();
-                await this.pause(1000);
+                await this.waitForNetworkIdle(5000);
+                await this.pause(500);
 
-                // Close sidebar hover
-                await this.page.locator(this.sel.closeBody).hover().catch(() => {});
+                // Move mouse away from sidebar to close hover state
+                await this.page.mouse.move(300, 300).catch(() => {});
                 await this.pause(500);
 
                 // Wait for URL to contain the path hint
@@ -47,7 +47,7 @@ export class NavigationBar extends BasePage {
                 return;
             } catch (err) {
                 if (attempt === 2) throw new Error(`Failed to navigate to ${moduleName} after 2 attempts: ${err}`);
-                await this.pause(2000);
+                await this.pause(1000);
             }
         }
     }

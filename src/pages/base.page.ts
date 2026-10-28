@@ -106,8 +106,8 @@ export class BasePage {
     }
 
     /** Wait for network to settle after an action. */
-    protected async waitForNetworkIdle() {
-        await this.page.waitForLoadState('networkidle').catch(() => {});
+    protected async waitForNetworkIdle(timeout = 5000) {
+        await this.page.waitForLoadState('networkidle', { timeout }).catch(() => {});
     }
 
     /**

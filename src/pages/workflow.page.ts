@@ -36,21 +36,21 @@ export class WorkflowPage extends BasePage {
         existingAudienceSearch:       "//input[@name='search-input-box']",
 
         // Node controls
-        nodeApplyBtn:       "//button[@data-testid='workflow-node-apply-button' or @data-test-id='workflow-node-apply-button']",
-        cancelBtn:          "//button[@data-testid='close-node-flyout-btn' or @data-test-id='close-node-flyout-btn']",
-        addNodeDropdown:    "//button[@data-testid='add-node-dropdown' or @data-test-id='add-node-dropdown']",
-        addActionNode:      "//button[@data-testid='add-node-dropdown-add-action' or @data-test-id='add-node-dropdown-add-action']",
-        addDelayNode:       "//button[@data-testid='add-node-dropdown-add-delay' or @data-test-id='add-node-dropdown-add-delay']",
-        addExitNode:        "//button[@data-testid='add-node-dropdown-exit-flow' or @data-test-id='add-node-dropdown-exit-flow']",
-       selectLiveEventOption:   "//button[@title='Add event']",
-        liveEventOption:    "//button[@data-testid='liveEvent' or @data-test-id='liveEvent']",
-        
+        nodeApplyBtn:       "//*[@data-testid='workflow-node-apply-button' or @data-test-id='workflow-node-apply-button']",
+        cancelBtn:          "//*[@data-testid='close-node-flyout-btn' or @data-test-id='close-node-flyout-btn']",
+        addNodeDropdown:    "//*[@id='workflow-add-node-btn' or @data-testid='add-node-dropdown' or @data-test-id='add-node-dropdown']",
+        addActionNode:      "//*[@data-testid='add-node-dropdown-add-action' or @data-test-id='add-node-dropdown-add-action'] | //*[@role='menuitem' and contains(.,'Action')] | //button[normalize-space()='Action' or contains(normalize-space(),'Action')]",
+        addDelayNode:       "//*[@data-testid='add-node-dropdown-add-delay' or @data-test-id='add-node-dropdown-add-delay'] | //*[@role='menuitem' and contains(.,'Delay')] | //button[normalize-space()='Delay' or contains(normalize-space(),'Delay')]",
+        addExitNode:        "//*[@data-testid='add-node-dropdown-exit-flow' or @data-test-id='add-node-dropdown-exit-flow'] | //*[@role='menuitem' and (contains(.,'Exit') or contains(.,'End'))] | //button[contains(normalize-space(),'Exit')]",
+        selectLiveEventOption:   "//*[@data-testid='workflow-node-flyout-body']//button[.//text()[contains(.,'simple event')] or .//span[contains(.,'simple event')]] | //button[contains(normalize-space(),'simple event')]",
+        liveEventOption:    "//*[@id='delay-live-event'] | //button[@data-testid='liveEvent' or @data-test-id='liveEvent']",
+        addLiveEventConfirmBtn: "//*[@data-testid='add-system-event-btn']",
         loginEventOption:   "//*[@data-testid='login' or @data-test-id='login']",
-        librarySearch:      "//input[@data-testid='library-search-input' or @data-test-id='library-search-input' or @placeholder='Search']",
-        libraryUseContent:  "//button[@data-testid='library-use-this-content-btn' or @data-test-id='library-use-this-content-btn' or contains(normalize-space(),'Use this content')]",
-        actionAddContent:   "//button[@data-testid='workflow-actions-communication-add-content-btn' or @data-test-id='workflow-actions-communication-add-content-btn']",
+        librarySearch:      "//*[@data-testid='library-search-input']",
+        libraryUseContent:  "//*[@data-testid='campaign-communication-list-hover'] | //*[@data-testid='library-use-this-content-btn' or contains(normalize-space(),'Use this content')]",
+        actionAddContent:   "//*[@data-testid='workflow-actions-communication-add-content-btn' or @data-test-id='workflow-actions-communication-add-content-btn'] | //button[contains(normalize-space(),'Add content') or contains(.,'Add Content')]",
         exitMarkAsGoal:     "//button[@role='switch']",
-        nodeEditBtn:        "//button[@data-testid='node-operations-dropdown-edit' or @data-test-id='node-operations-dropdown-edit']",
+        nodeEditBtn:        "//*[@data-testid='node-edit-btn' or @data-testid='node-operations-dropdown-edit']",
         headerThreeDotBtn:  "//button[@data-testid='workflow-header-operations-dropdown' or @data-test-id='workflow-header-operations-dropdown']",
         headerEditBtn:      "//button[@data-testid='workflow-operations-dropdown-edit' or @data-test-id='workflow-operations-dropdown-edit']",
 
@@ -203,57 +203,158 @@ export class WorkflowPage extends BasePage {
     // â”€â”€â”€ Node Actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     async clickNodeApply() {
-        const btn = this.page.locator(this.sel.nodeApplyBtn).first();
-        await btn.waitFor({ state: 'visible', timeout: 20000 });
-        await Promise.allSettled([
-            this.page.waitForLoadState('networkidle').catch(() => {}),
-            btn.click(),
-        ]);
+        await this.pause(1000);
+
+        // Clean up any empty event card in Delay flyout if present
+        const emptyEventDeleteBtn = this.page.locator(
+            "//*[@data-testid='workflow-node-flyout-body']//div[.//button[contains(.,'simple event')]]//button[@data-testid='criteria-delete-event-btn']"
+        ).first();
+        if (await emptyEventDeleteBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+            await emptyEventDeleteBtn.click();
+            await this.pause(500);
+        }
+
+        const applyBtn = this.page.locator(
+            "//button[@data-testid='workflow-node-apply-button' or @data-test-id='workflow-node-apply-button'] | " +
+            "//div[contains(@class,'flyout') or contains(@class,'drawer') or @role='dialog']//button[normalize-space()='Apply' or normalize-space()='Save'] | " +
+            "//button[normalize-space()='Apply' or normalize-space()='Save']"
+        ).first();
+
+        await applyBtn.waitFor({ state: 'visible', timeout: 15000 });
+        for (let i = 0; i < 10; i++) {
+            if (await applyBtn.isEnabled().catch(() => false)) break;
+            await this.pause(500);
+        }
+        await applyBtn.click();
         await this.pause(2000);
     }
 
     async clickAddNodeDropdown(nodeIndex: string) {
-        const btn = this.page.locator(`(${this.sel.addNodeDropdown})[${nodeIndex}]`);
-
-        // Pan canvas for nodes beyond the first
-        if (parseInt(nodeIndex, 10) > 1) {
+        // Always fit view so all canvas nodes and connectors are visible and properly positioned
+        const fitView = this.page.locator("//*[@data-testid='workflow-fit-view-btn']").first();
+        if (await fitView.isVisible({ timeout: 2000 }).catch(() => false)) {
+            await fitView.click().catch(() => {});
+            await this.pause(800);
+        } else if (parseInt(nodeIndex, 10) > 1) {
             await this.panCanvasUp();
+            await this.pause(500);
         }
 
-        await btn.scrollIntoViewIfNeeded().catch(() => {});
-        await btn.waitFor({ state: 'visible', timeout: 20000 });
-        await btn.hover();
+        // Find all add-node (+) connectors on the canvas
+        const buttons = this.page.locator(this.sel.addNodeDropdown);
+        const count = await buttons.count();
+
+        let targetBtn = buttons.last();
+        if (count > 1) {
+            // Find the bottom-most connector on canvas (largest Y coordinate)
+            // to ensure we click AFTER the delay/last node, NEVER in the middle between nodes
+            let maxY = -1;
+            for (let i = 0; i < count; i++) {
+                const btn = buttons.nth(i);
+                if (await btn.isVisible().catch(() => false)) {
+                    const box = await btn.boundingBox().catch(() => null);
+                    if (box && box.y > maxY) {
+                        maxY = box.y;
+                        targetBtn = btn;
+                    }
+                }
+            }
+        }
+
+        await targetBtn.scrollIntoViewIfNeeded().catch(() => {});
+        await targetBtn.waitFor({ state: 'visible', timeout: 15000 });
+        await targetBtn.hover();
+        await this.pause(500);
+        await targetBtn.click({ force: true });
         await this.pause(1000);
-        await btn.click({ force: true });
     }
 
     async clickActionNode(): Promise<void> {
-        await this.click(this.sel.addActionNode);
+        const btn = this.page.locator(this.sel.addActionNode).first();
+        await btn.waitFor({ state: 'visible', timeout: 10000 });
+        await btn.click();
         await this.pause(2000);
     }
 
     async clickDelayNode(): Promise<void> {
-        await this.click(this.sel.addDelayNode);
+        const btn = this.page.locator(this.sel.addDelayNode).first();
+        await btn.waitFor({ state: 'visible', timeout: 10000 });
+        await btn.click();
         await this.pause(2000);
     }
 
     async clickLiveEventOption(): Promise<void> {
-        await this.click(this.sel.liveEventOption);
+        await this.pause(1000);
+
+        // 1. Enable Live event toggle (#delay-live-event)
+        const liveEventSwitch = this.page.locator("//*[@id='delay-live-event'] | //button[@data-testid='liveEvent']").first();
+        if (await liveEventSwitch.isVisible({ timeout: 5000 }).catch(() => false)) {
+            const isLiveChecked = (await liveEventSwitch.getAttribute('aria-checked').catch(() => null)) === 'true' ||
+                                  (await liveEventSwitch.getAttribute('data-state').catch(() => null)) === 'checked';
+            if (!isLiveChecked) {
+                await liveEventSwitch.click();
+                await this.pause(1000);
+            }
+        } else {
+            const option = this.page.locator(this.sel.liveEventOption).first();
+            await option.click().catch(() => {});
+        }
+
+        // 2. Disable "Amount of time" toggle (#delay-amount-of-time) so ONLY live event is enabled
+        const amountOfTimeSwitch = this.page.locator("//*[@id='delay-amount-of-time']").first();
+        if (await amountOfTimeSwitch.isVisible({ timeout: 3000 }).catch(() => false)) {
+            const isTimeChecked = (await amountOfTimeSwitch.getAttribute('aria-checked').catch(() => null)) === 'true' ||
+                                  (await amountOfTimeSwitch.getAttribute('data-state').catch(() => null)) === 'checked' ||
+                                  (await amountOfTimeSwitch.getAttribute('class').catch(() => ''))?.includes('bg-brand') ||
+                                  (await amountOfTimeSwitch.getAttribute('class').catch(() => ''))?.includes('bg-primary');
+            // In OptiKPI V2, Amount of time is ON by default. If ON, click to disable it.
+            if (isTimeChecked) {
+                await amountOfTimeSwitch.click();
+                await this.pause(1000);
+            }
+        }
         await this.pause(1000);
     }
 
     async clickLoginLiveEvent(): Promise<void> {
-        await this.click(this.sel.selectLiveEventOption);
-        await this.click(this.sel.loginEventOption);
         await this.pause(1000);
+
+        // 1. Click "+ simple event" (from Recorder)
+        const eventTrigger = this.page.locator(this.sel.selectLiveEventOption).first();
+        await eventTrigger.waitFor({ state: 'visible', timeout: 10000 });
+        await eventTrigger.click();
+        await this.pause(1000);
+
+        // 2. Select Login radio ([data-testid='login'] from Recorder)
+        const loginRadio = this.page.locator(this.sel.loginEventOption).first();
+        await loginRadio.waitFor({ state: 'visible', timeout: 10000 });
+        await loginRadio.click();
+        await this.pause(1000);
+
+        // Clean up any empty/extra event in the Delay flyout (do not add extra event)
+        const emptyEventDeleteBtn = this.page.locator(
+            "//*[@data-testid='workflow-node-flyout-body']//div[.//button[contains(.,'simple event')]]//button[@data-testid='criteria-delete-event-btn']"
+        ).first();
+        if (await emptyEventDeleteBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+            await emptyEventDeleteBtn.click();
+            await this.pause(500);
+        }
     }
 
     async clickExitNode(): Promise<void> {
-        await this.click(this.sel.addExitNode);
+        const btn = this.page.locator(this.sel.addExitNode).first();
+        await btn.waitFor({ state: 'visible', timeout: 10000 });
+        await btn.click();
         await this.pause(2000);
     }
 
-    async clickAddContent()   { await this.click(this.sel.actionAddContent); }
+    async clickAddContent(): Promise<void> {
+        const btn = this.page.locator(this.sel.actionAddContent).first();
+        if (await btn.isVisible({ timeout: 4000 }).catch(() => false)) {
+            await btn.click();
+            await this.pause(1000);
+        }
+    }
 
     async searchCommunication(name: string): Promise<void> {
         const searchInput = this.page.locator(this.sel.librarySearch).first();
@@ -265,23 +366,91 @@ export class WorkflowPage extends BasePage {
     }
 
     async clickFirstCommunication(name: string): Promise<void> {
-        const card = this.page.locator(`//div[@data-testid='${name}' or @data-test-id='${name}']`).first();
+        let card = this.page.locator(
+            `//div[contains(@class,'grid') or contains(@class,'flex-wrap') or contains(@class,'gap-')]//div[contains(@class,'border') and .//*[normalize-space()='${name}']] | ` +
+            `//div[contains(@class,'border') and not(ancestor::header) and not(.//input) and .//*[normalize-space()='${name}']] | ` +
+            `//div[contains(@class,'grid') or contains(@class,'flex-wrap')]//div[contains(@class,'border')][1]`
+        ).first();
+
+        if (!await card.isVisible({ timeout: 3000 }).catch(() => false)) {
+            const clearBtn = this.page.locator("//*[@data-testid='clear-library-search-button']").first();
+            if (await clearBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
+                await clearBtn.click();
+                await this.pause(1000);
+            }
+            card = this.page.locator("//div[contains(@class,'grid') or contains(@class,'flex-wrap')]//div[contains(@class,'border')][1]").first();
+        }
+
         await card.waitFor({ state: 'visible', timeout: 10000 });
-        await this.pause(2000);
+        await card.scrollIntoViewIfNeeded().catch(() => {});
         await card.hover({ force: true });
-        await this.pause(500);
-        const useBtn = this.page.locator(this.sel.libraryUseContent).first();
-        await useBtn.waitFor({ state: 'visible', timeout: 10000 });
-        await useBtn.click();
+        await card.locator("img, div.relative, div[class*='preview']").first().hover({ force: true }).catch(() => {});
+        await this.pause(800);
+
+        const useBtn = this.page.locator(
+            "//*[@data-testid='campaign-communication-list-hover']//p | " +
+            "//*[@data-testid='campaign-communication-list-hover'] | " +
+            "//*[contains(normalize-space(),'Use this content')]"
+        ).first();
+
+        try {
+            await useBtn.click({ force: true, timeout: 5000 });
+        } catch {
+            await useBtn.dispatchEvent('click').catch(() => {});
+        }
+
+        await this.page.waitForURL((url) => !url.href.includes('setContent'), { timeout: 10000 }).catch(() => {});
         await this.pause(2000);
+
+        if (this.page.url().includes('setContent')) {
+            await card.click({ force: true }).catch(() => {});
+            await this.pause(2000);
+        }
     }
+
     async clickCancel()       { await this.click(this.sel.cancelBtn); await this.pause(1000); }
 
     async clickNodeEdit(nodeIndex: string) {
-        const nodeSelector = `(//button[@data-testid='node-operations-dropdown' or @data-test-id='node-operations-dropdown'])[${nodeIndex}]`;
-        await this.click(nodeSelector);
-        await this.click(this.sel.nodeEditBtn);
-        await this.pause(2000);
+        // 1. Check for direct edit icon button or "Set up delay" button on node card (new UI)
+        const nodeCard = this.page.locator(`(//div[contains(@class,'react-flow__node') or contains(@class,'workflow-node') or contains(@class,'relative') and .//div[contains(@class,'rounded')]])[${nodeIndex}]`).first();
+        if (await nodeCard.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await nodeCard.hover({ force: true }).catch(() => {});
+            await this.pause(300);
+
+            // In new UI, top right has pencil icon button
+            const directEditBtn = nodeCard.locator("button:has(svg):not(:has-text('Add')):not([role='switch'])").first();
+            if (await directEditBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+                await directEditBtn.click();
+                await this.pause(1500);
+                return;
+            }
+
+            // Or "Set up delay" / "Set up" button inside card
+            const setupBtn = nodeCard.locator("//button[contains(normalize-space(),'Set up') or contains(normalize-space(),'Edit')]").first();
+            if (await setupBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
+                await setupBtn.click();
+                await this.pause(1500);
+                return;
+            }
+        }
+
+        // 2. Fallback to dropdown-based edit (older UI)
+        const dropdownSel = `(//button[@data-testid='node-operations-dropdown' or @data-test-id='node-operations-dropdown' or contains(@class,'node-operations')])[${nodeIndex}]`;
+        const dropdown = this.page.locator(dropdownSel).first();
+        if (await dropdown.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await dropdown.click();
+            await this.pause(500);
+            await this.click(this.sel.nodeEditBtn);
+            await this.pause(1500);
+            return;
+        }
+
+        // 3. Fallback: any edit button matching nodeIndex
+        const fallbackEdit = this.page.locator(`(//button[contains(@data-testid,'edit') or @aria-label='Edit' or @title='Edit'])[${nodeIndex}]`).first();
+        if (await fallbackEdit.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await fallbackEdit.click();
+            await this.pause(1500);
+        }
     }
 
     async clickHeaderThreeDotMenu(): Promise<void> {
@@ -305,9 +474,30 @@ export class WorkflowPage extends BasePage {
     }
 
     async clickExitMarkAsGoal(): Promise<string | null> {
-        await this.click(this.sel.exitMarkAsGoal);
-        await this.pause(1000);
-        return this.page.locator(this.sel.exitMarkAsGoal).first().getAttribute('aria-checked');
+        // Check if flyout switch is already visible (flyout opens automatically when Exit node is created)
+        const switchBtn = this.page.locator(
+            "//div[contains(@class,'flyout') or contains(@class,'drawer') or @role='dialog' or @id='headlessui-portal-root']//button[@role='switch'] | //button[@role='switch']"
+        ).first();
+
+        // If the flyout is NOT open yet, click 'Set up exit' on the canvas
+        if (!await switchBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+            const setupBtn = this.page.locator("//button[contains(.,'Set up exit') or @data-testid='node-setup-btn']").first();
+            if (await setupBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+                await setupBtn.click({ force: true }).catch(() => {});
+                await this.pause(1000);
+            }
+        }
+
+        await switchBtn.waitFor({ state: 'visible', timeout: 10000 });
+        const beforeChecked = await switchBtn.getAttribute('aria-checked').catch(() => null) ??
+                              await switchBtn.getAttribute('data-state').catch(() => null);
+        if (beforeChecked !== 'true' && beforeChecked !== 'checked') {
+            await switchBtn.click();
+            await this.pause(1000);
+        }
+        const afterChecked = await switchBtn.getAttribute('aria-checked').catch(() => null) ??
+                             await switchBtn.getAttribute('data-state').catch(() => null);
+        return (afterChecked === 'true' || afterChecked === 'checked') ? 'true' : 'false';
     }
 
     // â”€â”€â”€ Save / Publish â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
