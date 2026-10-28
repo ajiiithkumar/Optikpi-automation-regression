@@ -356,9 +356,7 @@ Then('Filter the Audience with the saved Audience title', async function (this: 
             // Verify audience is visible
             await audience.verifyAudienceInList(expectedTitle);
             ExtentTestManager.logPass(`Filtered and searched for Audience: ${expectedTitle} (attempt ${attempt})`);
-// ---------------------------------------------------------------------
-// return  Success  exit the loop
-// ---------------------------------------------------------------------
+            return;
         } catch (err) {
             lastError = err as Error;
             console.log(`[Audience Search] Attempt ${attempt} failed: ${lastError.message}`);

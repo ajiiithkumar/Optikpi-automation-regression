@@ -33,9 +33,9 @@ export class AudiencePage extends BasePage {
         // Criteria
         criteria: "//*[@data-testid='audience-ruleBuilder-criteriaIcon-group-1' or @data-test-id='audience-ruleBuilder-criteriaIcon-group-1']",
         criteriaCustomerProps: "//*[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-customer-properties' or @data-test-id='audience-ruleBuilder-criteriaIcon-group-1-customer-properties']",
-        customerPropsEvent: "//button[normalize-space()='+ customer property' or contains(@data-testid,'customer property-btn-')]",
-        userIdInput: "//*[@data-testid='user_id' or @data-test-id='user_id'] | //input[@data-testid='user_id' or @data-test-id='user_id'] | //button[.//text()[normalize-space()='User Id']] | //label[normalize-space()='User Id']",
-        customerPropsDrawerSearch: "//div[@role='dialog' or contains(@class,'dialog') or contains(@class,'modal')]//input[@placeholder='Search'] | //input[@placeholder='Search' and not(@id='search-data')]",
+        customerPropsEvent: "//button[normalize-space()='+ customer property' or contains(@data-testid,'customer property-btn-') or contains(@data-testid,'customer-properties') or contains(.,'customer property')]",
+        userIdInput: "//*[@data-testid='user_id' or @data-test-id='user_id'] | //input[@data-testid='user_id' or @data-test-id='user_id'] | //button[.//text()[normalize-space()='User Id']] | //label[normalize-space()='User Id'] | //*[normalize-space()='User Id' and not(self::input)]",
+        customerPropsDrawerSearch: "//div[@role='dialog' or contains(@class,'dialog') or contains(@class,'modal') or contains(@id,'headlessui-dialog')]//input | //input[@placeholder='Search' and not(@id='search-data')]",
         customerPropsDrawerAddBtn: "//button[normalize-space()='Add property' or @data-testid='add-property-btn']",
         customerPropsDrawerCancelBtn: "//button[normalize-space()='Cancel' or @aria-label='Close']",
         ConditionIsOneOfBtn: "//input[@data-testid='is-one-of' or @data-test-id='is-one-of']",
@@ -69,7 +69,7 @@ export class AudiencePage extends BasePage {
         filterBtn: "//*[@data-testid='audience-table-listing-filter-btn' or @data-test-id='audience-table-listing-filter-btn']",
         filterActive: "//input[@data-testid='audience-active' or @data-test-id='audience-active']",
         filterApplyBtn: "//*[@data-testid='audience-apply-btn' or @data-test-id='audience-apply-btn']",
-        mainSearchField: "//input[@placeholder='Search']",
+        mainSearchField: "//*[@data-testid='audience-listView-searchInput'] | //input[@placeholder='Search']",
 
     // ------------------------------------------------------------- Criteria Event Performed
         criteriaEventPerformed: "//*[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-event-performed' or @data-test-id='audience-ruleBuilder-criteriaIcon-group-1-event-performed']",
@@ -298,27 +298,10 @@ export class AudiencePage extends BasePage {
                 await this.pause(1000);
             }
 
-            // 4. "while we dont have values in flyout, refresh the page and try again"
+            // 4. Wait briefly before retrying, without reloading the page
             if (pageAttempt < maxPageAttempts) {
-                console.log(`[selectUserIdProperty] No values in flyout on attempt ${pageAttempt}. Refreshing the page and trying again...`);
-                await this.page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {});
-                await this.waitForNetworkIdle(5000);
-                await this.pause(2500);
-
-                // Make sure customer properties card is active after reload
-                const custPropBtn = this.page.locator(this.sel.customerPropsEvent).first();
-                if (!await custPropBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-                    const critBtn = this.page.locator(this.sel.criteria).first();
-                    if (await critBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-                        await critBtn.click().catch(() => {});
-                        await this.pause(500);
-                    }
-                    const custPropCrit = this.page.locator(this.sel.criteriaCustomerProps).first();
-                    if (await custPropCrit.isVisible({ timeout: 2000 }).catch(() => false)) {
-                        await custPropCrit.click().catch(() => {});
-                        await this.pause(1000);
-                    }
-                }
+                console.log(`[selectUserIdProperty] Property not yet selected on attempt ${pageAttempt}, waiting and retrying...`);
+                await this.pause(1500);
             }
         }
 
@@ -584,7 +567,7 @@ export class AudiencePage extends BasePage {
         const titleXPath = !title.includes("'") ? `'${title}'` : `"${title}"`;
         const prefix = title.slice(0, 15);
         const prefixXPath = !prefix.includes("'") ? `'${prefix}'` : `"${prefix}"`;
-        const rowSelector = `//tr[.//span[contains(normalize-space(), ${titleXPath}) or contains(normalize-space(), ${prefixXPath})]] | //span[contains(normalize-space(), ${titleXPath}) or contains(normalize-space(), ${prefixXPath})]`;
+        const rowSelector = `//tr[contains(., ${titleXPath}) or contains(., ${prefixXPath})] | //*[contains(normalize-space(), ${titleXPath}) or contains(normalize-space(), ${prefixXPath})]`;
         await this.pause(1000);
         const row = this.page.locator(rowSelector).first();
         await row.waitFor({ state: 'attached', timeout: 30000 });
