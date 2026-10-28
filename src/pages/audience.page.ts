@@ -155,7 +155,14 @@ export class AudiencePage extends BasePage {
     async clickTabAll() { await this.click(this.sel.tabAll); }
     async clickTabRfm() { await this.click(this.sel.tabRfm); }
     async clickTabOnSchedule() { await this.click(this.sel.tabOnSchedule); }
-    async clickTabStatic() { await this.click(this.sel.tabStatic); }
+    async clickTabStatic() {
+        const tab = this.page.locator(this.sel.tabStatic).first();
+        await tab.waitFor({ state: 'attached', timeout: 20000 });
+        await tab.click({ force: true }).catch(async () => {
+            await tab.evaluate((el: HTMLElement) => el.click());
+        });
+        await this.pause(1000);
+    }
 
     async isStaticTabActive(): Promise<boolean> {
         return this.isVisible(this.sel.staticTabActive, 5000);
@@ -421,14 +428,26 @@ export class AudiencePage extends BasePage {
         await this.pause(1000);
 
         const confirmBtn = this.page.locator(`${this.sel.publishConfirm1} | ${this.sel.updateConfirm}`).first();
-        if (await confirmBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        if (await confirmBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
             await confirmBtn.click().catch(() => {});
             await this.pause(1000);
         }
 
-        await this.click(this.sel.publishStatic);
-        await this.click(this.sel.publishTypeConfirm);
-        await this.pause(3000);
+        const staticRadio = this.page.locator(this.sel.publishStatic).first();
+        await staticRadio.waitFor({ state: 'visible', timeout: 10000 });
+        await staticRadio.click({ force: true });
+        await this.pause(500);
+
+        const confirmTypeBtn = this.page.locator(this.sel.publishTypeConfirm).first();
+        await confirmTypeBtn.waitFor({ state: 'visible', timeout: 10000 });
+        await confirmTypeBtn.click({ force: true });
+        await this.pause(2000);
+
+        // Wait for modal backdrop to detach and page to settle
+        const modalBackdrop = this.page.locator("#headlessui-portal-root").first();
+        await modalBackdrop.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+        await this.page.waitForLoadState('domcontentloaded').catch(() => {});
+        await this.pause(1000);
     }
 
     async publishSchedule() {
