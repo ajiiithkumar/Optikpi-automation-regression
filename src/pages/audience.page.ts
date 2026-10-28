@@ -39,11 +39,11 @@ export class AudiencePage extends BasePage {
         customerPropsDrawerAddBtn: "//button[normalize-space()='Add property' or @data-testid='add-property-btn']",
         customerPropsDrawerCancelBtn: "//button[normalize-space()='Cancel' or @aria-label='Close']",
         ConditionIsOneOfBtn: "//input[@data-testid='is-one-of' or @data-test-id='is-one-of']",
-        searchField: "//input[@id='search-data']",
-        CustomerPropertiesValueslevel1Btn: "//button[contains(@data-testid,'customer-properties-group-') and contains(@data-testid,'-values-btn-') and not(contains(normalize-space(), 'Add'))]",
+        searchField: "//*[@id='search-data'] | //input[@id='search-data'] | //input[@placeholder='Search']",
+        CustomerPropertiesValueslevel1Btn: "//*[@data-testid='audience-ruleBuilder-customer-properties-group-1-values-btn-1-1'] | //button[contains(@data-testid,'customer-properties-group-') and contains(@data-testid,'-values-btn-') and not(contains(normalize-space(), 'Add'))] | //button[contains(normalize-space(),'values')]",
         CustomerEngagementValueslevel1Btn: "//button[contains(@data-testid,'customer-engagement-group-') and contains(@data-testid,'-eventValues-btn-') and not(contains(normalize-space(), 'Add'))]",
         CustomerEngagementValueslevel2Btn: "//button[contains(@data-testid,'customer-engagement-group-') and contains(@data-testid,'-eventValues-btn-') and contains(normalize-space(), 'Add')]",
-        addValuesBtn: "//*[@data-testid='commonProfile-add-values-btn' or @data-test-id='commonProfile-add-values-btn'] | //button[normalize-space()='Add values' or normalize-space()='Add value']",
+        addValuesBtn: "//*[@data-testid='commonProfile-add-values-btn'] | //button[normalize-space()='Add values']",
         CustomerPropertiesValueslevel2Btn: "//button[contains(@data-testid,'customer-properties-group-') and contains(@data-testid,'-values-btn-')]",
         // Preview
         preview1: "//*[@data-testid='audience-ruleBuilder-previewButton' or @data-test-id='audience-ruleBuilder-previewButton']",
@@ -229,90 +229,101 @@ export class AudiencePage extends BasePage {
         await this.pause(1000);
     }
 
-        async selectUserIdProperty(maxPageAttempts = 3) {
-        const userIdLocator = this.page.locator(this.sel.userIdInput).first();
-        const addBtn = this.page.locator(this.sel.customerPropsDrawerAddBtn).first();
+        async selectUserIdProperty(maxAttempts = 3) {
+        console.log('[selectUserIdProperty] Selecting User Id property...');
 
-        for (let pageAttempt = 1; pageAttempt <= maxPageAttempts; pageAttempt++) {
-            console.log(`[selectUserIdProperty] Attempt ${pageAttempt}/${maxPageAttempts} to select User Id property...`);
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+            console.log(`[selectUserIdProperty] Attempt ${attempt}/${maxAttempts}...`);
 
-            // 1. If property is already visible/selected, click and finish
-            if (await userIdLocator.isVisible({ timeout: 1500 }).catch(() => false)) {
-                await userIdLocator.click();
+            // 1. If '+ Criteria' is present (e.g. after refresh), add Customer Properties block first
+            const criteriaBtn = this.page.locator(this.sel.criteria).first();
+            const customerPropBtn = this.page.locator("//button[contains(normalize-space(),'customer property') or contains(@data-testid,'customer property-btn')]").last();
+            
+            if (!await customerPropBtn.isVisible({ timeout: 1500 }).catch(() => false)) {
+                if (await criteriaBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+                    console.log('[selectUserIdProperty] Clicking + Criteria and selecting Customer properties...');
+                    await criteriaBtn.click().catch(() => {});
+                    await this.pause(500);
+                    const critProps = this.page.locator(this.sel.criteriaCustomerProps).first();
+                    await critProps.waitFor({ state: 'visible', timeout: 5000 });
+                    await critProps.click().catch(() => {});
+                    await this.pause(1000);
+                }
+            }
+
+            // 2. Open flyout if not already open
+            const flyout = this.page.locator("//div[@role='dialog' or contains(@class,'dialog') or contains(@id,'headlessui-dialog') or contains(@class,'modal')]").first();
+            let isFlyoutOpen = await flyout.isVisible({ timeout: 1500 }).catch(() => false);
+
+            if (!isFlyoutOpen) {
+                const openBtn = this.page.locator("//button[contains(normalize-space(),'customer property') or contains(@data-testid,'customer property-btn')]").last();
+                await openBtn.waitFor({ state: 'visible', timeout: 5000 });
+                await openBtn.click();
+                await this.pause(1000);
+                isFlyoutOpen = await flyout.isVisible({ timeout: 5000 }).catch(() => false);
+            }
+
+            // 3. If flyout says 'No records found', refresh and restart from + Criteria
+            const noRecords = this.page.locator("//*[contains(normalize-space(),'No records found')]").first();
+            if (await noRecords.isVisible({ timeout: 1000 }).catch(() => false)) {
+                console.log(`[selectUserIdProperty] Flyout empty ('No records found') on attempt ${attempt}. Refreshing page...`);
+                await this.page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {});
+                await this.waitForNetworkIdle(5000).catch(() => {});
+                await this.pause(2000);
+
+                // After reload, click '+ Criteria' -> 'Customer properties' -> '+ customer property'
+                const postReloadCrit = this.page.locator(this.sel.criteria).first();
+                await postReloadCrit.waitFor({ state: 'visible', timeout: 10000 });
+                await postReloadCrit.click();
+                await this.pause(500);
+
+                const postReloadProp = this.page.locator(this.sel.criteriaCustomerProps).first();
+                await postReloadProp.waitFor({ state: 'visible', timeout: 5000 });
+                await postReloadProp.click();
+                await this.pause(1000);
+
+                const postReloadOpen = this.page.locator("//button[contains(normalize-space(),'customer property') or contains(@data-testid,'customer property-btn')]").last();
+                await postReloadOpen.waitFor({ state: 'visible', timeout: 5000 });
+                await postReloadOpen.click();
+                await this.pause(1500);
+            }
+
+            // 4. Locate and select 'User Id' in the flyout
+            const userIdOption = this.page.locator("//div[@role='dialog' or contains(@id,'headlessui-dialog')]//span[normalize-space()='User Id'] | //div[@role='dialog' or contains(@id,'headlessui-dialog')]//label[contains(.,'User Id')] | //*[@data-testid='user_id']").first();
+
+            const isVisible = await userIdOption.isVisible({ timeout: 5000 }).catch(() => false);
+            if (isVisible) {
+                await userIdOption.scrollIntoViewIfNeeded().catch(() => {});
+                await userIdOption.click({ force: true });
+                await this.pause(1000);
+
+                // If flyout has an 'Add property' button, click it
+                const addBtn = this.page.locator(this.sel.customerPropsDrawerAddBtn).first();
                 if (await addBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
                     const isEnabled = await addBtn.isEnabled().catch(() => false);
                     if (isEnabled) await addBtn.click().catch(() => {});
                 }
-                await this.pause(500);
-                return;
-            }
 
-            // 2. Open flyout/drawer if not already open
-            const eventBtn = this.page.locator(this.sel.customerPropsEvent).last();
-            const searchInput = this.page.locator(this.sel.customerPropsDrawerSearch).first();
-            const cancelBtn = this.page.locator(this.sel.customerPropsDrawerCancelBtn).first();
+                // Verify User Id is applied and Condition button is visible
+                await this.pause(1000);
+                const conditionBtn = this.page.locator(this.sel.ConditionBtn).first();
+                const appliedCheck = (await conditionBtn.isVisible({ timeout: 4000 }).catch(() => false)) ||
+                                     !(await flyout.isVisible({ timeout: 1500 }).catch(() => false));
 
-            let drawerOpen = (await searchInput.isVisible({ timeout: 1000 }).catch(() => false)) ||
-                             (await cancelBtn.isVisible({ timeout: 1000 }).catch(() => false));
-
-            if (!drawerOpen) {
-                if (await eventBtn.isVisible({ timeout: 2500 }).catch(() => false)) {
-                    await eventBtn.click().catch(() => {});
-                    await this.pause(1000);
-                } else {
-                    const critProps = this.page.locator(this.sel.criteriaCustomerProps).first();
-                    if (await critProps.isVisible({ timeout: 2000 }).catch(() => false)) {
-                        await critProps.click().catch(() => {});
-                        await this.pause(1000);
-                    }
-                }
-            }
-
-            // 3. Try to locate User Id in flyout (with search fallback)
-            for (let innerAttempt = 0; innerAttempt < 3; innerAttempt++) {
-                if (await userIdLocator.isVisible({ timeout: 2000 }).catch(() => false)) {
-                    await userIdLocator.click();
-                    if (await addBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
-                        const isEnabled = await addBtn.isEnabled().catch(() => false);
-                        if (isEnabled) await addBtn.click().catch(() => {});
-                    }
-                    await this.pause(500);
+                if (appliedCheck) {
+                    console.log('[selectUserIdProperty] User Id property successfully selected and applied!');
                     return;
                 }
-
-                // If not found, try searching in flyout
-                if (await searchInput.isVisible({ timeout: 1500 }).catch(() => false)) {
-                    await searchInput.fill('');
-                    await searchInput.fill('User Id');
-                    await this.pause(1000);
-                    if (await userIdLocator.isVisible({ timeout: 2500 }).catch(() => false)) {
-                        await userIdLocator.click();
-                        if (await addBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
-                            const isEnabled = await addBtn.isEnabled().catch(() => false);
-                            if (isEnabled) await addBtn.click().catch(() => {});
-                        }
-                        await this.pause(500);
-                        return;
-                    }
-                }
-                await this.pause(1000);
             }
 
-            // 4. Wait briefly before retrying, without reloading the page
-            if (pageAttempt < maxPageAttempts) {
-                console.log(`[selectUserIdProperty] Property not yet selected on attempt ${pageAttempt}, waiting and retrying...`);
-                await this.pause(1500);
-            }
+            console.log(`[selectUserIdProperty] Attempt ${attempt} did not complete, waiting before retry...`);
+            await this.pause(1500);
         }
 
-        // Final attempt with BasePage.click
-        await this.click(this.sel.userIdInput, 15000);
-        const finalAddBtn = this.page.locator(this.sel.customerPropsDrawerAddBtn).first();
-        if (await finalAddBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
-            const isEnabled = await finalAddBtn.isEnabled().catch(() => false);
-            if (isEnabled) await finalAddBtn.click().catch(() => {});
-        }
-        await this.pause(500);
+        // Final verification check
+        const conditionBtn = this.page.locator(this.sel.ConditionBtn).first();
+        await conditionBtn.waitFor({ state: 'visible', timeout: 10000 });
+        console.log('[selectUserIdProperty] User Id applied and Condition button is ready.');
     }
 
     async selectConditionIsOneOf() {
@@ -329,27 +340,21 @@ export class AudiencePage extends BasePage {
     }
 
     async enterUserIdValue(userId: string) {
-        await this.pause(1000);
-        const searchField = this.page.locator(this.sel.searchField).first();
-        await searchField.waitFor({ state: 'visible', timeout: 15000 });
-        await searchField.fill(userId);
-        await this.pause(1000); // wait for search filter
-
-        // Try to click the specific value's checkbox/label, or the first available checkbox
-        const exactMatch = this.page.locator(`//label[contains(normalize-space(), '${userId}')] | //div[contains(@class, 'checkbox')]//span[contains(normalize-space(), '${userId}')]`).first();
-        const firstCheckbox = this.page.locator('input[type="checkbox"]').first();
-
-        if (await exactMatch.isVisible().catch(() => false)) {
-            await exactMatch.click();
-        } else if (await firstCheckbox.isVisible().catch(() => false)) {
-            await firstCheckbox.click();
-        } else {
-            // Fallback: press Enter or click "+ Add value" if it's a new value
-            await this.page.keyboard.press('Enter').catch(() => { });
-        }
-
         await this.pause(500);
-        await this.click(this.sel.addValuesBtn);
+
+        // 1. Enter in search box (#search-data) and press Enter
+        const searchInput = this.page.locator("//*[@id='search-data'] | //input[@id='search-data'] | //input[@placeholder='Search']").first();
+        await searchInput.waitFor({ state: 'visible', timeout: 15000 });
+        await searchInput.fill('');
+        await searchInput.fill(userId);
+        await this.page.keyboard.press('Enter').catch(() => {});
+        await this.pause(500);
+
+        // 2. Directly click Add values button ([data-testid='commonProfile-add-values-btn'])
+        const addBtn = this.page.locator("//*[@data-testid='commonProfile-add-values-btn'] | //button[normalize-space()='Add values']").first();
+        await addBtn.waitFor({ state: 'visible', timeout: 10000 });
+        await addBtn.click();
+        await this.pause(1000);
     }
 
     async addExtraUserIds(userIds: string[]) {
