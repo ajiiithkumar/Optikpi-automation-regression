@@ -47,3 +47,6 @@ dist/
 # Ignored Folders
 Recorder/
 Files/
+
+# Campaign E2E resumable state (environment-specific run data)
+data/e2e-state/

@@ -148,6 +148,19 @@ export class CampaignPage extends BasePage {
         viewReportBtn: "//button[@data-testid='campaign-list-view-table-dropdown-icon-view-full-report' or @data-test-id='campaign-list-view-table-dropdown-icon-view-full-report']",
         reportPage: "//*[contains(@data-testid,'campaign-performance-report')]",
         reportSummaryTab: "//button[@data-testid='campaign-performance-report-summary' or @data-test-id='campaign-performance-report-summary']",
+
+        // Trigger: recurrence, re-enrollment and deposit event (campaign execution E2E)
+        triggerForm: "//*[@data-testid='campaign-stepper-form-trigger' or @data-test-id='campaign-stepper-form-trigger']",
+        repeatTypeSelect: "//button[@data-testid='campaign-timer-trigger-repeatType-select' or @data-test-id='campaign-timer-trigger-repeatType-select']",
+        repeatTypeRepeatOption: "//*[@data-testid='campaign-timer-trigger-repeatType-select-1' or @data-test-id='campaign-timer-trigger-repeatType-select-1']",
+        repeatUnitSelect: "//button[@data-testid='campaign-timer-trigger-repeatWeekDays-select' or @data-test-id='campaign-timer-trigger-repeatWeekDays-select']",
+        repeatEndDate: "//button[@data-testid='campaign-timer-trigger-endDate-select' or @data-test-id='campaign-timer-trigger-endDate-select']",
+        eventTriggerStartDate: "(//button[@data-testid='campaign-trigger-startDate-select' or @data-test-id='campaign-trigger-startDate-select'])[1]",
+        eventTriggerEndDate: "(//button[@data-testid='campaign-trigger-startDate-select' or @data-test-id='campaign-trigger-startDate-select'])[2]",
+        reenrollUseSetting: "//*[@data-testid='campaign-stepper-form-trigger' or @data-test-id='campaign-stepper-form-trigger']//button[normalize-space()='Use setting']",
+        reenrollUnitDropdown: "//button[@data-testid='enrollment-trigger-dropdown' or @data-test-id='enrollment-trigger-dropdown']",
+        reenrollNumberInputs: "//*[@data-testid='campaign-stepper-form-trigger' or @data-test-id='campaign-stepper-form-trigger']//input[@type='number' and @placeholder='Value']",
+        addEventConfirmBtn: "//button[@data-testid='commonProfile-add-event-btn' or @data-test-id='commonProfile-add-event-btn']",
     };
 
     // ─── Tab Actions ─────────────────────────────────────────────────────────
@@ -436,6 +449,40 @@ export class CampaignPage extends BasePage {
         await input.waitFor({ state: 'visible', timeout: 10000 });
         await input.fill('');
         await input.fill(value);
+    }
+
+    /**
+     * Reloads the edit page of a campaign that was just created in this page session.
+     * Observed on Dev: on a newly created campaign the control-group input is read-only until the
+     * page is reloaded, while a reloaded draft has it editable. Goal/audience/trigger are only kept
+     * in the page until Save draft or Publish, so this must run right after creation, before them.
+     */
+    async reloadCampaignDraft(): Promise<void> {
+        await this.waitForNetworkIdle(10000);
+        await this.page.reload({ waitUntil: 'domcontentloaded' });
+        await this.waitForEditPage(30000);
+        await this.collapseSidebar();
+        // After a reload the page opens in "Review" with every section collapsed (the collapsed goal cards
+        // still count as visible but sit under the headers). Reopen Goal with "Edit goal" once it is enabled.
+        const editGoal = this.page.locator("//button[normalize-space()='Edit goal']").first();
+        await editGoal.waitFor({ state: 'visible', timeout: 30000 });
+        for (let i = 0; i < 15 && await editGoal.isDisabled(); i++) await this.pause(1000);
+        await editGoal.click();
+        await this.waitForVisible(this.sel.goalOpen, 15000);
+    }
+
+    /** Enters the control-group percentage and checks it was accepted (fails clearly when the input is read-only). */
+    async enterControlGroupPercentageChecked(value: string): Promise<void> {
+        const input = this.page.locator(this.sel.controlGroupInput).first();
+        await input.waitFor({ state: 'visible', timeout: 10000 });
+        if (await input.evaluate((el: HTMLInputElement) => el.readOnly || el.disabled)) {
+            throw new Error('Control group input is read-only. Reload the new campaign draft before setting the goal and audience ' +
+                '(step "Reload the new campaign draft").');
+        }
+        await input.fill('');
+        await input.fill(value);
+        const entered = await input.inputValue();
+        if (entered !== value) throw new Error(`Control group input shows "${entered}", expected "${value}"`);
     }
 
     async isControlGroupSummaryVisible(): Promise<boolean> {
@@ -941,5 +988,94 @@ export class CampaignPage extends BasePage {
 
     async isReportPageVisible(): Promise<boolean> {
         return this.isVisible(this.sel.reportPage, 15000);
+    }
+
+    // ─── Trigger: recurrence / re-enrollment / deposit event (campaign execution E2E) ──
+
+    /** Time-based trigger: switch "Do not repeat" to "Repeat" and make sure the unit is Hour. */
+    async selectRepeatHourly(): Promise<void> {
+        await this.click(this.sel.repeatTypeSelect);
+        await this.click(this.sel.repeatTypeRepeatOption);
+        await this.waitForVisible(this.sel.repeatUnitSelect, 10000);
+        const unit = (await this.getText(this.sel.repeatUnitSelect)).toLowerCase();
+        if (!unit.includes('hour')) {
+            await this.click(this.sel.repeatUnitSelect);
+            await this.click(`${this.sel.triggerForm}//*[@role='option' or self::li or self::button][normalize-space()='Hour']`);
+        }
+        const finalUnit = await this.getText(this.sel.repeatUnitSelect);
+        if (!/hour/i.test(finalUnit)) throw new Error(`Repeat unit is "${finalUnit}", expected Hour`);
+    }
+
+    async getRepeatSummary(): Promise<{ unit: string; endDate: string }> {
+        return {
+            unit: await this.getText(this.sel.repeatUnitSelect),
+            endDate: await this.getText(this.sel.repeatEndDate),
+        };
+    }
+
+    async getTimeTriggerStartText(): Promise<string> {
+        return this.getText(this.sel.triggerStartDate);
+    }
+
+    async clickEventTriggerStartDate(): Promise<void> {
+        await this.click(this.sel.eventTriggerStartDate);
+    }
+
+    async getEventTriggerTimeZoneText(): Promise<string> {
+        return this.getText("//button[@data-testid='campaign-event-trigger-timeZone-select' or @data-test-id='campaign-event-trigger-timeZone-select']");
+    }
+
+    async getEventTriggerDates(): Promise<{ start: string; end: string }> {
+        return { start: await this.getText(this.sel.eventTriggerStartDate), end: await this.getText(this.sel.eventTriggerEndDate) };
+    }
+
+    /**
+     * Event trigger: simple event -> Deposit (category) -> Successful Deposit (radio "successful_deposit").
+     * Choosing the radio adds the event and closes the picker; the trigger then reads
+     * "Who have Performed Successful Deposit", which is checked before returning.
+     * The dialog root reports hidden (only fixed-position children), so the open check uses the visible
+     * Add event button; the radio input is hidden, so its label is what gets clicked.
+     */
+    async selectDepositEvent(): Promise<string> {
+        await this.click(this.sel.addSimpleEvent);
+        await this.waitForVisible(this.sel.addEventConfirmBtn, 10000);
+        await this.page.locator("//*[@role='dialog']//*[normalize-space(text())='Deposit']").filter({ visible: true }).first().click();
+        const label = this.page.locator("//*[@role='dialog']//label[@data-testid='successful_deposit' or @data-test-id='successful_deposit']").filter({ visible: true }).first();
+        await label.waitFor({ state: 'visible', timeout: 10000 });
+        // Choosing the radio adds the event and closes the dialog on its own; click Add event only if it is still open.
+        await label.click();
+        const addBtn = this.page.locator(this.sel.addEventConfirmBtn).filter({ visible: true });
+        if (await addBtn.first().isVisible({ timeout: 2000 }).catch(() => false)) {
+            await addBtn.first().click();
+            await this.pause(1000);
+        }
+        if (await addBtn.count() > 0) throw new Error('Simple event dialog is still open after choosing Successful Deposit');
+        // The trigger form is the evidence the event was chosen (the radio input re-renders and cannot be read back).
+        const formText = await this.getText(this.sel.triggerForm);
+        if (!/Successful Deposit/i.test(formText)) throw new Error(`"Successful Deposit" not shown in the trigger form after adding it: ${formText.slice(0, 300)}`);
+        return 'Successful Deposit';
+    }
+
+    async isReenrollmentEnabled(): Promise<boolean> {
+        return this.isVisible(this.sel.reenrollUnitDropdown, 2000);
+    }
+
+    /**
+     * "Re-enroll customers every [interval] [Day(s)] for max. [maxTimes] times."
+     * maxTimes is entered exactly as given; what the backend counts is asserted by the scenario.
+     */
+    async enableReenrollment(intervalDays: number, maxTimes: number): Promise<void> {
+        if (!await this.isReenrollmentEnabled()) await this.click(this.sel.reenrollUseSetting);
+        await this.waitForVisible(this.sel.reenrollUnitDropdown, 10000);
+        const unit = await this.getText(this.sel.reenrollUnitDropdown);
+        if (!/day/i.test(unit)) throw new Error(`Re-enrollment unit is "${unit}", expected Day(s)`);
+        const inputs = this.page.locator(this.sel.reenrollNumberInputs);
+        if (await inputs.count() < 2) throw new Error('Re-enrollment interval / max inputs not found');
+        await inputs.nth(0).fill(String(intervalDays));
+        await inputs.nth(1).fill(String(maxTimes));
+        const values = [await inputs.nth(0).inputValue(), await inputs.nth(1).inputValue()];
+        if (values[0] !== String(intervalDays) || values[1] !== String(maxTimes)) {
+            throw new Error(`Re-enrollment inputs read back ${values.join('/')}, expected ${intervalDays}/${maxTimes}`);
+        }
     }
 }

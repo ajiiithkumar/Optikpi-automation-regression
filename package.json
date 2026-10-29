@@ -27,7 +27,13 @@
         "casino:session": "ts-node src/utils/run-casino-api.ts session",
         "casino:all": "ts-node src/utils/run-casino-api.ts all",
         "docs:checklist": "node scripts/generate-checklist.js",
-        "docs:excel": "node scripts/update-excel-checklist.js"
+        "docs:excel": "node scripts/update-excel-checklist.js",
+        "test:campaign-e2e": "cross-env E2E_RUN_MODE=full PARALLEL_THREADS=4 EXTENT_REPORT_PATH=reports/extent/Campaign_E2E.html JSON_REPORT_PATH=reports/json/campaign-e2e.json cucumber-js -c config/cucumber.js features/e2e/campaign-execution.feature --retry 0 --tags \"@CampaignE2E and not @E2E-Resume\"",
+        "test:campaign-e2e:create": "cross-env PARALLEL_THREADS=4 EXTENT_REPORT_PATH=reports/extent/Campaign_E2E.html JSON_REPORT_PATH=reports/json/campaign-e2e.json cucumber-js -c config/cucumber.js features/e2e/campaign-execution.feature --retry 0 --tags \"@E2E-Create\"",
+        "test:campaign-e2e:verify": "cross-env PARALLEL_THREADS=4 EXTENT_REPORT_PATH=reports/extent/Campaign_E2E.html JSON_REPORT_PATH=reports/json/campaign-e2e.json cucumber-js -c config/cucumber.js features/e2e/campaign-execution.feature --retry 0 --tags \"@E2E-Verify\"",
+        "test:campaign-e2e:immediate": "cross-env E2E_RUN_MODE=full PARALLEL_THREADS=4 EXTENT_REPORT_PATH=reports/extent/Campaign_E2E.html JSON_REPORT_PATH=reports/json/campaign-e2e.json cucumber-js -c config/cucumber.js features/e2e/campaign-execution.feature --retry 0 --tags \"@E2E-Immediate\"",
+        "test:campaign-e2e:scheduled": "cross-env E2E_RUN_MODE=full PARALLEL_THREADS=4 EXTENT_REPORT_PATH=reports/extent/Campaign_E2E.html JSON_REPORT_PATH=reports/json/campaign-e2e.json cucumber-js -c config/cucumber.js features/e2e/campaign-execution.feature --retry 0 --tags \"@E2E-Scheduled\"",
+        "test:campaign-e2e:status": "node scripts/campaign-e2e-status.js"
     },
     "keywords": [],
     "author": "",
