@@ -428,20 +428,20 @@ Feature: Campaign module
     Then Verify the campaign navigates to the Edit Campaign page
     Then Verify the Open Goal is still set and retained
 
-  # @Regression @Campaign @REG-CAMP-17
-  # Scenario: Campaign page loads and all status tabs navigate successfully
-  # Given I log in for module "Campaign"
-  # Then I close the announcement popup if it appears
-  # When I navigate to "Campaign"
-  # Then I should see the "Campaign" page
-  # Then Click the Active tab
-  # Then Verify Active tab should load successfully
-  # Then Click the Completed tab
-  # Then Verify Completed tab should load successfully
-  # Then Click the Draft tab
-  # Then Verify Draft tab should load successfully
-  # Then Click the All tab
-  # Then Verify All tab should load successfully
+  @Regression @Campaign @REG-CAMP-17
+  Scenario: Campaign page loads and all status tabs navigate successfully
+    Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
+    When I navigate to "Campaign"
+    Then I should see the "Campaign" page
+    Then Click the Active tab
+    Then Verify Active tab should load successfully
+    Then Click the Completed tab
+    Then Verify Completed tab should load successfully
+    Then Click the Draft tab
+    Then Verify Draft tab should load successfully
+    Then Click the All tab
+    Then Verify All tab should load successfully
 
   @Regression @Campaign @REG-CAMP-18
   Scenario: Edit Published Campaign shows Audience and Trigger fields as restricted
@@ -460,25 +460,25 @@ Feature: Campaign module
     Then Locate the Trigger section
     Then Verify the Trigger edit button is disabled or not clickable
 
-  # @Regression @Campaign @REG-CAMP-19
-  # Scenario: Duplicate Campaign copies all settings and appears in Draft tab
-  # Given I log in for module "Campaign"
-  # Then I close the announcement popup if it appears
-  # When I navigate to "Campaign"
-  # Then I should see the "Campaign" page
-  # Then Click the All tab
-  # Then Verify All tab should load successfully
-  # Then Enter the Published Campaign Name in the search bar
-  # Then Click the three-dot menu on the campaign
-  # Then Click the campaign Duplicate option
-  # Then Enter the duplicated Campaign Name
-  # Then Click the Duplicate Confirm button
-  # Then Verify the duplication success message is displayed
-  # Then Click the Save as Draft button
-  # Then Click the Draft tab
-  # Then Verify Draft tab should load successfully
-  # Then Enter the duplicated Campaign Name in the search bar
-  # Then Verify the duplicated campaign is visible in the Draft tab
+  @Regression @Campaign @REG-CAMP-19
+  Scenario: Duplicate Campaign copies all settings and appears in Draft tab
+    Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
+    When I navigate to "Campaign"
+    Then I should see the "Campaign" page
+    Then Click the All tab
+    Then Verify All tab should load successfully
+    Then Enter the Published Campaign Name in the search bar
+    Then Click the three-dot menu on the campaign
+    Then Click the campaign Duplicate option
+    Then Enter the duplicated Campaign Name
+    Then Click the Duplicate Confirm button
+    Then Verify the duplication success message is displayed
+    Then Click the Save as Draft button
+    Then Click the Draft tab
+    Then Verify Draft tab should load successfully
+    Then Enter the duplicated Campaign Name in the search bar
+    Then Verify the duplicated campaign is visible in the Draft tab
 
   @Regression @Campaign @REG-CAMP-20
   Scenario: Delete a Draft Campaign and verify it is removed from all tabs
@@ -500,75 +500,75 @@ Feature: Campaign module
     Then Enter the Campaign Name in the search bar
     Then Verify the deleted campaign does not appear in the All tab
 
-  # @Regression @Campaign @REG-CAMP-21
-  # Scenario: Pagination loads correct campaign data on each page
-  # Given I log in for module "Campaign"
-  # Then I close the announcement popup if it appears
-  # When I navigate to "Campaign"
-  # Then I should see the "Campaign" page
-  # Then Click the All tab
-  # Then Verify All tab should load successfully
-  # Then Verify the campaign list has more than one page of results
-  # Then Click the Next page button
-  # Then Verify the second page of campaigns is loaded correctly
-  # Then Click the Previous page button
-  # Then Verify the first page of campaigns is restored correctly
+  @Regression @Campaign @REG-CAMP-21
+  Scenario: Pagination loads correct campaign data on each page
+    Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
+    When I navigate to "Campaign"
+    Then I should see the "Campaign" page
+    Then Click the All tab
+    Then Verify All tab should load successfully
+    Then Verify the campaign list has more than one page of results
+    Then Click the Next page button
+    Then Verify the second page of campaigns is loaded correctly
+    Then Click the Previous page button
+    Then Verify the first page of campaigns is restored correctly
 
-  # @Regression @Campaign @REG-CAMP-22
-  # Scenario: Search Campaign by name returns correct results and clears correctly
-  # Given I log in for module "Campaign"
-  # Then I close the announcement popup if it appears
-  # When I navigate to "Campaign"
-  # Then I should see the "Campaign" page
-  # Then Click the All tab
-  # Then Verify All tab should load successfully
-  # Then Enter a known Campaign Name in the search bar
-  # Then Verify only campaigns matching the search term are displayed in the list
-  # Then Clear the search bar
-  # Then Verify the full campaign list is restored with all campaigns visible
+  @Regression @Campaign @REG-CAMP-22
+  Scenario: Search Campaign by name returns correct results and clears correctly
+    Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
+    When I navigate to "Campaign"
+    Then I should see the "Campaign" page
+    Then Click the All tab
+    Then Verify All tab should load successfully
+    Then Enter a known Campaign Name in the search bar
+    Then Verify only campaigns matching the search term are displayed in the list
+    Then Clear the search bar
+    Then Verify the full campaign list is restored with all campaigns visible
 
-  # @Regression @Campaign @REG-CAMP-23
-  # Scenario: Filter campaigns by status and verify only matching campaigns are shown
-  # Given I log in for module "Campaign"
-  # Then I close the announcement popup if it appears
-  # When I navigate to "Campaign"
-  # Then I should see the "Campaign" page
-  # Then Click the All tab
-  # Then Verify All tab should load successfully
-  # Then Click the Filter button
-  # Then Select a filter criteria such as trigger type or goal type
-  # Then Apply the selected filter
-  # Then Verify only campaigns matching the selected filter are displayed
-  # Then Click the Clear Filter button
-  # Then Verify the full campaign list is restored with all campaigns visible
+  @Regression @Campaign @REG-CAMP-23
+  Scenario: Filter campaigns by status and verify only matching campaigns are shown
+    Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
+    When I navigate to "Campaign"
+    Then I should see the "Campaign" page
+    Then Click the All tab
+    Then Verify All tab should load successfully
+    Then Click the Filter button
+    Then Select a filter criteria such as trigger type or goal type
+    Then Apply the selected filter
+    Then Verify only campaigns matching the selected filter are displayed
+    Then Click the Clear Filter button
+    Then Verify the full campaign list is restored with all campaigns visible
 
-  # @Regression @Campaign @REG-CAMP-24
-  # Scenario: Campaign History Log displays correct activity entries with timestamps
-  # Given I log in for module "Campaign"
-  # Then I close the announcement popup if it appears
-  # When I navigate to "Campaign"
-  # Then I should see the "Campaign" page
-  # Then Click the All tab
-  # Then Verify All tab should load successfully
-  # Then Enter the Campaign Name in the search bar
-  # Then Verify the campaign is visible in the list
-  # Then Click the three-dot menu on the campaign
-  # Then Click the History Log tab or button
-  # Then Verify the History Log section is displayed
-  # Then Verify at least one activity entry is visible in the history log
+  @Regression @Campaign @REG-CAMP-24
+  Scenario: Campaign History Log displays correct activity entries with timestamps
+    Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
+    When I navigate to "Campaign"
+    Then I should see the "Campaign" page
+    Then Click the All tab
+    Then Verify All tab should load successfully
+    Then Enter the Campaign Name in the search bar
+    Then Verify the campaign is visible in the list
+    Then Click the three-dot menu on the campaign
+    Then Click the History Log tab or button
+    Then Verify the History Log section is displayed
+    Then Verify at least one activity entry is visible in the history log
 
-  # @Regression @Campaign @REG-CAMP-25
-  # Scenario: View Campaign Report loads and displays key metrics correctly
-  # Given I log in for module "Campaign"
-  # Then I close the announcement popup if it appears
-  # When I navigate to "Campaign"
-  # Then I should see the "Campaign" page
-  # Then Click the Active tab
-  # Then Verify Active tab should load successfully
-  # Then Enter the Campaign Name in the search bar
-  # Then Verify the campaign is visible in the list
-  # Then Click the three-dot menu on the campaign
-  # Then Click the View Report button
-  # Then Verify the Campaign Report page is displayed
-  # Then Verify the report data is loaded without any errors
+  @Regression @Campaign @REG-CAMP-25
+  Scenario: View Campaign Report loads and displays key metrics correctly
+    Given I log in for module "Campaign"
+    Then I close the announcement popup if it appears
+    When I navigate to "Campaign"
+    Then I should see the "Campaign" page
+    Then Click the Active tab
+    Then Verify Active tab should load successfully
+    Then Enter the Campaign Name in the search bar
+    Then Verify the campaign is visible in the list
+    Then Click the three-dot menu on the campaign
+    Then Click the View Report button
+    Then Verify the Campaign Report page is displayed
+    Then Verify the report data is loaded without any errors
 

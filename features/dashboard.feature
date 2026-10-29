@@ -1,16 +1,16 @@
 Feature: Dashboard module
   # Users are managed in config/users.json (kept out of the report).
 
-  # @Regression @Dashboard @REG-DASH-01
-  # Scenario: Dashboard v2 tab navigation
-  # Given I log in for module "Dashboard"
-  # Then I close the announcement popup if it appears
-  # When I navigate to "Dashboard"
-  # Then I should see the "Dashboard" page
-  # Then I navigate to the "Overview" dashboard tab and verify it loads
-  # Then I navigate to the "Actions" dashboard tab and verify it loads
-  # Then I navigate to the "Engagement" dashboard tab and verify it loads
-  # Then I navigate to the "Business Performance" dashboard tab and verify it loads
+  @Regression @Dashboard @REG-DASH-01
+  Scenario: Dashboard v2 tab navigation
+    Given I log in for module "Dashboard"
+    Then I close the announcement popup if it appears
+    When I navigate to "Dashboard"
+    Then I should see the "Dashboard" page
+    Then I navigate to the "Overview" dashboard tab and verify it loads
+    Then I navigate to the "Actions" dashboard tab and verify it loads
+    Then I navigate to the "Engagement" dashboard tab and verify it loads
+    Then I navigate to the "Business Performance" dashboard tab and verify it loads
 
   @Regression @Dashboard @REG-DASH-02
   Scenario: Dashboard v2 global date range validation
