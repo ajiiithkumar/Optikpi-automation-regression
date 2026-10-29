@@ -237,6 +237,8 @@ export class DashboardPage extends BasePage {
 
         const tab = this.page.locator(tabSel).first();
         await tab.waitFor({ state: 'visible', timeout: 15000 });
+        // Tabs sit under the hover-expanded sidebar; collapse it before clicking.
+        await this.collapseSidebar();
         await tab.click();
         await this.page.waitForTimeout(1500);
 

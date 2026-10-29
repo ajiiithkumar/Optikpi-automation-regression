@@ -8,10 +8,32 @@ import { Page } from 'playwright';
 export class BasePage {
     constructor(protected page: Page) {}
 
+    /**
+     * Move the mouse off the sidebar so its hover-expanded state collapses.
+     * The expanded sidebar (lg:w-80 = 320px, z-51) overlays page content such as
+     * the All / Active / Overview tabs and makes clicks on them time out.
+     * Uses the sidebar's real width instead of CSS classes, so it survives rebuilds.
+     */
+    protected async collapseSidebar() {
+        const vp = this.page.viewportSize()
+            ?? await this.page.evaluate(() => ({ width: window.innerWidth, height: window.innerHeight }));
+        await this.page.mouse.move(vp.width - 5, Math.round(vp.height / 2)).catch(() => {});
+        await this.page.waitForFunction(() => {
+            const sb = document.querySelector('[data-testid="sidebar"]');
+            return !sb || sb.getBoundingClientRect().width < 120;
+        }, null, { timeout: 5000 }).catch(() => {});
+    }
+
     /** Wait for an element to be visible, then click it. */
     protected async click(selector: string, timeout?: number) {
         const el = this.page.locator(selector).first();
         await el.waitFor({ state: 'visible', timeout });
+        // If the target is page content (not in the sidebar), make sure the
+        // hover-expanded sidebar is not covering it before clicking.
+        const inSidebar = await el
+            .evaluate((node) => !!node.closest('[data-testid="sidebar"]'))
+            .catch(() => false);
+        if (!inSidebar) await this.collapseSidebar();
         await el.click();
         await this.page.waitForTimeout(1500);
     }

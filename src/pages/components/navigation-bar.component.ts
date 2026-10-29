@@ -38,9 +38,9 @@ export class NavigationBar extends BasePage {
                 await this.waitForNetworkIdle(5000);
                 await this.pause(500);
 
-                // Move mouse away from sidebar to close hover state
-                await this.page.mouse.move(300, 300).catch(() => {});
-                await this.pause(500);
+                // Move the mouse off the sidebar and wait for it to collapse.
+                // (300,300 was still inside the 320px-wide expanded sidebar.)
+                await this.collapseSidebar();
 
                 // Wait for URL to contain the path hint
                 await this.waitForUrlContains(entry.pathHint);
