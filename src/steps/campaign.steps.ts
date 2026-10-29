@@ -1,4 +1,4 @@
-﻿
+
 import { Given, When, Then } from '@cucumber/cucumber';
 import { CampaignPage } from '../pages/campaign.page';
 import { NavigationBar } from '../pages/components/navigation-bar.component';
@@ -50,7 +50,9 @@ async function performActiveTabCampaignSearch(world: PlaywrightWorld, campaignNa
     await searchField.click();
     await searchField.fill('');
     await world.page!.waitForTimeout(500);
-    await page.searchCampaign(campaignName);
+    await searchField.fill(campaignName);
+    await world.page!.keyboard.press('Enter');
+    await world.page!.waitForTimeout(2000);
     await world.page!.waitForTimeout(1000);
     // NOTE: Visibility check is intentionally NOT done here.
     // Use "Verify the campaign is visible in the Draft tab" for positive check.
@@ -66,6 +68,7 @@ Then('Click the Active tab', async function (this: PlaywrightWorld) {
 });
 
 Then('Verify Active tab should load successfully', async function (this: PlaywrightWorld) {
+    await getCampaignPage(this).clickActiveTab().catch(() => {});
     await getCampaignPage(this).pause(2000);
     ExtentTestManager.logPass('Active tab loaded successfully');
 });
@@ -528,6 +531,24 @@ Then('Search the communication name in the search bar', async function (this: Pl
 Then('Click the communication that comes first in the list', async function (this: PlaywrightWorld) {
     const targetName = this['lastSearchedCommunication'] ?? communicationName;
 
+    // 0. Fail fast if the library search returned nothing (test data missing or renamed).
+    // Without this, the picker stays open and the next click is blocked for 60s.
+    const emptyState = this.page.locator('.empty-library-bg').first();
+    const namedItem = this.page.locator(`//*[contains(text(),'${targetName}')]`).first();
+    await namedItem.or(emptyState).first().waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+    if (await emptyState.isVisible().catch(() => false)) {
+        const msg = `Communication "${targetName}" was not found in the library (empty library shown). Check the test data: it may have been renamed or deleted.`;
+        ExtentTestManager.logFail(msg);
+        throw new Error(msg);
+    }
+
+    // Campaign flow: the library opens in the "Select content" modal; select inside that modal only.
+    if (await getCampaignPage(this).selectCommunicationFromContentModal(targetName)) {
+        ExtentTestManager.logPass(`Selected communication from library: ${targetName}`);
+        return;
+    }
+
+    // Workflow flow (full-page library, URL contains setContent).
     // 1. Locate the communication card in the content grid
     const card = this.page.locator(
         `//div[contains(@class,'border') and (.//*[contains(text(),'${targetName}')] or .//*[contains(text(),'Test mock')])] | ` +

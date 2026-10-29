@@ -31,14 +31,17 @@ export class AudiencePage extends BasePage {
 
 
         // Criteria
-        criteria: "//*[@data-testid='audience-ruleBuilder-criteriaIcon-group-1' or @data-test-id='audience-ruleBuilder-criteriaIcon-group-1']",
+        criteria: "//*[@data-testid='audience-ruleBuilder-criteriaIcon-group-1' or @data-test-id='audience-ruleBuilder-criteriaIcon-group-1'] | //button[@data-testid='Criteria' or @data-test-id='Criteria' or contains(normalize-space(),'+ Criteria')]",
         criteriaCustomerProps: "//*[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-customer-properties' or @data-test-id='audience-ruleBuilder-criteriaIcon-group-1-customer-properties']",
         customerPropsEvent: "//button[normalize-space()='+ customer property' or contains(@data-testid,'customer property-btn-') or contains(@data-testid,'customer-properties') or contains(.,'customer property')]",
         userIdInput: "//*[@data-testid='user_id' or @data-test-id='user_id'] | //input[@data-testid='user_id' or @data-test-id='user_id'] | //button[.//text()[normalize-space()='User Id']] | //label[normalize-space()='User Id'] | //*[normalize-space()='User Id' and not(self::input)]",
         customerPropsDrawerSearch: "//div[@role='dialog' or contains(@class,'dialog') or contains(@class,'modal') or contains(@id,'headlessui-dialog')]//input | //input[@placeholder='Search' and not(@id='search-data')]",
         customerPropsDrawerAddBtn: "//button[normalize-space()='Add property' or @data-testid='add-property-btn']",
         customerPropsDrawerCancelBtn: "//button[normalize-space()='Cancel' or @aria-label='Close']",
-        ConditionIsOneOfBtn: "//input[@data-testid='is-one-of' or @data-test-id='is-one-of']",
+        // Engagement flyouts: the radio <input> is styled with appearance-none and ignores direct clicks, so click its <label>.
+        ConditionIsOneOfLabel: "//label[@for='is-one-of' or @data-testid='is-one-of' or @data-test-id='is-one-of']",
+        // Customer-property flyouts: no clickable label, the input itself is clicked (original selector).
+        ConditionIsOneOfBtn: "//input[@data-testid='is-one-of' or @data-test-id='is-one-of'] | //*[text()[normalize-space()='Is One Of' or normalize-space()='is one of']]",
         searchField: "//*[@id='search-data'] | //input[@id='search-data'] | //input[@placeholder='Search']",
         CustomerPropertiesValueslevel1Btn: "//*[@data-testid='audience-ruleBuilder-customer-properties-group-1-values-btn-1-1'] | //button[contains(@data-testid,'customer-properties-group-') and contains(@data-testid,'-values-btn-') and not(contains(normalize-space(), 'Add'))] | //button[contains(normalize-space(),'values')]",
         CustomerEngagementValueslevel1Btn: "//button[contains(@data-testid,'customer-engagement-group-') and contains(@data-testid,'-eventValues-btn-') and not(contains(normalize-space(), 'Add'))]",
@@ -91,7 +94,7 @@ export class AudiencePage extends BasePage {
         criteriaCustomerMetric: "//*[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-customer-metric' or @data-test-id='audience-ruleBuilder-criteriaIcon-group-1-customer-metric']",
         criteriaCustomerMetricEvent: "//button[@class='bg-white flex flex-row items-center justify-center rounded-md px-3 py-2 border border-gray-300 cursor-pointer']",
         metricTotalDeposited: "//input[@data-testid='total-deposited-amount' or @data-test-id='total-deposited-amount']",
-        ConditionBtn: "//button[@class='bg-white flex flex-row items-center justify-center border border-gray-300 rounded-lg px-3 py-2 cursor-pointer']",
+        ConditionBtn: "//button[contains(@data-testid,'-condition-btn-')] | //button[@class='bg-white flex flex-row items-center justify-center border border-gray-300 rounded-lg px-3 py-2 cursor-pointer']",
         metricConditionGreaterEqual: "//input[@data-testid='greater-than-or-equal-to' or @data-test-id='greater-than-or-equal-to']",
         metricValueInput: "//input[@class='text-center focus:outline-none']",
 
@@ -107,8 +110,18 @@ export class AudiencePage extends BasePage {
         criteriaCustomerEngagementevent: "//button[contains(normalize-space(),'+ engagement') or contains(normalize-space(),'+ customer engagement') or (contains(@data-testid,'customer-engagement') and contains(@data-testid,'btn-'))]",
         engagementWorkflow: "//input[@data-testid='workflow_engagement' or @data-test-id='workflow_engagement']",
         engagementattribute: "//button[contains(@data-testid,'eventAttribute-btn-') or contains(normalize-space(),'workflow') or contains(normalize-space(),'Workflow')]",
-        workflowName: "//*[@data-testid='workflow_id' or @data-test-id='workflow_id'] | //*[normalize-space()='Workflow Name'] | //button[contains(.,'Workflow Name')]",
-        workflowAction: "//*[@data-testid='node_id' or @data-test-id='node_id'] | //*[normalize-space()='Workflow Action'] | //button[contains(.,'Workflow Action')]",
+        // First value label inside the "values" drawer only. A page-wide selector here previously matched
+        // buttons outside the drawer, and clicking them closed the drawer before "Add values".
+        valuesDrawerOption: "//div[@role='dialog'][.//h2[normalize-space()='values']]//label[@for]",
+        // Values button of the "Workflow Action" row: first values button after that row's chip, so the
+        // "Workflow Name" row above (which also has a values/Add values button) is never picked.
+        workflowActionValuesBtn: "(//*[normalize-space(text())='Workflow Action'])[1]/following::button[contains(@data-testid,'-eventValues-btn-') or normalize-space()='values'][1]",
+        valuesDrawerCheckbox:"//div[@role='dialog'][.//h2[normalize-space()='values']]//input[@type='checkbox']",
+        valuesDrawerAddBtn: "//div[@role='dialog'][.//h2[normalize-space()='values']]//button[@data-testid='commonProfile-add-values-btn' or normalize-space()='Add values']",
+        addAttributeBtn:"//button[@data-testid='commonProfile-add-attribute-btn' or normalize-space()='Add attribute']",
+        // Click the <label>: the radio <input> itself is styled with appearance-none and ignores direct clicks.
+        workflowName: "//label[@data-testid='workflow_id' or @data-test-id='workflow_id' or @for='workflow_id']",
+        workflowAction: "//label[@data-testid='node_id' or @data-test-id='node_id' or @for='node_id']",
 
         // AND / OR logic
         Group1AndConditionBtn: "//*[@data-testid='audience-ruleBuilder-criteriaIcon-group-1' or @data-test-id='audience-ruleBuilder-criteriaIcon-group-1']",
@@ -142,7 +155,9 @@ export class AudiencePage extends BasePage {
         downloadSubmitBtn:       "[data-testid='modal-submit-button']",
         downloadGenerateBtn:     "//*[@data-testid='modal-submit-button'] | //button[contains(normalize-space(),'Generate') or contains(normalize-space(),'Download') or contains(normalize-space(),'Submit') or contains(normalize-space(),'Export')] | //button[contains(@data-testid,'download-generate') or contains(@data-testid,'customer-list-generate')]",
         createNewDropdownBtn:    "//*[@data-testid='create-new-audience-dropdown-btn'] | //button[contains(normalize-space(),'Create new Audience') and .//svg]",
-        retentionAudienceBtn:    "//*[@data-testid='create-new-audience-dropdown-btn-retention-audience'] | //button[contains(.,'Import CSV') or contains(.,'Retention')] | //*[contains(normalize-space(),'Import CSV') or contains(normalize-space(),'Retention audience') or contains(normalize-space(),'Retention Audience')]",
+        // Menu item inside the "Create new Audience" dropdown. Never match with //*[contains(normalize-space(),...)]:
+        // that also matches <html>/<body>, and .first() then clicks the page instead of the menu item.
+        retentionAudienceBtn:    "//*[@role='menu']//button[@data-testid='create-new-audience-dropdown-btn-import-csv' or @data-testid='create-new-audience-dropdown-btn-retention-audience' or contains(normalize-space(),'Import CSV') or contains(normalize-space(),'Retention')]",
         csvFileInput:            "#selectFile",
         createNewCampaignBtn: "[data-testid='audience-listView-tableList-dropdownIcon-1-create-new-campaign']",
         viewHistoryLogBtn: "[data-testid='audience-listView-tableList-dropdownIcon-1-view-history-log']",
@@ -200,8 +215,18 @@ export class AudiencePage extends BasePage {
         await this.click(this.sel.createFromScratch);
     }
 
-    async waitForCreatePage() {
-        await this.waitForVisible(this.sel.nameInput, 30000);
+    async waitForCreatePage(maxRetries = 2) {
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            const input = this.page.locator(this.sel.nameInput).first();
+            if (await input.isVisible({ timeout: 10000 }).catch(() => false)) {
+                return;
+            }
+            if (attempt < maxRetries) {
+                console.log('[waitForCreatePage] Create audience modal input not visible yet, retrying click on Retention Audience...');
+                await this.clickCreateRetentionAudience().catch(() => {});
+            }
+        }
+        await this.waitForVisible(this.sel.nameInput, 15000);
     }
 
     async fillDetails(name: string, tag?: string) {
@@ -231,7 +256,14 @@ export class AudiencePage extends BasePage {
     // ------------------------------------------------------------- Criteria Builder
 
     async openCustomerProperty() {
-        await this.click(this.sel.criteria);
+        const custProps = this.page.locator(this.sel.criteriaCustomerProps).first();
+        if (!await custProps.isVisible({ timeout: 1500 }).catch(() => false)) {
+            const crit = this.page.locator(this.sel.criteria).first();
+            if (await crit.isVisible({ timeout: 2000 }).catch(() => false)) {
+                await crit.click();
+                await this.pause(500);
+            }
+        }
         await this.click(this.sel.criteriaCustomerProps);
         await this.pause(1000);
     }
@@ -270,33 +302,36 @@ export class AudiencePage extends BasePage {
                 isFlyoutOpen = await flyout.isVisible({ timeout: 5000 }).catch(() => false);
             }
 
-            // 3. If flyout says 'No records found', refresh and restart from + Criteria
-            const noRecords = this.page.locator("//*[contains(normalize-space(),'No records found')]").first();
-            if (await noRecords.isVisible({ timeout: 1000 }).catch(() => false)) {
-                console.log(`[selectUserIdProperty] Flyout empty ('No records found') on attempt ${attempt}. Refreshing page...`);
-                await this.page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {});
-                await this.waitForNetworkIdle(5000).catch(() => {});
-                await this.pause(2000);
+            // 3. Wait for the flyout list to finish loading: either the 'User Id' option or 'No records found'.
+            // (locator.isVisible() ignores its timeout and returns instantly, so it can miss a late empty state.)
+            const userIdOption = this.page.locator("//div[@role='dialog' or contains(@id,'headlessui-dialog')]//span[normalize-space()='User Id'] | //div[@role='dialog' or contains(@id,'headlessui-dialog')]//label[contains(.,'User Id')] | //*[@data-testid='user_id']").first();
+            const noRecords = this.page.locator("//div[@role='dialog' or contains(@id,'headlessui-dialog')]//*[text()[contains(normalize-space(),'No records found')]]").first();
+            await userIdOption.or(noRecords).first().waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
 
-                // After reload, click '+ Criteria' -> 'Customer properties' -> '+ customer property'
-                const postReloadCrit = this.page.locator(this.sel.criteria).first();
-                await postReloadCrit.waitFor({ state: 'visible', timeout: 10000 });
-                await postReloadCrit.click();
-                await this.pause(500);
-
-                const postReloadProp = this.page.locator(this.sel.criteriaCustomerProps).first();
-                await postReloadProp.waitFor({ state: 'visible', timeout: 5000 });
-                await postReloadProp.click();
-                await this.pause(1000);
-
-                const postReloadOpen = this.page.locator("//button[contains(normalize-space(),'customer property') or contains(@data-testid,'customer property-btn')]").last();
-                await postReloadOpen.waitFor({ state: 'visible', timeout: 5000 });
-                await postReloadOpen.click();
+            if (await noRecords.isVisible().catch(() => false)) {
+                console.log(`[selectUserIdProperty] Flyout empty ('No records found') on attempt ${attempt}.`);
+                if (this.page.url().includes('/audience/')) {
+                    // Audience builder: refresh the page and restart from + Criteria (next attempt rebuilds the block).
+                    console.log('[selectUserIdProperty] Refreshing the page and restarting from + Criteria...');
+                    await this.page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {});
+                    await this.waitForNetworkIdle(5000);
+                    await this.pause(2000); // no reliable signal that the builder finished re-rendering after reload
+                    continue;
+                }
+                // Workflow rule-builder: a reload redirects to the canvas (criteria icon never appears),
+                // so close the flyout and reopen it instead.
+                console.log('[selectUserIdProperty] Closing and reopening the flyout...');
+                const closeBtn = this.page.locator("//div[@role='dialog' or contains(@id,'headlessui-dialog')]//button[normalize-space()='Cancel' or .//*[normalize-space()='Close panel']]").first();
+                await closeBtn.click().catch(async () => { await this.page.keyboard.press('Escape').catch(() => {}); });
                 await this.pause(1500);
+
+                const reopenBtn = this.page.locator("//button[contains(normalize-space(),'customer property') or contains(@data-testid,'customer property-btn')]").last();
+                await reopenBtn.waitFor({ state: 'visible', timeout: 5000 });
+                await reopenBtn.click();
+                await this.pause(2500);
             }
 
-            // 4. Locate and select 'User Id' in the flyout
-            const userIdOption = this.page.locator("//div[@role='dialog' or contains(@id,'headlessui-dialog')]//span[normalize-space()='User Id'] | //div[@role='dialog' or contains(@id,'headlessui-dialog')]//label[contains(.,'User Id')] | //*[@data-testid='user_id']").first();
+            // 4. Select 'User Id' in the flyout
 
             const isVisible = await userIdOption.isVisible({ timeout: 5000 }).catch(() => false);
             if (isVisible) {
@@ -333,9 +368,18 @@ export class AudiencePage extends BasePage {
         console.log('[selectUserIdProperty] User Id applied and Condition button is ready.');
     }
 
+    /** Click "Is One Of": the label when the flyout has one, otherwise the input/text fallback. */
+    private async clickConditionIsOneOf() {
+        const label = this.page.locator(this.sel.ConditionIsOneOfLabel).first();
+        const fallback = this.page.locator(this.sel.ConditionIsOneOfBtn).first();
+        // Wait until the option list is rendered, then prefer the label if there is one.
+        await label.or(fallback).first().waitFor({ state: 'visible', timeout: 10000 });
+        await this.click((await label.isVisible()) ? this.sel.ConditionIsOneOfLabel : this.sel.ConditionIsOneOfBtn);
+    }
+
     async selectConditionIsOneOf() {
         await this.click(this.sel.ConditionBtn);
-        await this.click(this.sel.ConditionIsOneOfBtn);
+        await this.clickConditionIsOneOf();
     }
 
     async selectCustomerPropertiesValueslevel1Btn() {
@@ -751,24 +795,50 @@ export class AudiencePage extends BasePage {
         await this.pause(500);
     }
 
-    async selectWorkflowName() {
+    /**
+     * Open the "+ engagement attribute" flyout, pick an option and make sure it was applied.
+     * If the option is not applied the flyout stays open and no condition button appears,
+     * so later steps would wait for the full timeout. Fail fast with a clear message instead.
+     */
+    private async pickEngagementAttribute(optionSelector: string, label: string) {
         await this.page.locator(this.sel.engagementattribute).last().click();
         await this.pause(500);
-        await this.click(this.sel.workflowName);
-        await this.pause(500);
+
+        await this.waitForVisible(optionSelector, 10000);
+        await this.click(optionSelector);
+
+        // Depending on the flyout, selecting the option either closes it right away or leaves it
+        // open with "Add attribute" enabled. Click "Add attribute" only when it is still there.
+        if (await this.isVisible(this.sel.addAttributeBtn, 2000)) {
+            const addBtn = this.page.locator(this.sel.addAttributeBtn).first();
+            if (!await addBtn.isEnabled().catch(() => false)) {
+                throw new Error(`"${label}" was not applied: the option was not selected, so "Add attribute" stayed disabled.`);
+            }
+            await addBtn.click();
+            await addBtn.waitFor({ state: 'detached', timeout: 10000 });
+        }
+
+        // A condition button appears for the new attribute row once it is applied.
+        const applied = await this.isVisible(this.sel.ConditionBtn, 10000);
+        if (!applied) {
+            throw new Error(`"${label}" was not applied: no condition button appeared after selecting it.`);
+        }
+    }
+
+    async selectWorkflowName() {
+        await this.pickEngagementAttribute(this.sel.workflowName, 'Workflow Name');
     }
 
     private async selectValueFromDrawerOrAddFallback(fallbackVal = "Workflow_Test") {
         await this.pause(1000);
-        const optionItem = this.page.locator(
-            "//div[@role='dialog' or contains(@class,'drawer') or contains(@class,'flyout') or contains(@class,'bg-white')]//input[@type='checkbox'] | " +
-            "//input[@id='search-data']/ancestor::div[contains(@class,'absolute') or contains(@class,'bg-white')][1]//button | " +
-            "//div[contains(@class,'space-y')]//label | " +
-            "//button[contains(@class,'flex') and contains(@class,'items-center') and not(normalize-space()='Add values') and not(normalize-space()='Cancel')]"
-        ).first();
+        const optionItem = this.page.locator(this.sel.valuesDrawerOption).first();
 
         if (await optionItem.isVisible({ timeout: 4000 }).catch(() => false)) {
-            await optionItem.click();
+            // Clicking an already ticked option would untick it, so only click when it is not selected yet.
+            const alreadyChecked = await this.page.locator(this.sel.valuesDrawerCheckbox).first().isChecked().catch(() => false);
+            if (!alreadyChecked) {
+                await optionItem.click();
+            }
         } else {
             const addValueBtn = this.page.locator("//button[contains(normalize-space(),'Add value') or contains(.,'Add value')]").first();
             if (await addValueBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
@@ -788,34 +858,32 @@ export class AudiencePage extends BasePage {
             }
         }
         await this.pause(500);
-        const addBtn = this.page.locator(this.sel.addValuesBtn).first();
-        if (await addBtn.isEnabled().catch(() => false)) {
-            await addBtn.click();
-        } else {
-            const cancelBtn = this.page.locator("//button[normalize-space()='Cancel']").first();
-            await cancelBtn.click().catch(() => {});
+        // Use the drawer's own button: sel.addValuesBtn also matches the "+ Add values" chip in the rule row.
+        const addBtn = this.page.locator(this.sel.valuesDrawerAddBtn).first();
+        await addBtn.waitFor({ state: 'visible', timeout: 10000 });
+        if (!await addBtn.isEnabled().catch(() => false)) {
+            throw new Error('No value was selected in the values drawer, so "Add values" is disabled.');
         }
-        await this.pause(500);
+        await addBtn.click();
+        await addBtn.waitFor({ state: 'detached', timeout: 10000 });
     }
 
     async selectWorkflowNameValue() {
         await this.click(this.sel.ConditionBtn);
-        await this.click(this.sel.ConditionIsOneOfBtn);
+        await this.clickConditionIsOneOf();
         await this.page.locator("//button[contains(@data-testid,'-eventValues-btn-')]").first().click();
         await this.selectValueFromDrawerOrAddFallback("Registration_Workflow");
     }
 
     async selectWorkflowActionValue() {
         await this.page.locator(this.sel.ConditionBtn).last().click();
-        await this.click(this.sel.ConditionIsOneOfBtn);
-        await this.page.locator("//button[contains(@data-testid,'-eventValues-btn-')]").last().click();
+        await this.clickConditionIsOneOf();
+        await this.click(this.sel.workflowActionValuesBtn);
         await this.selectValueFromDrawerOrAddFallback("Action_Completed");
     }
 
     async selectWorkflowAction() {
-        await this.page.locator(this.sel.engagementattribute).last().click();
-        await this.click(this.sel.workflowAction);
-        await this.pause(500);
+        await this.pickEngagementAttribute(this.sel.workflowAction, 'Workflow Action');
     }
 
     // ------------------------------------------------------------- AND OR Logic
@@ -1091,19 +1159,35 @@ export class AudiencePage extends BasePage {
         await download.saveAs(targetPath);
         console.log('[Download] saved with .csv to: ' + targetPath);
         await this.pause(1000);
+        // Ensure the download modal is closed so it doesn't block downstream actions
+        const closeBtn = this.page.locator("//div[@role='dialog' or contains(@class,'modal')]//button[contains(@class,'close') or @aria-label='Close' or normalize-space()='Cancel' or normalize-space()='Close' or .//*[name()='svg']]").first();
+        if (await closeBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+            await closeBtn.click().catch(() => {});
+        }
+        await this.page.keyboard.press('Escape').catch(() => {});
+        await this.pause(1000);
         return targetPath;
     }
 
     async clickCreateRetentionAudience() {
-        await this.page.locator(this.sel.createNewDropdownBtn).first().click();
+        // Ensure any lingering modal or backdrop is closed
+        await this.page.keyboard.press('Escape').catch(() => {});
         await this.pause(500);
-        await this.page.locator(this.sel.retentionAudienceBtn).first().waitFor({ state: 'visible', timeout: 8000 });
-        await this.page.locator(this.sel.retentionAudienceBtn).first().click();
+
+        const dropdownBtn = this.page.locator(this.sel.createNewDropdownBtn).first();
+        await dropdownBtn.waitFor({ state: 'visible', timeout: 15000 });
+        await dropdownBtn.click({ force: true });
+        await this.pause(600);
+
+        const retentionBtn = this.page.locator(this.sel.retentionAudienceBtn).first();
+        await retentionBtn.waitFor({ state: 'visible', timeout: 10000 });
+        await retentionBtn.click({ force: true });
         await this.pause(1000);
     }
 
     async uploadCSVFile(filePath: string) {
-        await this.page.locator("text=Upload retention audience").first().waitFor({ state: "visible", timeout: 20000 }).catch(() => {});
+        // "Import CSV" opens the "Import audience from CSV" modal; its hidden file input is #selectFile.
+        await this.page.locator(this.sel.csvFileInput).first().waitFor({ state: 'attached', timeout: 20000 });
         await this.pause(500);
         const selectors = [
             "input[type=\"file\"]",

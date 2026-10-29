@@ -66,6 +66,14 @@ export class CampaignPage extends BasePage {
         // Communication
         chooseContentBtn: "//button[@data-testid='campaign-choose-content-btn' or @data-test-id='campaign-choose-content-btn']",
         setCommunicationBtn: "//button[@data-testid='campaign-stepper-set-communication-button' or @data-test-id='campaign-stepper-set-communication-button']",
+        // "Select content" library modal. Everything is scoped to it: Variant A's content on the page behind
+        // the modal also shows the communication name / "Test mock", so page-wide selectors hit the wrong card.
+        contentModal: "//div[@role='dialog' or @id='headlessui-portal-root'][.//*[normalize-space()='Select content']]",
+        // Use the title for open/closed checks: the dialog root only has position:fixed children, so its box is
+        // empty and Playwright always reports it as hidden.
+        contentModalTitle: "//div[@role='dialog' or @id='headlessui-portal-root']//*[text()[normalize-space()='Select content']]",
+        // First card preview in the modal (the element that holds the hover overlay button).
+        contentModalFirstPreview: "//div[@role='dialog' or @id='headlessui-portal-root'][.//*[normalize-space()='Select content']]//div[button[@data-testid='campaign-communication-list-hover']]",
         contentSummary: "//div[contains(@class,'bg-disabledBackground') and contains(@class,'items-center') and contains(@class,'flex-wrap')]",
         addVariantBtn: "//button[@data-testid='campaign-add-content-variant-button' or @data-test-id='campaign-add-content-variant-button']",
         chooseContentVariant: "//button[contains(@data-testid,'choose-content-variant') or contains(@data-testid,'campaign-choose-content-btn')]",
@@ -544,6 +552,41 @@ export class CampaignPage extends BasePage {
     async clickSetCommunication() {
         await this.click(this.sel.setCommunicationBtn);
         await this.pause(1000);
+    }
+
+    /**
+     * Select a communication in the campaign "Select content" modal.
+     * Returns false when the modal is not open (workflow uses a full-page library instead).
+     * Throws if the modal is still open after trying, so the next step does not wait 60 s behind it.
+     */
+    async selectCommunicationFromContentModal(targetName: string): Promise<boolean> {
+        const modalTitle = this.page.locator(this.sel.contentModalTitle).first();
+        if (!await modalTitle.isVisible({ timeout: 3000 }).catch(() => false)) return false;
+
+        // Each card preview carries the communication name as its data-testid and holds the hidden
+        // "Use this content" overlay button, which only shows while the preview is hovered.
+        const namedPreview = this.page.locator(
+            `${this.sel.contentModal}//div[@data-testid='${targetName}'][button[@data-testid='campaign-communication-list-hover']]`
+        ).first();
+        const preview = await namedPreview.isVisible({ timeout: 5000 }).catch(() => false)
+            ? namedPreview
+            : this.page.locator(this.sel.contentModalFirstPreview).first();
+        await preview.waitFor({ state: 'visible', timeout: 15000 });
+        const useBtn = preview.locator("xpath=./button[@data-testid='campaign-communication-list-hover']");
+
+        for (let attempt = 0; attempt < 3; attempt++) {
+            await preview.scrollIntoViewIfNeeded().catch(() => false);
+            await preview.hover({ force: true }).catch(() => false);
+            if (await useBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+                await useBtn.click({ force: true }).catch(() => false);
+            } else {
+                // Overlay did not show on hover: fire the click on the overlay button directly.
+                await useBtn.dispatchEvent('click').catch(() => false);
+            }
+            const closed = await modalTitle.waitFor({ state: 'hidden', timeout: 8000 }).then(() => true).catch(() => false);
+            if (closed) return true;
+        }
+        throw new Error(`Communication "${targetName}" was not selected: the "Select content" modal is still open.`);
     }
 
     async isContentSummaryVisible(): Promise<boolean> {

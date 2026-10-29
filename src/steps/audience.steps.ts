@@ -918,8 +918,17 @@ Then('Search and verify customers are visible in the preview list flyout', async
 });
 
 Then('Filter the Audience with the saved Audience title from {string}', async function (this: PlaywrightWorld, sourceTag: string) {
-    const entry = await waitForNameEntryCompleted(sourceTag).catch(() => null);
-    if (!entry) throw new Error(`Could not find a saved audience title for tag ${sourceTag} in names.json`);
+    // Wait up to 2.5 min for the scenario that creates this audience (it can run in parallel).
+    // Shorter than the 5 min step timeout, so a failed producer gives a clear error instead of a hang.
+    const entry = await waitForNameEntryCompleted(sourceTag, 150000).catch(() => null);
+    if (!entry) {
+        const names: any = await readNameJson().catch(() => ({}));
+        const status = names?.[sourceTag]?.status ?? 'missing';
+        throw new Error(
+            `No completed audience title for "${sourceTag}" in names.json (status: ${status}). ` +
+            `The scenario that creates it probably failed or did not run.`
+        );
+    }
 
     // Store it so downstream steps can use it (e.g. tooltips or validations)
     this['currentAudienceTitle'] = entry.title;

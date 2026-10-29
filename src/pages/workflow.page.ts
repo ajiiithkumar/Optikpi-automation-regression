@@ -50,7 +50,8 @@ export class WorkflowPage extends BasePage {
         libraryUseContent:  "//*[@data-testid='campaign-communication-list-hover'] | //*[@data-testid='library-use-this-content-btn' or contains(normalize-space(),'Use this content')]",
         actionAddContent:   "//*[@data-testid='workflow-actions-communication-add-content-btn' or @data-test-id='workflow-actions-communication-add-content-btn'] | //button[contains(normalize-space(),'Add content') or contains(.,'Add Content')]",
         exitMarkAsGoal:     "//button[@role='switch']",
-        nodeEditBtn:        "//*[@data-testid='node-edit-btn' or @data-testid='node-operations-dropdown-edit']",
+        nodeEditButtons:    "//button[@data-testid='node-edit-btn']",
+        nodeEditBtn:"//*[@data-testid='node-edit-btn' or @data-testid='node-operations-dropdown-edit']",
         headerThreeDotBtn:  "//button[@data-testid='workflow-header-operations-dropdown' or @data-test-id='workflow-header-operations-dropdown']",
         headerEditBtn:      "//button[@data-testid='workflow-operations-dropdown-edit' or @data-test-id='workflow-operations-dropdown-edit']",
 
@@ -349,11 +350,12 @@ export class WorkflowPage extends BasePage {
     }
 
     async clickAddContent(): Promise<void> {
+        // Wait for the button (locator.isVisible() ignores its timeout), and fail clearly instead of
+        // silently skipping the click, which left the library closed and broke the next step.
         const btn = this.page.locator(this.sel.actionAddContent).first();
-        if (await btn.isVisible({ timeout: 4000 }).catch(() => false)) {
-            await btn.click();
-            await this.pause(1000);
-        }
+        await btn.waitFor({ state: 'visible', timeout: 15000 });
+        await btn.click();
+        await this.pause(1000);
     }
 
     async searchCommunication(name: string): Promise<void> {
@@ -390,7 +392,9 @@ export class WorkflowPage extends BasePage {
         const useBtn = this.page.locator(
             "//*[@data-testid='campaign-communication-list-hover']//p | " +
             "//*[@data-testid='campaign-communication-list-hover'] | " +
-            "//*[contains(normalize-space(),'Use this content')]"
+            // Only the element whose own text says "Use this content": //*[contains(normalize-space(),...)]
+            // also matches <html>, and .first() would then click the page instead of the button.
+            "//*[text()[contains(normalize-space(),'Use this content')]]"
         ).first();
 
         try {
@@ -411,6 +415,16 @@ export class WorkflowPage extends BasePage {
     async clickCancel()       { await this.click(this.sel.cancelBtn); await this.pause(1000); }
 
     async clickNodeEdit(nodeIndex: string) {
+        // 0. Canvas nodes each have their own pencil (data-testid="node-edit-btn"): node N is the Nth pencil.
+        // Do not guess a node card by CSS class: that matched the header's "Workflow settings" button instead.
+        const nodeEditButtons = this.page.locator(this.sel.nodeEditButtons);
+        await nodeEditButtons.first().waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+        if (await nodeEditButtons.count() >= Number(nodeIndex)) {
+            await nodeEditButtons.nth(Number(nodeIndex) - 1).click();
+            await this.pause(1500);
+            return;
+        }
+
         // 1. Check for direct edit icon button or "Set up delay" button on node card (new UI)
         const nodeCard = this.page.locator(`(//div[contains(@class,'react-flow__node') or contains(@class,'workflow-node') or contains(@class,'relative') and .//div[contains(@class,'rounded')]])[${nodeIndex}]`).first();
         if (await nodeCard.isVisible({ timeout: 3000 }).catch(() => false)) {

@@ -376,10 +376,10 @@
     Then Click Download Customer List from the menu
     Then Click the modal submit button and wait for the download to complete
     Then Click Create Retention Audience from the dropdown
-    Then I should see the Create Audience page
-    Then Fill in the Audience details and save
     Then Upload the sample CSV file to the audience
     Then Click the modal submit button
+    Then I should see the Create Audience page
+    Then Fill in the Audience details and save
     Then Poll until the CSV audience status is "Active"
 
   @Regression @Audience @REG-AUD-18

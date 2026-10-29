@@ -108,9 +108,15 @@ Then('I select the {string} date range and verify it is displayed correctly',
 
         await dashboard.selectDateRangePreset(option);
 
-        // 1. Verify dropdown label matches the selected option name
+        // 1. Verify dropdown label matches the selected option name.
+        // The label updates after the UI re-renders, so poll instead of reading once.
+        await expect
+            .poll(() => dashboard.getDateRangeLabel(), {
+                timeout: 15000,
+                message: `Date range label should contain "${option}"`,
+            })
+            .toContain(option);
         const label = await dashboard.getDateRangeLabel();
-        expect(label).toContain(option);
 
         // 2. If we have an expected start date, verify the header contains it
         const headerText = await dashboard.getHeaderDateRangeText();
@@ -239,8 +245,13 @@ Then('Verify the audience filter is displayed in the dashboard',
                 'dashboardFilterAudience not set — ensure "I select the existing audience" step ran first.'
             );
         }
-        const isApplied = await getDashboardPage(this).isAudienceFilterApplied(audienceName);
-        expect(isApplied).toBeTruthy();
+        // The filter chip appears after Apply, so poll instead of checking once.
+        await expect
+            .poll(() => getDashboardPage(this).isAudienceFilterApplied(audienceName), {
+                timeout: 15000,
+                message: `Audience filter for "${audienceName}" should be displayed`,
+            })
+            .toBeTruthy();
         ExtentTestManager.logPass(`Audience filter displayed for: "${audienceName}"`);
     }
 );
