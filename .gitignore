@@ -7,6 +7,10 @@ reports/
 # Log files
 *.log
 
+# Local backups and diff dumps
+*.bak
+*.diff
+
 # Auth tokens & session data (sensitive)
 data/auth/
 data/.user-locks/
@@ -39,3 +43,10 @@ dist/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Ignored Folders
+Recorder/
+Files/
+
+# Campaign E2E resumable state (environment-specific run data)
+data/e2e-state/

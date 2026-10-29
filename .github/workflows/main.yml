@@ -1,4 +1,4 @@
-name: OptiKPI Regression Tests
+name: OptiKPI Regression + Campaign E2E Tests
 
 on:
   workflow_dispatch:
@@ -40,7 +40,11 @@ jobs:
       - name: Write users config from secret
         run: echo '${{ secrets.USERS_CONFIG_JSON }}' > data/users-config/users.json
 
-      - name: Run Audience and Campaign regression suite
+      - name: Reset test data
+        # names.json is a runtime store; start every CI run clean so no stale audience/campaign names are used.
+        run: echo '{}' > data/names.json
+
+      - name: Run regression suite
         id: run-tests
         continue-on-error: true
         run: npm run test:tag -- "@Regression"
@@ -63,4 +67,81 @@ jobs:
 
       - name: Fail job if tests failed
         if: steps.run-tests.outcome == 'failure'
+        run: exit 1
+
+  # Campaign execution E2E (7 cases): publishes real campaigns and checks the initial send through
+  # the Logs and Engagement tabs. Starts after the regression job has finished (pass or fail), so the
+  # regression Slack report is never held up by it, and the two jobs never share test accounts.
+  campaign-e2e-tests:
+    name: Campaign execution E2E
+    needs: regression-tests
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    env:
+      HEADLESS: "true"
+      # 4 parallel workers (one per test account); each case keeps its own state file. The npm script sets the same.
+      PARALLEL_THREADS: "4"
+      CI: "true"
+      TZ: Asia/Kolkata
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Create required directories
+        run: mkdir -p data/users-config
+
+      - name: Write .env from secret
+        run: echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Write users config from secret
+        run: echo '${{ secrets.USERS_CONFIG_JSON }}' > data/users-config/users.json
+
+      - name: Reset test data
+        run: echo '{}' > data/names.json
+
+      - name: Run campaign E2E (create all, then verify all)
+        id: run-e2e
+        continue-on-error: true
+        run: npm run test:campaign-e2e
+
+      - name: Show campaign E2E status
+        if: always()
+        run: npm run test:campaign-e2e:status
+
+      - name: Upload campaign E2E reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: campaign-e2e-reports
+          path: |
+            reports/
+            data/e2e-state/
+          retention-days: 14
+
+      - name: Send Slack notification
+        if: always() && env.SLACK_BOT_TOKEN != ''
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          RUN_LABEL: "OptiKPI V2.0 Campaign E2E Test"
+          HTML_REPORT: reports/extent/Campaign_E2E.html
+        run: npm run slack:report
+
+      - name: Fail job if tests failed
+        if: steps.run-e2e.outcome == 'failure'
         run: exit 1

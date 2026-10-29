@@ -1,0 +1,521 @@
+﻿´╗┐import { BasePage } from './base.page';
+        // --- REG-AUD-16 ---
+        conditionIsNotEmpty: "[data-testid='is-not-empty']",
+        previewViewAllBtn:   "[data-testid='audience-ruleBuilder-preview-totalCustomers-viewall-button']",
+        flyoutBackToEditor:  "[data-testid='audience-flyout-backToEditor-button']",
+        // Customer list flyout search (JSON steps 82-86)
+        customerListSearchInput: "[data-testid='audience-customerList-search-input'], input[placeholder*='Search'], [aria-label='Search']",
+        customerListTableRow:    "[data-testid^='audience-customerList-tableRow']",
+
+        // --- REG-AUD-17 ---
+        audienceSearchInput:     "[data-testid='audience-listView-searchInput']",
+        firstRowThreeDotIcon:    "[data-testid='audience-listView-tableList-dropdownIcon-1']",
+        downloadCustomerListBtn: "[data-testid='audience-listView-tableList-dropdownIcon-1-download-customer-list']",
+        downloadSubmitBtn:       "[data-testid='modal-submit-button']",
+        downloadGenerateBtn:     "button:has-text('Generate'), [data-testid*='download-generate'], [data-testid*='customer-list-generate']",
+        createNewDropdownBtn:    "[data-testid='create-new-audience-dropdown-btn']",
+        retentionAudienceBtn:    "[data-testid='create-new-audience-dropdown-btn-retention-audience']",
+        csvFileInput:            "#selectFile",
+
+        // --- REG-AUD-18 ---
+        createNewCampaignBtn: "[data-testid='audience-listView-tableList-dropdownIcon-1-create-new-campaign']",
+
+        // --- REG-AUD-19 ---
+        viewHistoryLogBtn: "[data-testid='audience-listView-tableList-dropdownIcon-1-view-history-log']",
+        historyLogEntry:   "tr:nth-of-type(1) span > span.block",
+
+        // --- REG-AUD-20 ---
+        reportIcon: "xpath=//*[@data-testid='audience-listView-tableList-reportIcon-1']/svg",
+
+    // ---------------------------------------------------------------------
+    // REG-AUD-16  Static Audience helpers
+    // ---------------------------------------------------------------------
+
+    async clickConditionIsNotEmpty() {
+        // Step 1: open the condition dropdown (same as selectConditionIsOneOf)
+        await this.click(this.sel.ConditionBtn);
+        await this.pause(500);
+        // Step 2: select is-not-empty from within the dropdown
+        await this.page.locator(this.sel.conditionIsNotEmpty).first().dispatchEvent('click');
+        await this.pause(500);
+    }
+
+    async clickPreviewViewAll() {
+        await this.page.locator(this.sel.previewViewAllBtn).first().waitFor({ state: 'visible', timeout: 15000 });
+        await this.page.locator(this.sel.previewViewAllBtn).first().click();
+        await this.pause(2000);
+    }
+
+    async clickBackToEditor() {
+        await this.page.locator(this.sel.flyoutBackToEditor).first().waitFor({ state: 'visible', timeout: 10000 });
+        await this.page.locator(this.sel.flyoutBackToEditor).first().click();
+        await this.pause(1000);
+    }
+
+    // ---------------------------------------------------------------------
+    // REG-AUD-17  Bulk Download + Retention/CSV Audience helpers
+    // ---------------------------------------------------------------------
+
+    async searchAudienceInList(keyword: string) {
+        const input = this.page.locator(this.sel.audienceSearchInput).first();
+        await input.waitFor({ state: 'visible', timeout: 10000 });
+        await input.fill('');
+        await input.fill(keyword);
+        await input.press('Enter');
+        await this.pause(2000);
+    }
+
+    async clickFirstRowThreeDot() {
+        // Hover the first table row to reveal the hidden three-dot button
+        await this.page.locator('table tbody tr').first().hover().catch(() => {});
+        await this.pause(500);
+        // Click the three-dot button directly
+        const btn = this.page.locator(this.sel.firstRowThreeDotIcon).first();
+        await btn.waitFor({ state: 'visible', timeout: 10000 });
+        await btn.click();
+        await this.pause(700);
+    }
+
+    async clickDownloadCustomerListAndCapture(): Promise<string> {
+        await this.page.locator(this.sel.downloadCustomerListBtn).first().waitFor({ state: 'visible', timeout: 8000 });
+        // Capture the file download before clicking
+        const [download] = await Promise.all([
+            this.page.waitForEvent('download'),
+            this.page.locator(this.sel.downloadCustomerListBtn).first().click(),
+        ]);
+        await this.pause(1000);
+        const filePath = await download.path();
+        return filePath || '';
+    }
+
+    async clickDownloadCustomerList() {
+        await this.page.locator(this.sel.downloadCustomerListBtn).first().waitFor({ state: 'visible', timeout: 8000 });
+        await this.page.locator(this.sel.downloadCustomerListBtn).first().click();
+        await this.pause(1000);
+    }
+
+    async clickModalSubmit() {
+        // First check if we are inside the "Upload retention audience" modal
+        const isRetentionModal = await this.page.locator("text='Upload retention audience'").first().isVisible({ timeout: 3000 }).catch(() => false);
+
+        if (isRetentionModal) {
+            // Step 1: Click "Upload" to start processing the CSV
+            const uploadBtn = this.page.locator("button:has-text('Upload')").first();
+            if (await uploadBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+                console.log("[Upload] Clicking 'Upload' to start processing...");
+                await uploadBtn.click();
+            }
+
+            // Step 2: Wait for the green "uploaded" status to appear
+            console.log("[Upload] Waiting for upload processing to complete...");
+            await this.page.locator("text=uploaded").first()
+                .waitFor({ state: 'visible', timeout: 120000 })
+                .catch(() => console.log("[Upload] 'uploaded' text not seen, proceeding anyway"));
+            
+            // Step 3: Wait for "Publish now" button to appear and be enabled
+            const publishBtn = this.page.locator("button:has-text('Publish now')").first();
+            await publishBtn.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+            await this.page.waitForFunction(() => {
+                const btns = Array.from(document.querySelectorAll("button"));
+                const pBtn = btns.find(b => b.innerText?.includes('Publish now'));
+                return pBtn && !pBtn.disabled;
+            }, null, { timeout: 60000 }).catch(() => {});
+            
+            console.log("[Upload] File uploaded - clicking Publish now...");
+            await this.pause(1000); // small buffer after upload confirmation
+
+            // Click Publish now
+            await publishBtn.click();
+
+            // Wait for modal to fully close before returning
+            await publishBtn.waitFor({ state: 'hidden', timeout: 30000 }).catch(() => {});
+            await this.pause(2000);
+            return;
+        }
+
+        // Generic fallback for other modals (e.g. Download Customer List)
+        const candidates = [
+            this.page.locator(this.sel.downloadSubmitBtn).first()
+        ];
+        for (const btn of candidates) {
+            if (await btn.isVisible({ timeout: 3000 }).catch(() => false)) {
+                await btn.click();
+                await this.pause(2000);
+                return;
+            }
+        }
+        throw new Error('clickModalSubmit: no visible submit button found');
+    }
+
+    /** Click Generate button in Download modal, capture download and wait for file to save (up to 120s) */
+    async clickModalSubmitAndWaitForDownload(): Promise<string> {
+        const btn = this.page.locator(this.sel.downloadGenerateBtn).first();
+        await btn.waitFor({ state: 'visible', timeout: 8000 });
+        const [download] = await Promise.all([
+            this.page.waitForEvent('download', { timeout: 120000 }),
+            btn.click(),
+        ]);
+        console.log('[Download] started: ' + download.suggestedFilename());
+        // Save with .csv extension so the app does not reject it as invalid
+        const os = require('os');
+        const path = require('path');
+        const targetPath = path.join(os.tmpdir(), 'audience-download-' + Date.now() + '.csv');
+        await download.saveAs(targetPath);
+        console.log('[Download] saved with .csv to: ' + targetPath);
+        await this.pause(1000);
+        return targetPath;
+    }
+
+    async clickCreateRetentionAudience() {
+        await this.page.locator(this.sel.createNewDropdownBtn).first().click();
+        await this.pause(500);
+        await this.page.locator(this.sel.retentionAudienceBtn).first().waitFor({ state: 'visible', timeout: 8000 });
+        await this.page.locator(this.sel.retentionAudienceBtn).first().click();
+        await this.pause(1000);
+    }
+
+    async uploadCSVFile(filePath: string) {
+        // Wait for upload modal to appear
+        await this.page.locator("text=Upload retention audience").first()
+            .waitFor({ state: "visible", timeout: 20000 }).catch(() => {});
+        await this.pause(500);
+
+        // Do NOT click any label - opens native OS file picker which blocks Playwright
+        // Find the hidden file input and set files directly
+        const selectors = [
+            "input[type=\"file\"]",
+            "#selectFile",
+            "#headlessui-portal-root input[type=\"file\"]",
+            "input[accept*=\"csv\"]",
+        ];
+        let fileInput = null;
+        for (const sel of selectors) {
+            const loc = this.page.locator(sel).first();
+            const found = await loc.count().catch(() => 0);
+            if (found > 0) { fileInput = loc; break; }
+        }
+        if (!fileInput) throw new Error("Could not find file input in upload modal");
+        await fileInput.waitFor({ state: "attached", timeout: 10000 });
+        await fileInput.setInputFiles(filePath);
+        await this.pause(1500);
+    }
+
+    async pollAudienceStatus(audienceName: string, targetStatus: string, timeoutMs = 120000): Promise<void> {
+        const start = Date.now();
+        while (Date.now() - start < timeoutMs) {
+            await this.searchAudienceInList(audienceName);
+            
+            // Find the specific row containing our audience name to avoid header issues
+            const rowLocator = this.page.locator(`tr:has-text("${audienceName}")`).first();
+            const texts = await rowLocator.locator('td').allInnerTexts().catch(() => ['']);
+            const fullText = texts.join(' ').toLowerCase();
+            
+            console.log(`[Poll Status] Found row text: "${fullText}" | Looking for: "${targetStatus.toLowerCase()}"`);
+            
+            if (fullText.includes(targetStatus.toLowerCase())) {
+                console.log("[Poll Status] Success! Target status found.");
+                return;
+            }
+            
+            // Wait 10 seconds before polling again
+            await this.pause(10000);
+        }
+        throw new Error(`Timed out waiting for "${audienceName}" to reach "${targetStatus}"`);
+    }
+    // ---------------------------------------------------------------------
+    // REG-AUD-16  Static Audience helpers
+    // ---------------------------------------------------------------------
+
+    async clickConditionIsNotEmpty() {
+        // Step 1: open the condition dropdown (same as selectConditionIsOneOf)
+        await this.click(this.sel.ConditionBtn);
+        await this.pause(500);
+        // Step 2: select is-not-empty from within the dropdown
+        await this.page.locator(this.sel.conditionIsNotEmpty).first().dispatchEvent('click');
+        await this.pause(500);
+    }
+
+    async clickPreviewViewAll() {
+        await this.page.locator(this.sel.previewViewAllBtn).first().waitFor({ state: 'visible', timeout: 15000 });
+        await this.page.locator(this.sel.previewViewAllBtn).first().click();
+        await this.pause(2000);
+    }
+
+    async clickBackToEditor() {
+        await this.page.locator(this.sel.flyoutBackToEditor).first().waitFor({ state: 'visible', timeout: 10000 });
+        await this.page.locator(this.sel.flyoutBackToEditor).first().click();
+        await this.pause(1000);
+    }
+
+    // ---------------------------------------------------------------------
+    // REG-AUD-17  Bulk Download + Retention/CSV Audience helpers
+    // ---------------------------------------------------------------------
+
+    async searchAudienceInList(keyword: string) {
+        const input = this.page.locator(this.sel.audienceSearchInput).first();
+        await input.waitFor({ state: 'visible', timeout: 10000 });
+        await input.fill('');
+        await input.fill(keyword);
+        await input.press('Enter');
+        await this.pause(2000);
+    }
+
+    async clickFirstRowThreeDot() {
+        // Hover the first table row to reveal the hidden three-dot button
+        await this.page.locator('table tbody tr').first().hover().catch(() => {});
+        await this.pause(500);
+        // Click the three-dot button directly
+        const btn = this.page.locator(this.sel.firstRowThreeDotIcon).first();
+        await btn.waitFor({ state: 'visible', timeout: 10000 });
+        await btn.click();
+        await this.pause(700);
+    }
+
+    async clickDownloadCustomerListAndCapture(): Promise<string> {
+        await this.page.locator(this.sel.downloadCustomerListBtn).first().waitFor({ state: 'visible', timeout: 8000 });
+        // Capture the file download before clicking
+        const [download] = await Promise.all([
+            this.page.waitForEvent('download'),
+            this.page.locator(this.sel.downloadCustomerListBtn).first().click(),
+        ]);
+        await this.pause(1000);
+        const filePath = await download.path();
+        return filePath || '';
+    }
+
+    async clickDownloadCustomerList() {
+        await this.page.locator(this.sel.downloadCustomerListBtn).first().waitFor({ state: 'visible', timeout: 8000 });
+        await this.page.locator(this.sel.downloadCustomerListBtn).first().click();
+        await this.pause(1000);
+    }
+
+    async clickModalSubmit() {
+        // First check if we are inside the "Upload retention audience" modal
+        const isRetentionModal = await this.page.locator("text='Upload retention audience'").first().isVisible({ timeout: 3000 }).catch(() => false);
+
+        if (isRetentionModal) {
+            // Step 1: Click "Upload" to start processing the CSV
+            const uploadBtn = this.page.locator("button:has-text('Upload')").first();
+            if (await uploadBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+                console.log("[Upload] Clicking 'Upload' to start processing...");
+                await uploadBtn.click();
+            }
+
+            // Step 2: Wait for the green "uploaded" status to appear
+            console.log("[Upload] Waiting for upload processing to complete...");
+            await this.page.locator("text=uploaded").first()
+                .waitFor({ state: 'visible', timeout: 120000 })
+                .catch(() => console.log("[Upload] 'uploaded' text not seen, proceeding anyway"));
+            
+            // Step 3: Wait for "Publish now" button to appear and be enabled
+            const publishBtn = this.page.locator("button:has-text('Publish now')").first();
+            await publishBtn.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+            await this.page.waitForFunction(() => {
+                const btns = Array.from(document.querySelectorAll("button"));
+                const pBtn = btns.find(b => b.innerText?.includes('Publish now'));
+                return pBtn && !pBtn.disabled;
+            }, null, { timeout: 60000 }).catch(() => {});
+            
+            console.log("[Upload] File uploaded - clicking Publish now...");
+            await this.pause(1000); // small buffer after upload confirmation
+
+            // Click Publish now
+            await publishBtn.click();
+
+            // Wait for modal to fully close before returning
+            await publishBtn.waitFor({ state: 'hidden', timeout: 30000 }).catch(() => {});
+            await this.pause(2000);
+            return;
+        }
+
+        // Generic fallback for other modals (e.g. Download Customer List)
+        const candidates = [
+            this.page.locator(this.sel.downloadSubmitBtn).first()
+        ];
+        for (const btn of candidates) {
+            if (await btn.isVisible({ timeout: 3000 }).catch(() => false)) {
+                await btn.click();
+                await this.pause(2000);
+                return;
+            }
+        }
+        throw new Error('clickModalSubmit: no visible submit button found');
+    }
+
+    /** Click Generate button in Download modal, capture download and wait for file to save (up to 120s) */
+    async clickModalSubmitAndWaitForDownload(): Promise<string> {
+        const btn = this.page.locator(this.sel.downloadGenerateBtn).first();
+        await btn.waitFor({ state: 'visible', timeout: 8000 });
+        const [download] = await Promise.all([
+            this.page.waitForEvent('download', { timeout: 120000 }),
+            btn.click(),
+        ]);
+        console.log('[Download] started: ' + download.suggestedFilename());
+        // Save with .csv extension so the app does not reject it as invalid
+        const os = require('os');
+        const path = require('path');
+        const targetPath = path.join(os.tmpdir(), 'audience-download-' + Date.now() + '.csv');
+        await download.saveAs(targetPath);
+        console.log('[Download] saved with .csv to: ' + targetPath);
+        await this.pause(1000);
+        return targetPath;
+    }
+
+    async clickCreateRetentionAudience() {
+        await this.page.locator(this.sel.createNewDropdownBtn).first().click();
+        await this.pause(500);
+        await this.page.locator(this.sel.retentionAudienceBtn).first().waitFor({ state: 'visible', timeout: 8000 });
+        await this.page.locator(this.sel.retentionAudienceBtn).first().click();
+        await this.pause(1000);
+    }
+
+    async uploadCSVFile(filePath: string) {
+        // Wait for upload modal to appear
+        await this.page.locator("text=Upload retention audience").first()
+            .waitFor({ state: "visible", timeout: 20000 }).catch(() => {});
+        await this.pause(500);
+
+        // Do NOT click any label - opens native OS file picker which blocks Playwright
+        // Find the hidden file input and set files directly
+        const selectors = [
+            "input[type=\"file\"]",
+            "#selectFile",
+            "#headlessui-portal-root input[type=\"file\"]",
+            "input[accept*=\"csv\"]",
+        ];
+        let fileInput = null;
+        for (const sel of selectors) {
+            const loc = this.page.locator(sel).first();
+            const found = await loc.count().catch(() => 0);
+            if (found > 0) { fileInput = loc; break; }
+        }
+        if (!fileInput) throw new Error("Could not find file input in upload modal");
+        await fileInput.waitFor({ state: "attached", timeout: 10000 });
+        await fileInput.setInputFiles(filePath);
+        await this.pause(1500);
+    }
+
+    async pollAudienceStatus(audienceName: string, targetStatus: string, timeoutMs = 120000): Promise<void> {
+        const start = Date.now();
+        while (Date.now() - start < timeoutMs) {
+            await this.searchAudienceInList(audienceName);
+            
+            // Find the specific row containing our audience name to avoid header issues
+            const rowLocator = this.page.locator(`tr:has-text("${audienceName}")`).first();
+            const texts = await rowLocator.locator('td').allInnerTexts().catch(() => ['']);
+            const fullText = texts.join(' ').toLowerCase();
+            
+            console.log(`[Poll Status] Found row text: "${fullText}" | Looking for: "${targetStatus.toLowerCase()}"`);
+            
+            if (fullText.includes(targetStatus.toLowerCase())) {
+                console.log("[Poll Status] Success! Target status found.");
+                return;
+            }
+            
+            // Wait 10 seconds before polling again
+            await this.pause(10000);
+        }
+        throw new Error(`Timed out waiting for "${audienceName}" to reach "${targetStatus}"`);
+    }
+
+    // ---------------------------------------------------------------------
+    // REG-AUD-18  Create Campaign from Audience
+    // ---------------------------------------------------------------------
+
+    async clickCreateNewCampaignFromAudience() {
+        await this.page.locator(this.sel.createNewCampaignBtn).first().waitFor({ state: 'visible', timeout: 8000 });
+        await this.page.locator(this.sel.createNewCampaignBtn).first().click();
+        await this.pause(2000);
+    }
+
+    // ---------------------------------------------------------------------
+    // REG-AUD-19  View History Log
+    // ---------------------------------------------------------------------
+
+    async clickViewHistoryLog() {
+        await this.page.locator(this.sel.viewHistoryLogBtn).first().waitFor({ state: 'visible', timeout: 8000 });
+        await this.page.locator(this.sel.viewHistoryLogBtn).first().click();
+        await this.pause(2000);
+    }
+
+    async isHistoryLogVisible(): Promise<boolean> {
+        return this.page.locator(this.sel.historyLogEntry).first()
+            .isVisible({ timeout: 10000 }).catch(() => false);
+    }
+
+    // ---------------------------------------------------------------------
+    // REG-AUD-20  View Report
+    // ---------------------------------------------------------------------
+
+    async clickReportIcon() {
+        await this.page.locator(this.sel.reportIcon).first().waitFor({ state: 'visible', timeout: 10000 });
+        await this.page.locator(this.sel.reportIcon).first().dispatchEvent('click');
+        await this.pause(3000);
+    }
+
+    // ---------------------------------------------------------------------
+    // REG-AUD-16  Customer List Flyout ´┐¢ search & validate
+    // ---------------------------------------------------------------------
+
+    /** Wait for the customer list flyout to fully load - polls until rows visible */
+    async waitForCustomerListFlyout(): Promise<void> {
+        await this.page.locator(this.sel.flyoutBackToEditor)
+            .first().waitFor({ state: 'visible', timeout: 20000 });
+        const start = Date.now();
+        while (Date.now() - start < 30000) {
+            const rows = this.page.locator('div.h-\\[700px\\] td, div.h-\\[700px\\] tr');
+            const count = await rows.count().catch(() => 0);
+            if (count > 0) break;
+            await this.pause(1000);
+        }
+        await this.pause(1000);
+    }
+
+    /** Click the last page in the customer list flyout pagination footer */
+    async clickLastPageInCustomerListFlyout(): Promise<void> {
+        // Find all pagination page buttons: data-testid='audience-customerList-pagination-button-pageNumber-N'
+        const pageBtns = this.page.locator("[data-testid^='audience-customerList-pagination-button-pageNumber-']");
+        const count = await pageBtns.count().catch(() => 0);
+        if (count > 0) {
+            await pageBtns.last().click();
+            await this.pause(2000); // wait for last page to load
+        }
+    }
+
+    /** Search in customer list flyout and return true if rows are visible */
+    async searchAndVerifyCustomerListFlyout(userId: string): Promise<boolean> {
+        await this.clickLastPageInCustomerListFlyout();
+        const searchInput = this.page.locator(
+            "div.h-\\[700px\\] input[placeholder*='Search'], [aria-label='Search'], div.h-\\[700px\\] input[type='text'], input[placeholder='Search']"
+        ).first();
+        await searchInput.waitFor({ state: 'visible', timeout: 10000 });
+        await searchInput.fill(userId);
+        await searchInput.press('Enter');
+        await this.pause(3000);
+        const rows = this.page.locator('td:has-text("' + userId + '")');
+        const rowCount = await rows.count().catch(() => 0);
+        return rowCount > 0;
+    }
+
+    async searchAndVerifyUserInReportList(userId: string): Promise<boolean> {
+        await this.page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+        await this.pause(1000);
+        const lastPageBtn = this.page.locator("button[class*='page']:not([class*='prev']):not([class*='next']), .pagination button").last();
+        if (await lastPageBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
+            await lastPageBtn.click().catch(() => {});
+            await this.pause(3000);
+        }
+        const searchInput = this.page.locator(
+            "input[placeholder*='Search'], input[placeholder*='search'], [aria-label*='Search'], input[type='text']"
+        ).first();
+        await searchInput.waitFor({ state: 'visible', timeout: 15000 });
+        await searchInput.scrollIntoViewIfNeeded();
+        await searchInput.fill('');
+        await searchInput.fill(userId);
+        await searchInput.press('Enter');
+        await this.pause(3000);
+        const rows = this.page.locator('td:has-text("' + userId + '")');
+        const rowCount = await rows.count().catch(() => 0);
+        return rowCount > 0;
+    }
+

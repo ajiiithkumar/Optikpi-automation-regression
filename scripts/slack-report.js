@@ -13,6 +13,8 @@
  *
  * Optional env vars:
  *   RUN_LABEL    — label for this run (e.g. "OptiKPI V2.0 Regression Test")
+ *   HTML_REPORT  — Extent HTML report to attach (default reports/extent/OptiKPI_V2.0_Smoke_Test.html);
+ *                  the campaign E2E job sets reports/extent/Campaign_E2E.html
  */
 
 try { require('dotenv').config(); } catch (_) {}
@@ -22,7 +24,9 @@ const path = require('path');
 const { WebClient } = require('@slack/web-api');
 
 const SUMMARY_FILE = path.join(process.cwd(), 'reports', 'run-summary.json');
-const HTML_REPORT  = path.join(process.cwd(), 'reports', 'extent', 'OptiKPI_V2.0_Smoke_Test.html');
+const HTML_REPORT  = process.env.HTML_REPORT
+  ? path.resolve(process.env.HTML_REPORT)
+  : path.join(process.cwd(), 'reports', 'extent', 'OptiKPI_V2.0_Smoke_Test.html');
 
 // ── Read run summary ──────────────────────────────────────────────────────────
 let summary;
@@ -144,8 +148,8 @@ if (summary.failedScenarios && summary.failedScenarios.length > 0) {
     const uploadResult = await client.filesUploadV2({
       channel_id: channelId,
       file: fs.createReadStream(HTML_REPORT),
-      filename: `OptiKPI_V2.0_Regression_Test_${new Date().toISOString().replace(/[:.]/g, '-')}.html`,
-      title: `OptiKPI V2.0 Regression Test — Extent Report (${summary.timestamp})`,
+      filename: `${runLabel.replace(/[^A-Za-z0-9.]+/g, '_')}_${new Date().toISOString().replace(/[:.]/g, '-')}.html`,
+      title: `${runLabel} — Extent Report (${summary.timestamp})`,
       initial_comment: 'HTML Extent Report attached. Download and open in a browser to view.',
     });
 

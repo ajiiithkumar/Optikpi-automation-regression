@@ -8,135 +8,160 @@ export class CampaignPage extends BasePage {
     // ─── Private Selectors ───────────────────────────────────────────────────
     private readonly sel = {
         // Tabs
-        activeTab:       "//button[@data-test-id='campaign-tab-active']",
-        completedTab:    "//button[@data-test-id='campaign-tab-completed']",
-        draftTab:        "//button[@data-test-id='campaign-tab-draft']",
-        allTab:          "//button[@data-test-id='campaign-tab-all']",
+        activeTab: "//button[@data-test-id='campaign-tab-active']",
+        completedTab: "//button[@data-test-id='campaign-tab-completed']",
+        draftTab: "//button[@data-test-id='campaign-tab-draft']",
+        allTab: "//button[@data-test-id='campaign-tab-all']",
 
         // Creation
-        createNewBtn:    "//button[@data-testid='create-new-campaign-button']",
-        nameInput:       "//input[@data-testid='campaign-name-input']",
-        tagInput:        "//input[@data-testid='campaign-tag-input']",
-        createBtn:       "//button[@data-testid='create-campaign-button']",
-        editTitle:       "//h2[contains(@class,'text-2xl')]",
+        createNewBtn: "//button[@data-testid='create-new-campaign-button' or @data-test-id='create-new-campaign-button']",
+        nameInput: "//input[@data-testid='campaign-name-input' or @data-test-id='campaign-name-input']",
+        tagInput: "//input[@data-testid='campaign-tag-input' or @data-test-id='campaign-tag-input']",
+        createBtn: "//button[@data-testid='create-campaign-button' or @data-test-id='create-campaign-button']",
+        editTitle: "//h2[contains(@class,'text-2xl')]",
 
         // Goal
-        goalClick:       "//div[@data-testid='campaign-goal-Engagement-Click-undefined']",
-        goalOpen:        "//div[@data-testid='campaign-goal-Engagement-Open-undefined']",
-        setGoalBtn:      "//button[@data-testid='campaign-stepper-set-goal-button']",
-        editGoal:        "//button[normalize-space()='Edit goal'] | //span[normalize-space()='Edit goal']",
-        financialTab:    "//button[@data-test-id='campaign-tab-financial']",
-        goalDeposit_not_selected:   "//div[contains(@data-testid,'campaign-goal-Financial-Deposit-undefined')]",
-        goalSummary:     "//button[@data-testid='campaign-goal-preview-click']",
+        goalClick: "//div[@data-testid='campaign-goal-Engagement-Click-undefined' or @data-test-id='campaign-goal-Engagement-Click-undefined']",
+        goalOpen: "//div[@data-testid='campaign-goal-Engagement-Open-undefined' or @data-test-id='campaign-goal-Engagement-Open-undefined']",
+        goalLogin: "//div[@data-testid='campaign-goal-Engagement-Login-undefined' or @data-test-id='campaign-goal-Engagement-Login-undefined']",
+        setGoalBtn: "//button[@data-testid='campaign-stepper-set-goal-button' or @data-test-id='campaign-stepper-set-goal-button']",
+        editGoal: "//button[normalize-space()='Edit goal'] | //span[normalize-space()='Edit goal']",
+        financialTab: "//button[@data-test-id='campaign-tab-financial']",
+        goalDeposit_not_selected: "//div[contains(@data-testid,'campaign-goal-Financial-Deposit-undefined')]",
+        goalSummary: "//button[@data-testid='campaign-goal-preview-click' or @data-test-id='campaign-goal-preview-click']",
         /** Goal set — Engagement Open shows inline preview (post–goal-picker UI). */
-        goalPreviewOpen: "//button[@data-testid='campaign-goal-preview-open']",
-        goalPreviewOpenSummary: "//div[contains(@class,'bg-disabledBackground')][.//span[contains(normalize-space(),'Your campaign goal is')] and .//button[@data-testid='campaign-goal-preview-open']]",
+        goalPreviewOpen: "//button[@data-testid='campaign-goal-preview-open' or @data-test-id='campaign-goal-preview-open']",
+        goalPreviewOpenSummary: "//div[contains(@class,'bg-disabledBackground')][.//span[contains(normalize-space(),'Your campaign goal is')] and .//button[@data-testid='campaign-goal-preview-open' or @data-test-id='campaign-goal-preview-open']]",
 
         // Audience
-        newAudienceTab:       "//button[@data-test-id='campaign-tab-new-audience']",
-        existingAudienceTab:  "//button[@data-test-id='campaign-tab-existing-audience']",
-        selectExistingBtn:    "//button[contains(normalize-space(),'Select existing audience')]",
-        existingAudienceOk:   "//button[@data-testid='flyout-confirm-btn']",
-        setAudienceBtn:       "//button[@data-testid='campaign-stepper-set-audience-button']",
-        audienceSummary:      "//div[@class='flex items-center flex-wrap justify-start p-2.5 rounded text-tertiary bg-disabledBackground']",
-        estimatedReach:       "//*[contains(@data-testid,'estimated-reach') or contains(normalize-space(),'Estimated reach') or contains(normalize-space(),'estimated')]",
-        controlGroupInput:    "//input[@data-testid='workflow-control-group-percentage']",
-        controlGroupSummary:  "//*[contains(@data-testid,'control-group') or contains(normalize-space(),'Control group')]",
-        editAudienceBtn:      "//span[contains(@class,'flex justify-center items-center gap-1 rounded-lg group') and normalize-space()='Edit audience']",
+        newAudienceTab: "//button[@data-test-id='campaign-tab-new-audience']",
+        existingAudienceTab: "//button[@data-test-id='campaign-tab-existing-audience']",
+        selectExistingBtn: "//button[contains(normalize-space(),'Select existing audience')]",
+        existingAudienceOk: "//button[@data-testid='flyout-confirm-btn' or @data-test-id='flyout-confirm-btn']",
+        setAudienceBtn: "//button[@data-testid='campaign-stepper-set-audience-button' or @data-test-id='campaign-stepper-set-audience-button']",
+        audienceSummary: "//div[@class='flex items-center flex-wrap justify-start p-2.5 rounded text-tertiary bg-disabledBackground']",
+        estimatedReach: "//*[contains(@data-testid,'estimated-reach') or contains(normalize-space(),'Estimated reach') or contains(normalize-space(),'estimated')]",
+        controlGroupInput: "//input[@data-testid='workflow-control-group-percentage' or @data-test-id='workflow-control-group-percentage']",
+        controlGroupSummary: "//*[contains(@data-testid,'control-group') or contains(normalize-space(),'Control group')]",
+        editAudienceBtn: "//span[contains(@class,'flex justify-center items-center gap-1 rounded-lg group') and normalize-space()='Edit audience']",
+        campaignAudiencePreviewBtn: "[data-testid='campaign-preview-audience-btn']",
+        campaignAudiencePreviewCount: "[data-testid^='campaign-audience-preview-activeCustomers-']",
+        campaignAudienceExcludedCount: "[data-testid^='campaign-audience-preview-unsubscribedCustomers-']",
 
         // Trigger
-        triggerStartDate:  "//button[@data-testid='campaign-timer-trigger-startDate-select']",
-        setTriggerBtn:     "//button[@data-testid='campaign-stepper-set-trigger-button']",
-        triggerSummary:    "//div[@class='flex items-center flex-wrap justify-start p-2.5 rounded text-tertiary border border-warningDark bg-warning gap-1 text-sm whitespace-pre']",
-        eventBasedOption:  "//button[@data-test-id='campaign-tab-event-trigger']",
+        triggerStartDate: "//button[@data-testid='campaign-timer-trigger-startDate-select' or @data-test-id='campaign-timer-trigger-startDate-select']",
+        setTriggerBtn: "//button[@data-testid='campaign-stepper-set-trigger-button' or @data-test-id='campaign-stepper-set-trigger-button']",
+        triggerSummary: "//div[@class='flex items-center flex-wrap justify-start p-2.5 rounded text-tertiary border border-warningDark bg-warning gap-1 text-sm whitespace-pre']",
+        eventBasedOption: "//button[@data-test-id='campaign-tab-event-trigger']",
         systemEventOption: "//button[@data-test-id='campaign-tab-systemevent']",
-        eventList:         "//div[contains(@data-testid,'trigger-event-list') or contains(@class,'event-list')]",
-        loginEvent:        "//input[@data-testid='login']",
-        addSimpleEvent:    "//button[@title='Add event' and contains(normalize-space(),'simple event')]",
-        Add_live_event_Btn: "//button[@data-testid='add-system-event-btn']",
-        applyTriggerBtn:   "//button[@data-testid='trigger-apply-btn' or contains(normalize-space(),'Apply')]",
+        eventList: "//div[contains(@data-testid,'trigger-event-list') or contains(@class,'event-list')]",
+        loginEvent: "//input[@data-testid='login' or @data-test-id='login']",
+        addSimpleEvent: "//button[@title='Add event' and contains(normalize-space(),'simple event')]",
+        Add_live_event_Btn: "//button[@data-testid='add-system-event-btn' or @data-test-id='add-system-event-btn']",
+        applyTriggerBtn: "//button[@data-testid='trigger-apply-btn' or @data-test-id='trigger-apply-btn' or contains(normalize-space(),'Apply')]",
         triggerValidationError: "//*[contains(normalize-space(),'Trigger dates or Event rules are not set properly. Please update the dates or rules to finish campaign setup.') or contains(normalize-space(),'Trigger dates are not set properly. Please update the dates to finish campaign setup.')]",
-        editTriggerBtn:    "//button[contains(@data-testid,'edit-trigger') or (contains(@class,'edit') and ancestor::*[contains(@class,'trigger')])]",
-        reenrollToggle:    "//button[contains(@data-testid,'reenroll-toggle') or contains(@aria-label,'Re-enroll')] | //div[contains(normalize-space(),'Re-enroll')]//button[@role='switch'] | //button[following-sibling::*[contains(normalize-space(),'Re-enroll')]]",
+        editTriggerBtn: "//button[contains(@data-testid,'edit-trigger') or (contains(@class,'edit') and ancestor::*[contains(@class,'trigger')])]",
+        reenrollToggle: "//button[contains(@data-testid,'reenroll-toggle') or contains(@aria-label,'Re-enroll')] | //div[contains(normalize-space(),'Re-enroll')]//button[@role='switch'] | //button[following-sibling::*[contains(normalize-space(),'Re-enroll')]]",
         reenrollDaysInput: "//input[contains(@data-testid,'reenroll-days') or contains(@placeholder,'days') or @placeholder='Value']",
-  
+
         // Communication
-        chooseContentBtn:     "//button[@data-testid='campaign-choose-content-btn']",
-        setCommunicationBtn:  "//button[@data-testid='campaign-stepper-set-communication-button']",
-        contentSummary:       "//div[contains(@class,'bg-disabledBackground') and contains(@class,'items-center') and contains(@class,'flex-wrap')]",
-        addVariantBtn:        "//button[@data-testid='campaign-add-content-variant-button']",
+        chooseContentBtn: "//button[@data-testid='campaign-choose-content-btn' or @data-test-id='campaign-choose-content-btn']",
+        setCommunicationBtn: "//button[@data-testid='campaign-stepper-set-communication-button' or @data-test-id='campaign-stepper-set-communication-button']",
+        // "Select content" library modal. Everything is scoped to it: Variant A's content on the page behind
+        // the modal also shows the communication name / "Test mock", so page-wide selectors hit the wrong card.
+        contentModal: "//div[@role='dialog' or @id='headlessui-portal-root'][.//*[normalize-space()='Select content']]",
+        // Use the title for open/closed checks: the dialog root only has position:fixed children, so its box is
+        // empty and Playwright always reports it as hidden.
+        contentModalTitle: "//div[@role='dialog' or @id='headlessui-portal-root']//*[text()[normalize-space()='Select content']]",
+        // First card preview in the modal (the element that holds the hover overlay button).
+        contentModalFirstPreview: "//div[@role='dialog' or @id='headlessui-portal-root'][.//*[normalize-space()='Select content']]//div[button[@data-testid='campaign-communication-list-hover']]",
+        contentSummary: "//div[contains(@class,'bg-disabledBackground') and contains(@class,'items-center') and contains(@class,'flex-wrap')]",
+        addVariantBtn: "//button[@data-testid='campaign-add-content-variant-button' or @data-test-id='campaign-add-content-variant-button']",
         chooseContentVariant: "//button[contains(@data-testid,'choose-content-variant') or contains(@data-testid,'campaign-choose-content-btn')]",
-        variantA:             "//button[contains(normalize-space(),'Version A') or contains(normalize-space(),'Variant A')]",
-        variantB:             "//button[contains(normalize-space(),'Version B') or contains(normalize-space(),'Variant B')]",
-        staticAllocation:     "//button[contains(@data-test-id,'campaign-tab-a-b-testing-with-static-allocation') or contains(normalize-space(),'A/B testing with Static Allocation')]",
-        criteriaAllocation:   "//button[contains(@data-test-id,'campaign-tab-criteriabasedallocation') or contains(normalize-space(),'Criteria-based Allocation')]",
-        variantAInput:        "//input[@data-testid='campaign-version-percentage']",
-        variantBInput:        "//input[@data-testid='campaign-version-percentage']",
+        variantA: "//button[contains(normalize-space(),'Version A') or contains(normalize-space(),'Variant A')]",
+        variantB: "//button[contains(normalize-space(),'Version B') or contains(normalize-space(),'Variant B')]",
+        staticAllocation: "//button[contains(@data-test-id,'campaign-tab-a-b-testing-with-static-allocation') or contains(normalize-space(),'A/B testing with Static Allocation')]",
+        criteriaAllocation: "//button[contains(@data-test-id,'campaign-tab-criteriabasedallocation') or contains(normalize-space(),'Criteria-based Allocation')]",
+        variantAInput: "//input[@data-testid='campaign-version-percentage' or @data-test-id='campaign-version-percentage']",
+        variantBInput: "//input[@data-testid='campaign-version-percentage' or @data-test-id='campaign-version-percentage']",
         totalAllocationSummary: "//div[contains(@class,'bg-disabledBackground') and .//button[normalize-space()='Static allocation'] and .//button[contains(normalize-space(),'Version A')] and .//button[contains(normalize-space(),'Version B')]]",
-        addCriteriaBtn:       "//button[contains(@data-testid,'add-criteria') or contains(normalize-space(),'Add Criteria')]",
-        addCriteriaBtnVariantA:       "//button[@data-testid='add-criteria-dropdown-A']",
-        addCriteriaCustomerProperties: "//button[@data-testid='add-criteria-dropdown-A-customer-properties']",
-        criteriaCustomerPropertyBtn:   "//button[@data-testid='audience-ruleBuilder-customer-properties--customer property-btn-1']",
-        criteriaConditionBtn:          "//button[@data-testid='audience-ruleBuilder-customer-properties--condition-btn-1']",
-        criteriaValuesBtn:             "//button[@data-testid='audience-ruleBuilder-customer-properties--values-btn-1-1']",
-        criteriaUserIdInput:           "//input[@data-testid='user_id']",
-        criteriaIsOneOfBtn:            "//input[@data-testid='is-one-of']",
-        criteriaSearchField:           "//input[@id='search-data']",
-        criteriaAddValuesBtn:          "//button[@data-testid='commonProfile-add-values-btn']",
-        defaultVariantRadioB:          "//input[@data-testid='default-variant-radio-B']",
-        criteriaSummary:               "//div[contains(@class,'bg-disabledBackground') and .//button[normalize-space()='Criteria-based Allocation']]",
+        addCriteriaBtn: "//button[contains(@data-testid,'add-criteria') or contains(normalize-space(),'Add Criteria')]",
+        addCriteriaBtnVariantA: "//button[@data-testid='add-criteria-dropdown-A' or @data-test-id='add-criteria-dropdown-A']",
+        addCriteriaCustomerProperties: "//button[@data-testid='add-criteria-dropdown-A-customer-properties' or @data-test-id='add-criteria-dropdown-A-customer-properties']",
+        criteriaCustomerPropertyBtn: "//button[@data-testid='audience-ruleBuilder-customer-properties--customer property-btn-1' or @data-test-id='audience-ruleBuilder-customer-properties--customer property-btn-1']",
+        criteriaConditionBtn: "//button[@data-testid='audience-ruleBuilder-customer-properties--condition-btn-1' or @data-test-id='audience-ruleBuilder-customer-properties--condition-btn-1']",
+        criteriaValuesBtn: "//button[@data-testid='audience-ruleBuilder-customer-properties--values-btn-1-1' or @data-test-id='audience-ruleBuilder-customer-properties--values-btn-1-1']",
+        criteriaUserIdInput: "//*[@data-testid='user_id' or @data-test-id='user_id'] | //input[@data-testid='user_id' or @data-test-id='user_id'] | //button[.//text()[normalize-space()='User Id']] | //label[normalize-space()='User Id']",
+        criteriaIsOneOfBtn: "//input[@data-testid='is-one-of' or @data-test-id='is-one-of']",
+        criteriaSearchField: "//input[@id='search-data']",
+        criteriaAddValuesBtn: "//button[@data-testid='commonProfile-add-values-btn' or @data-test-id='commonProfile-add-values-btn']",
+        defaultVariantRadioB: "//input[@data-testid='default-variant-radio-B' or @data-test-id='default-variant-radio-B']",
+        criteriaSummary: "//div[contains(@class,'bg-disabledBackground') and .//button[normalize-space()='Criteria-based Allocation']]",
 
         // Publish / Draft
-        publishBtn:        "//button[@data-testid='campaign-publish-button']",
-        publishConfirm:    "//button[@data-testid='modal-submit-button']",
-        saveDraftBtn:      "//button[@data-testid='campaign-save-draft-button']",
-        saveDraftConfirm:  "//button[@data-testid='modal-submit-button']",
-        headlessModal:     "//*[@id='headlessui-portal-root']//form",
+        publishBtn: "//button[@data-testid='campaign-publish-button' or @data-test-id='campaign-publish-button']",
+        publishConfirm: "//button[@data-testid='modal-submit-button' or @data-test-id='modal-submit-button']",
+        saveDraftBtn: "//button[@data-testid='campaign-save-draft-button' or @data-test-id='campaign-save-draft-button']",
+        saveDraftConfirm: "//button[@data-testid='modal-submit-button' or @data-test-id='modal-submit-button']",
+        headlessModal: "//*[@id='headlessui-portal-root']//form",
 
         // Search
-        searchIcon: "//button[@data-testid='campaign-listView-table-search-icon']",
-        searchBar:  "//input[@id='campaign-listView-table-search-icon']",
-        
+        searchIcon: "//button[@data-testid='campaign-listView-table-search-icon' or @data-test-id='campaign-listView-table-search-icon']",
+        searchBar: "//input[@id='campaign-listView-table-search-icon']",
+
 
         // Campaign Details / Edit Name
-        campaignEditbtn: "//button[@data-testid='campaign-edit-settings-btn'] | //*[contains(@data-testid,'campaign-performance-report')]",
+        campaignEditbtn: "//button[@data-testid='campaign-edit-settings-btn' or @data-test-id='campaign-edit-settings-btn'] | //*[contains(@data-testid,'campaign-performance-report')]",
 
-        editNameBtn:          "//button[contains(@data-testid,'edit-name') or contains(@aria-label,'Edit name') or contains(normalize-space(),'Edit name')]",
-        nameEditInput:        "//input[@data-testid='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
-        saveNameBtn:          "//button[@data-testid='create-campaign-button' and contains(normalize-space(),'Update campaign')]",
-        backToListBtn:        "//button[contains(@data-testid,'back-to-list') or contains(@aria-label,'Back')] | //a[contains(@href,'/campaign')]",
+        editNameBtn: "//button[contains(@data-testid,'edit-name') or contains(@aria-label,'Edit name') or contains(normalize-space(),'Edit name')]",
+        nameEditInput: "//input[@data-testid='campaign-name-input' or @data-test-id='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
+        saveNameBtn: "//button[@data-testid='create-campaign-button' or @data-test-id='create-campaign-button' and contains(normalize-space(),'Update campaign')]",
+        backToListBtn: "//button[contains(@data-testid,'back-to-list') or contains(@aria-label,'Back')] | //a[contains(@href,'/campaign')]",
 
         // Campaign row / list
-        campaignRow:          "//tr[contains(@class,'campaign-row')] | //div[contains(@class,'campaign-card')]",
-        dropdownIcon:         "//button[@data-testid='campaign-list-view-table-dropdown-icon']",
-        dropdownEditSettings: "//button[@data-testid='campaign-list-view-table-dropdown-icon-edit-settings']",
-        threeDotMenu:         "//button[contains(@data-testid,'campaign-action-menu') or contains(@aria-label,'Actions') or contains(@class,'action-menu')]",
-        duplicateOption:  "//button[@data-testid='campaign-list-view-table-dropdown-icon-duplicate']",
+        campaignRow: "//tr[contains(@class,'campaign-row')] | //div[contains(@class,'campaign-card')]",
+        dropdownIcon: "//button[@data-testid='campaign-list-view-table-dropdown-icon' or @data-test-id='campaign-list-view-table-dropdown-icon']",
+        dropdownEditSettings: "//button[@data-testid='campaign-list-view-table-dropdown-icon-edit-settings' or @data-test-id='campaign-list-view-table-dropdown-icon-edit-settings']",
+        threeDotMenu: "//button[contains(@data-testid,'campaign-action-menu') or contains(@aria-label,'Actions') or contains(@class,'action-menu')]",
+        duplicateOption: "//button[@data-testid='campaign-list-view-table-dropdown-icon-duplicate' or @data-test-id='campaign-list-view-table-dropdown-icon-duplicate']",
         /** Duplicate modal — campaign name field (portal / dialog). */
-        duplicateModalNameInput : "//input[@data-testid='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
-        deleteOption:     "//button[@data-testid='campaign-list-view-table-dropdown-icon-delete-campaign']",
-        duplicateConfirm: "//button[@data-testid='workflow-action-button']",
-        deleteConfirm:    "//button[@data-testid='workflow-action-button']",
+        duplicateModalNameInput: "//input[@data-testid='campaign-name-input' or @data-test-id='campaign-name-input' or contains(@data-testid,'edit-name-input')]",
+        deleteOption: "//button[@data-testid='campaign-list-view-table-dropdown-icon-delete-campaign' or @data-test-id='campaign-list-view-table-dropdown-icon-delete-campaign']",
+        duplicateConfirm: "//button[@data-testid='workflow-action-button' or @data-test-id='workflow-action-button']",
+        deleteConfirm: "//button[@data-testid='workflow-action-button' or @data-test-id='workflow-action-button']",
         deleteConfirmInput: "//*[@id='headlessui-portal-root']//input[@type='text' or not(@type)]",
-        successToast:     "//*[contains(@class,'toast') or contains(@class,'notification') or contains(@class,'Toastify')][string-length(normalize-space()) > 0]",
+        successToast: "//*[contains(@class,'toast') or contains(@class,'notification') or contains(@class,'Toastify')][string-length(normalize-space()) > 0]",
 
         // Pagination
-        nextPageBtn:     "//button[@data-testid='campaign-pagination-next-btn']",
-        prevPageBtn:     "//button[@data-testid='campaign-pagination-previous-btn']",
+        nextPageBtn: "//button[@data-testid='campaign-pagination-next-btn' or @data-test-id='campaign-pagination-next-btn']",
+        prevPageBtn: "//button[@data-testid='campaign-pagination-previous-btn' or @data-test-id='campaign-pagination-previous-btn']",
 
         // Filter
-        filterBtn:       "//button[@data-testid='campaign-listView-table-filter-icon']",
-        clearFilterBtn:  "//button[@data-testid='campaign-filters-reset-button']",
+        filterBtn: "//button[@data-testid='campaign-listView-table-filter-icon' or @data-test-id='campaign-listView-table-filter-icon']",
+        clearFilterBtn: "//button[@data-testid='campaign-filters-reset-button' or @data-test-id='campaign-filters-reset-button']",
         clearFilterChip: "//*[contains(@data-testid,'-clear-button')]",
 
         // History Log — option in the 3-dot dropdown on the campaign list row
-        historyLogBtn:   "//button[@data-testid='campaign-list-view-table-dropdown-icon-view-history-log']",
+        historyLogBtn: "//button[@data-testid='campaign-list-view-table-dropdown-icon-view-history-log' or @data-test-id='campaign-list-view-table-dropdown-icon-view-history-log']",
         historyLogEntry: "//form//tbody//tr",
 
         // Report — option in the 3-dot dropdown on the campaign list row
-        viewReportBtn:   "//button[@data-testid='campaign-list-view-table-dropdown-icon-view-full-report']",
-        reportPage:      "//*[contains(@data-testid,'campaign-performance-report')]",
-        reportSummaryTab: "//button[@data-testid='campaign-performance-report-summary']",
+        viewReportBtn: "//button[@data-testid='campaign-list-view-table-dropdown-icon-view-full-report' or @data-test-id='campaign-list-view-table-dropdown-icon-view-full-report']",
+        reportPage: "//*[contains(@data-testid,'campaign-performance-report')]",
+        reportSummaryTab: "//button[@data-testid='campaign-performance-report-summary' or @data-test-id='campaign-performance-report-summary']",
+
+        // Trigger: recurrence, re-enrollment and deposit event (campaign execution E2E)
+        triggerForm: "//*[@data-testid='campaign-stepper-form-trigger' or @data-test-id='campaign-stepper-form-trigger']",
+        repeatTypeSelect: "//button[@data-testid='campaign-timer-trigger-repeatType-select' or @data-test-id='campaign-timer-trigger-repeatType-select']",
+        repeatTypeRepeatOption: "//*[@data-testid='campaign-timer-trigger-repeatType-select-1' or @data-test-id='campaign-timer-trigger-repeatType-select-1']",
+        repeatUnitSelect: "//button[@data-testid='campaign-timer-trigger-repeatWeekDays-select' or @data-test-id='campaign-timer-trigger-repeatWeekDays-select']",
+        repeatEndDate: "//button[@data-testid='campaign-timer-trigger-endDate-select' or @data-test-id='campaign-timer-trigger-endDate-select']",
+        eventTriggerStartDate: "(//button[@data-testid='campaign-trigger-startDate-select' or @data-test-id='campaign-trigger-startDate-select'])[1]",
+        eventTriggerEndDate: "(//button[@data-testid='campaign-trigger-startDate-select' or @data-test-id='campaign-trigger-startDate-select'])[2]",
+        reenrollUseSetting: "//*[@data-testid='campaign-stepper-form-trigger' or @data-test-id='campaign-stepper-form-trigger']//button[normalize-space()='Use setting']",
+        reenrollUnitDropdown: "//button[@data-testid='enrollment-trigger-dropdown' or @data-test-id='enrollment-trigger-dropdown']",
+        reenrollNumberInputs: "//*[@data-testid='campaign-stepper-form-trigger' or @data-test-id='campaign-stepper-form-trigger']//input[@type='number' and @placeholder='Value']",
+        addEventConfirmBtn: "//button[@data-testid='commonProfile-add-event-btn' or @data-test-id='commonProfile-add-event-btn']",
     };
 
     // ─── Tab Actions ─────────────────────────────────────────────────────────
@@ -172,7 +197,7 @@ export class CampaignPage extends BasePage {
         if (visible) {
             await this.fill(this.sel.tagInput, tag);
             await this.page.waitForTimeout(300); // Wait for React to register the text
-            await this.page.keyboard.press('Enter').catch(() => {});
+            await this.page.keyboard.press('Enter').catch(() => { });
             await this.page.waitForTimeout(500); // Wait for the tag chip to render before clicking Create
         }
     }
@@ -180,13 +205,13 @@ export class CampaignPage extends BasePage {
     async clickCreateCampaign() {
         await this.click(this.sel.createBtn);
         await this.waitForNetworkIdle();
-        
+
         // Immediately check if the red error text appears in the modal
         const errorText = this.page.locator("text=/An unexpected error/i").first();
         if (await errorText.isVisible({ timeout: 1000 }).catch(() => false)) {
             // Retry once after 1s for transient server spikes under parallel load
             await this.page.waitForTimeout(1000);
-            await this.click(this.sel.createBtn).catch(() => {});
+            await this.click(this.sel.createBtn).catch(() => { });
             await this.waitForNetworkIdle();
 
             if (await errorText.isVisible({ timeout: 1000 }).catch(() => false)) {
@@ -207,7 +232,7 @@ export class CampaignPage extends BasePage {
     async verifyNameUpdated(expectedName: string, timeout = 20000) {
         // Wait for the edit-name input to disappear (panel closed after save)
         await this.page.locator(this.sel.nameEditInput)
-            .first().waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+            .first().waitFor({ state: 'hidden', timeout: 10000 }).catch(() => { });
         await this.pause(1000);
         // Read whatever title the h2 currently has — useful for diagnostics
         const currentTitle = await this.page.locator("//h2[contains(@class,'text-2xl')]").first()
@@ -296,6 +321,11 @@ export class CampaignPage extends BasePage {
         await this.click(this.sel.goalOpen);
     }
 
+    /** Engagement → Login goal. With this goal the control-group input is editable (with Open it stays read-only). */
+    async clickGoalLogin(): Promise<void> {
+        await this.click(this.sel.goalLogin);
+    }
+
     async clickFinancialTab() {
         await this.click(this.sel.financialTab);
     }
@@ -340,7 +370,7 @@ export class CampaignPage extends BasePage {
             return (await previewOpen.innerText().catch(() => '')).trim();
         }
         const previewClick = this.page.locator(
-            "//div[contains(@class,'bg-disabledBackground')][.//span[contains(normalize-space(),'Your campaign goal is')] and .//button[@data-testid='campaign-goal-preview-click']]"
+            "//div[contains(@class,'bg-disabledBackground')][.//span[contains(normalize-space(),'Your campaign goal is')] and .//button[@data-testid='campaign-goal-preview-click' or @data-test-id='campaign-goal-preview-click']]"
         ).first();
         if (await previewClick.isVisible({ timeout: 2000 }).catch(() => false)) {
             return (await previewClick.innerText().catch(() => '')).trim();
@@ -381,13 +411,34 @@ export class CampaignPage extends BasePage {
         await this.pause(1000);
     }
 
+    async clickCampaignAudiencePreview() {
+        await this.page.locator(this.sel.campaignAudiencePreviewBtn).first().click();
+        await this.pause(2000);
+    }
+
+    async getCampaignAudiencePreviewCount(): Promise<number> {
+        const countLocator = this.page.locator(this.sel.campaignAudiencePreviewCount).first();
+        await countLocator.waitFor({ state: 'visible', timeout: 8000 }).catch(() => { });
+        const text = (await countLocator.textContent())?.trim() || '0';
+        const num = parseInt(text.replace(/[^0-9]/g, ''), 10);
+        return isNaN(num) ? 0 : num;
+    }
+
+    async getCampaignAudienceExcludedCount(): Promise<number> {
+        const countLocator = this.page.locator(this.sel.campaignAudienceExcludedCount).first();
+        await countLocator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => { });
+        const text = (await countLocator.textContent())?.trim() || '0';
+        const num = parseInt(text.replace(/[^0-9]/g, ''), 10);
+        return isNaN(num) ? 0 : num;
+    }
+
     async clickSetAudience() {
         await this.click(this.sel.setAudienceBtn);
     }
 
     async isAudienceSummaryVisible(): Promise<boolean> {
         const el = this.page.locator(this.sel.contentSummary).nth(1);
-        await el.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+        await el.waitFor({ state: 'visible', timeout: 15000 }).catch(() => { });
         return el.isVisible();
     }
 
@@ -404,6 +455,45 @@ export class CampaignPage extends BasePage {
         await input.waitFor({ state: 'visible', timeout: 10000 });
         await input.fill('');
         await input.fill(value);
+    }
+
+    /**
+     * Reloads the edit page of a campaign that was just created in this page session.
+     * Observed on Dev: on a newly created campaign the control-group input is read-only until the
+     * page is reloaded, while a reloaded draft has it editable. Goal/audience/trigger are only kept
+     * in the page until Save draft or Publish, so this must run right after creation, before them.
+     */
+    async reloadCampaignDraft(): Promise<void> {
+        await this.waitForNetworkIdle(10000);
+        await this.page.reload({ waitUntil: 'domcontentloaded' });
+        await this.waitForEditPage(30000);
+        await this.collapseSidebar();
+        // After a reload the page opens in "Review" with every section collapsed (the collapsed goal cards
+        // still count as visible but sit under the headers). Reopen Goal with "Edit goal" once it is enabled.
+        const editGoal = this.page.locator("//button[normalize-space()='Edit goal']").first();
+        await editGoal.waitFor({ state: 'visible', timeout: 30000 });
+        for (let i = 0; i < 15 && await editGoal.isDisabled(); i++) await this.pause(1000);
+        await editGoal.click();
+        await this.waitForVisible(this.sel.goalOpen, 15000);
+    }
+
+    /**
+     * Enters the control-group percentage and checks it was accepted. The input only becomes editable
+     * after an audience is selected and its Preview has loaded, so wait for that before typing.
+     */
+    async enterControlGroupPercentageChecked(value: string): Promise<void> {
+        const input = this.page.locator(this.sel.controlGroupInput).first();
+        await input.waitFor({ state: 'visible', timeout: 10000 });
+        const isLocked = (): Promise<boolean> => input.evaluate((el: HTMLInputElement) => el.readOnly || el.disabled);
+        for (let i = 0; i < 20 && await isLocked(); i++) await this.pause(1000);
+        if (await isLocked()) {
+            throw new Error('Control group input is still read-only 20s after the audience Preview. ' +
+                'Select the audience and click Preview before entering the control group.');
+        }
+        await input.fill('');
+        await input.fill(value);
+        const entered = await input.inputValue();
+        if (entered !== value) throw new Error(`Control group input shows "${entered}", expected "${value}"`);
     }
 
     async isControlGroupSummaryVisible(): Promise<boolean> {
@@ -435,9 +525,9 @@ export class CampaignPage extends BasePage {
 
     async clickEventBasedOption() {
         if (await this.isVisible(this.sel.setTriggerBtn)) {
-        await this.click(this.sel.eventBasedOption);
-        await this.pause(1000);
-        }else{
+            await this.click(this.sel.eventBasedOption);
+            await this.pause(1000);
+        } else {
             await this.clickSetTrigger();
             await this.click(this.sel.eventBasedOption);
             await this.pause(1000);
@@ -520,6 +610,41 @@ export class CampaignPage extends BasePage {
     async clickSetCommunication() {
         await this.click(this.sel.setCommunicationBtn);
         await this.pause(1000);
+    }
+
+    /**
+     * Select a communication in the campaign "Select content" modal.
+     * Returns false when the modal is not open (workflow uses a full-page library instead).
+     * Throws if the modal is still open after trying, so the next step does not wait 60 s behind it.
+     */
+    async selectCommunicationFromContentModal(targetName: string): Promise<boolean> {
+        const modalTitle = this.page.locator(this.sel.contentModalTitle).first();
+        if (!await modalTitle.isVisible({ timeout: 3000 }).catch(() => false)) return false;
+
+        // Each card preview carries the communication name as its data-testid and holds the hidden
+        // "Use this content" overlay button, which only shows while the preview is hovered.
+        const namedPreview = this.page.locator(
+            `${this.sel.contentModal}//div[@data-testid='${targetName}'][button[@data-testid='campaign-communication-list-hover']]`
+        ).first();
+        const preview = await namedPreview.isVisible({ timeout: 5000 }).catch(() => false)
+            ? namedPreview
+            : this.page.locator(this.sel.contentModalFirstPreview).first();
+        await preview.waitFor({ state: 'visible', timeout: 15000 });
+        const useBtn = preview.locator("xpath=./button[@data-testid='campaign-communication-list-hover']");
+
+        for (let attempt = 0; attempt < 3; attempt++) {
+            await preview.scrollIntoViewIfNeeded().catch(() => false);
+            await preview.hover({ force: true }).catch(() => false);
+            if (await useBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+                await useBtn.click({ force: true }).catch(() => false);
+            } else {
+                // Overlay did not show on hover: fire the click on the overlay button directly.
+                await useBtn.dispatchEvent('click').catch(() => false);
+            }
+            const closed = await modalTitle.waitFor({ state: 'hidden', timeout: 8000 }).then(() => true).catch(() => false);
+            if (closed) return true;
+        }
+        throw new Error(`Communication "${targetName}" was not selected: the "Select content" modal is still open.`);
     }
 
     async isContentSummaryVisible(): Promise<boolean> {
@@ -639,7 +764,7 @@ export class CampaignPage extends BasePage {
         const searchField = this.page.locator(this.sel.criteriaSearchField).first();
         if (await searchField.isVisible({ timeout: 5000 }).catch(() => false)) {
             await searchField.fill('test');
-            await this.page.keyboard.press('Enter').catch(() => {});
+            await this.page.keyboard.press('Enter').catch(() => { });
             await this.pause(500);
         }
         const addValuesBtn = this.page.locator(this.sel.criteriaAddValuesBtn).first();
@@ -687,13 +812,13 @@ export class CampaignPage extends BasePage {
         const confirmBtn = this.page.locator(this.sel.saveDraftConfirm).first();
         const confirmVisible = await confirmBtn.isVisible({ timeout: 5000 }).catch(() => false);
         if (confirmVisible) {
-            await confirmBtn.click().catch(() => {});
+            await confirmBtn.click().catch(() => { });
             await this.pause(1000);
         }
 
         // Wait for any HeadlessUI modal to fully close before returning
         const modal = this.page.locator(this.sel.headlessModal).first();
-        await modal.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+        await modal.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => { });
         await this.pause(1000);
     }
 
@@ -705,7 +830,7 @@ export class CampaignPage extends BasePage {
             await this.click(this.sel.searchIcon);
         }
         await this.fill(this.sel.searchBar, name);
-        await this.page.keyboard.press('Enter').catch(() => {});
+        await this.page.keyboard.press('Enter').catch(() => { });
         await this.pause(2000);
     }
 
@@ -713,7 +838,7 @@ export class CampaignPage extends BasePage {
         const searchField = this.page.locator(this.sel.searchBar).first();
         await searchField.click();
         await searchField.fill('');
-        await this.page.keyboard.press('Enter').catch(() => {});
+        await this.page.keyboard.press('Enter').catch(() => { });
         await this.pause(2000);
     }
 
@@ -775,7 +900,7 @@ export class CampaignPage extends BasePage {
         // The delete modal requires typing the campaign name to enable the Delete button
         const confirmInput = this.page.locator(this.sel.deleteConfirmInput).first();
         await confirmInput.waitFor({ state: 'visible', timeout: 10000 });
-        
+
         if (!campaignName) {
             throw new Error('[Delete Confirm] No campaign name provided — cannot confirm deletion.');
         }
@@ -797,7 +922,7 @@ export class CampaignPage extends BasePage {
                 return !portal || portal.children.length === 0;
             },
             { timeout: 10000 }
-        ).catch(() => {});
+        ).catch(() => { });
         await this.pause(500);
     }
 
@@ -874,5 +999,94 @@ export class CampaignPage extends BasePage {
 
     async isReportPageVisible(): Promise<boolean> {
         return this.isVisible(this.sel.reportPage, 15000);
+    }
+
+    // ─── Trigger: recurrence / re-enrollment / deposit event (campaign execution E2E) ──
+
+    /** Time-based trigger: switch "Do not repeat" to "Repeat" and make sure the unit is Hour. */
+    async selectRepeatHourly(): Promise<void> {
+        await this.click(this.sel.repeatTypeSelect);
+        await this.click(this.sel.repeatTypeRepeatOption);
+        await this.waitForVisible(this.sel.repeatUnitSelect, 10000);
+        const unit = (await this.getText(this.sel.repeatUnitSelect)).toLowerCase();
+        if (!unit.includes('hour')) {
+            await this.click(this.sel.repeatUnitSelect);
+            await this.click(`${this.sel.triggerForm}//*[@role='option' or self::li or self::button][normalize-space()='Hour']`);
+        }
+        const finalUnit = await this.getText(this.sel.repeatUnitSelect);
+        if (!/hour/i.test(finalUnit)) throw new Error(`Repeat unit is "${finalUnit}", expected Hour`);
+    }
+
+    async getRepeatSummary(): Promise<{ unit: string; endDate: string }> {
+        return {
+            unit: await this.getText(this.sel.repeatUnitSelect),
+            endDate: await this.getText(this.sel.repeatEndDate),
+        };
+    }
+
+    async getTimeTriggerStartText(): Promise<string> {
+        return this.getText(this.sel.triggerStartDate);
+    }
+
+    async clickEventTriggerStartDate(): Promise<void> {
+        await this.click(this.sel.eventTriggerStartDate);
+    }
+
+    async getEventTriggerTimeZoneText(): Promise<string> {
+        return this.getText("//button[@data-testid='campaign-event-trigger-timeZone-select' or @data-test-id='campaign-event-trigger-timeZone-select']");
+    }
+
+    async getEventTriggerDates(): Promise<{ start: string; end: string }> {
+        return { start: await this.getText(this.sel.eventTriggerStartDate), end: await this.getText(this.sel.eventTriggerEndDate) };
+    }
+
+    /**
+     * Event trigger: simple event -> Deposit (category) -> Successful Deposit (radio "successful_deposit").
+     * Choosing the radio adds the event and closes the picker; the trigger then reads
+     * "Who have Performed Successful Deposit", which is checked before returning.
+     * The dialog root reports hidden (only fixed-position children), so the open check uses the visible
+     * Add event button; the radio input is hidden, so its label is what gets clicked.
+     */
+    async selectDepositEvent(): Promise<string> {
+        await this.click(this.sel.addSimpleEvent);
+        await this.waitForVisible(this.sel.addEventConfirmBtn, 10000);
+        await this.page.locator("//*[@role='dialog']//*[normalize-space(text())='Deposit']").filter({ visible: true }).first().click();
+        const label = this.page.locator("//*[@role='dialog']//label[@data-testid='successful_deposit' or @data-test-id='successful_deposit']").filter({ visible: true }).first();
+        await label.waitFor({ state: 'visible', timeout: 10000 });
+        // Choosing the radio adds the event and closes the dialog on its own; click Add event only if it is still open.
+        await label.click();
+        const addBtn = this.page.locator(this.sel.addEventConfirmBtn).filter({ visible: true });
+        if (await addBtn.first().isVisible({ timeout: 2000 }).catch(() => false)) {
+            await addBtn.first().click();
+            await this.pause(1000);
+        }
+        if (await addBtn.count() > 0) throw new Error('Simple event dialog is still open after choosing Successful Deposit');
+        // The trigger form is the evidence the event was chosen (the radio input re-renders and cannot be read back).
+        const formText = await this.getText(this.sel.triggerForm);
+        if (!/Successful Deposit/i.test(formText)) throw new Error(`"Successful Deposit" not shown in the trigger form after adding it: ${formText.slice(0, 300)}`);
+        return 'Successful Deposit';
+    }
+
+    async isReenrollmentEnabled(): Promise<boolean> {
+        return this.isVisible(this.sel.reenrollUnitDropdown, 2000);
+    }
+
+    /**
+     * "Re-enroll customers every [interval] [Day(s)] for max. [maxTimes] times."
+     * maxTimes is entered exactly as given; what the backend counts is asserted by the scenario.
+     */
+    async enableReenrollment(intervalDays: number, maxTimes: number): Promise<void> {
+        if (!await this.isReenrollmentEnabled()) await this.click(this.sel.reenrollUseSetting);
+        await this.waitForVisible(this.sel.reenrollUnitDropdown, 10000);
+        const unit = await this.getText(this.sel.reenrollUnitDropdown);
+        if (!/day/i.test(unit)) throw new Error(`Re-enrollment unit is "${unit}", expected Day(s)`);
+        const inputs = this.page.locator(this.sel.reenrollNumberInputs);
+        if (await inputs.count() < 2) throw new Error('Re-enrollment interval / max inputs not found');
+        await inputs.nth(0).fill(String(intervalDays));
+        await inputs.nth(1).fill(String(maxTimes));
+        const values = [await inputs.nth(0).inputValue(), await inputs.nth(1).inputValue()];
+        if (values[0] !== String(intervalDays) || values[1] !== String(maxTimes)) {
+            throw new Error(`Re-enrollment inputs read back ${values.join('/')}, expected ${intervalDays}/${maxTimes}`);
+        }
     }
 }

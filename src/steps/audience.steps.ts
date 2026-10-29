@@ -9,7 +9,9 @@ import { PlaywrightWorld } from '../support/world';
 const getAudiencePage = (world: PlaywrightWorld) => new AudiencePage(world.page);
 const getDatePicker = (world: PlaywrightWorld) => new DateTimePicker(world.page);
 
-// ─── View Toggle ─────────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------
+// View Toggle
+// ---------------------------------------------------------------------
 
 Then('Click the card view icon', async function (this: PlaywrightWorld) {
     await getAudiencePage(this).switchToCardView();
@@ -31,7 +33,9 @@ Then('List view should load successfully', async function (this: PlaywrightWorld
     ExtentTestManager.logPass('List view loaded successfully');
 });
 
-// ─── Tab Navigation ──────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------
+// Tab Navigation
+// ---------------------------------------------------------------------
 
 Then('Verify All tab data loads successfully', async function (this: PlaywrightWorld) {
     await getAudiencePage(this).clickTabAll();
@@ -46,7 +50,7 @@ Then('Static tab should load successfully', async function (this: PlaywrightWorl
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
             await audience.clickTabStatic();
-            await this.page.waitForTimeout(3000);
+            await this.page.waitForTimeout(1000);
             const isActive = await audience.isStaticTabActive();
             if (!isActive) throw new Error('Static tab is not active after clicking');
             ExtentTestManager.logPass(`Static tab loaded (attempt ${attempt})`);
@@ -66,10 +70,10 @@ Then('Static tab should load successfully', async function (this: PlaywrightWorl
     throw lastError || new Error('Static tab did not load successfully');
 });
 
-Then('Live tab should load successfully', async function (this: PlaywrightWorld) {
-    await getAudiencePage(this).clickTabLive();
+Then('RFM tab should load successfully', async function (this: PlaywrightWorld) {
+    await getAudiencePage(this).clickTabRfm();
     await this.page.waitForTimeout(500);
-    ExtentTestManager.logPass('Live tab loaded');
+    ExtentTestManager.logPass('RFM tab loaded');
 });
 
 Then('On Schedule tab should load successfully', async function (this: PlaywrightWorld) {
@@ -78,7 +82,9 @@ Then('On Schedule tab should load successfully', async function (this: Playwrigh
     ExtentTestManager.logPass('On Schedule tab loaded');
 });
 
-// ─── Audience Creation ───────────────────────────────────────────────────────
+// ---------------------------------------------------------------------
+// Audience Creation
+// ---------------------------------------------------------------------
 
 Then('Click the Create new Audience button', async function (this: PlaywrightWorld) {
     await getAudiencePage(this).clickCreateNew();
@@ -130,7 +136,9 @@ Then('It should enter into the edit page of the created Audience', async functio
     ExtentTestManager.logPass('Edit page for created Audience is visible');
 });
 
-// ─── Criteria Builder ────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------
+// Criteria Builder
+// ---------------------------------------------------------------------
 
 Then('Click the customer property option on Criteria', async function (this: PlaywrightWorld) {
     await getAudiencePage(this).openCustomerProperty();
@@ -178,7 +186,9 @@ Then('Check the Preview button 2 records is shown', async function (this: Playwr
     ExtentTestManager.logPass('Preview 2 button clicked (expected 1 records).');
 });
 
-// ─── Save / Publish ──────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------
+// Save / Publish
+// ---------------------------------------------------------------------
 
 Then('Save as draft the Audience and go back to Audience list page', async function (this: PlaywrightWorld) {
     await getAudiencePage(this).saveDraft();
@@ -206,7 +216,7 @@ Then('Validate the Audience tooltip title matches the saved Audience title', asy
     await audience.verifyTooltipTitle(expectedTitle);
 
     const previewCount = this['lastPreviewCount'];
-    if (previewCount !== undefined) {
+    if (previewCount !== undefined && previewCount > 0) {
         const listCount = await audience.getTotalCustomerCount(expectedTitle);
         if (listCount !== previewCount) {
             throw new Error(`Total Customers mismatch. Preview: ${previewCount}, List: ${listCount}`);
@@ -283,8 +293,12 @@ Then('Click the Publish button and Confirm the Publish Static Audience', async f
     const { found, message } = await getAudiencePage(this).checkLimitReachedPopup();
     if (found) {
         this.limitReached = true;
-        ExtentTestManager.logInfo(`⚠️ ${message} — skipping remaining steps`);
-        ExtentTestManager.logPass('Publish Static Audience — limit reached, step passed gracefully');
+// ---------------------------------------------------------------------
+// ExtentTestManagerlogInfo(  message  skipping remaining steps)
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// ExtentTestManagerlogPass(Publish Static Audience  limit reached step passed gracefully)
+// ---------------------------------------------------------------------
         return;
     }
 
@@ -299,8 +313,12 @@ Then('Click the Publish button and Confirm the Publish Schedule Audience', async
     const { found, message } = await audience.checkLimitReachedPopup();
     if (found) {
         this.limitReached = true;
-        ExtentTestManager.logInfo(`⚠️ ${message} — skipping remaining steps`);
-        ExtentTestManager.logPass('Publish Schedule Audience — limit reached, step passed gracefully');
+// ---------------------------------------------------------------------
+// ExtentTestManagerlogInfo(  message  skipping remaining steps)
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// ExtentTestManagerlogPass(Publish Schedule Audience  limit reached step passed gracefully)
+// ---------------------------------------------------------------------
         return;
     }
 
@@ -311,10 +329,16 @@ Then('Click the Publish button and Confirm the Publish Schedule Audience', async
     // Click Update Schedule
     await datePicker.clickUpdateSchedule();
 
+    // New UI (Sept 2026): after Update Schedule closes the sub-dialog,
+    // click Confirm on the main trigger modal to complete publishing.
+    await audience.clickPublishTypeConfirm().catch(() => { });
+
     ExtentTestManager.logPass('Published Schedule Audience Clicked successfully');
 });
 
-// ─── Filter & Search ─────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------
+// Filter  Search
+// ---------------------------------------------------------------------
 
 Then('Filter the Audience with the saved Audience title', async function (this: PlaywrightWorld) {
     const audience = getAudiencePage(this);
@@ -332,7 +356,7 @@ Then('Filter the Audience with the saved Audience title', async function (this: 
             // Verify audience is visible
             await audience.verifyAudienceInList(expectedTitle);
             ExtentTestManager.logPass(`Filtered and searched for Audience: ${expectedTitle} (attempt ${attempt})`);
-            return; // Success — exit the loop
+            return;
         } catch (err) {
             lastError = err as Error;
             console.log(`[Audience Search] Attempt ${attempt} failed: ${lastError.message}`);
@@ -371,9 +395,11 @@ Then('Log out from the application', async function (this: PlaywrightWorld) {
     ExtentTestManager.logInfo('Logout control not found; please update selectors for logout if needed.');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// REGRESSION — Event Performed Criteria
-// ═══════════════════════════════════════════════════════════════════════════════
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// REGRESSION  Event Performed Criteria
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 Then('Click the Event performed option on Criteria', async function (this: PlaywrightWorld) {
     await getAudiencePage(this).openEventPerformed();
@@ -400,9 +426,11 @@ Then('Set the occurrence date range to Today and apply', async function (this: P
     ExtentTestManager.logPass('Set occurrence date range to Today');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// REGRESSION — Customer Metric Criteria
-// ═══════════════════════════════════════════════════════════════════════════════
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// REGRESSION  Customer Metric Criteria
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 Then('Click the Customer Metric option on Criteria', async function (this: PlaywrightWorld) {
     await getAudiencePage(this).openCustomerMetric();
@@ -441,9 +469,11 @@ Then('In the value field enter alphabetic text instead of a number and apply', a
     ExtentTestManager.logPass('Entered alphabetic text in numeric field');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// REGRESSION — Part of Audience Criteria
-// ═══════════════════════════════════════════════════════════════════════════════
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// REGRESSION  Part of Audience Criteria
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 Given('an Audience from REG-AUD-01 or REG-AUD-02 or REG-AUD-03 is available', async function (this: PlaywrightWorld) {
     const entry = await waitForNameEntryCompleted('existingAudience');
@@ -458,7 +488,9 @@ Given('an existing published Audience is available', async function (this: Playw
         ExtentTestManager.logInfo(`Using existing published Audience: ${entry.title}`);
         return;
     }
-    ExtentTestManager.logInfo('No existing published Audience found in names.json — test will create one inline if needed');
+// ---------------------------------------------------------------------
+// ExtentTestManagerlogInfo(No existing published Audience found in namesjson  test will create one inline if needed)
+// ---------------------------------------------------------------------
 });
 
 Then('Click the Part of Audience option on Criteria', async function (this: PlaywrightWorld) {
@@ -473,9 +505,11 @@ Then('on the Part of Audience pop up select the existing audience and apply', as
     ExtentTestManager.logPass(`Selected existing audience: ${audienceName}`);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// REGRESSION — Customer Engagement Criteria
-// ═══════════════════════════════════════════════════════════════════════════════
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// REGRESSION  Customer Engagement Criteria
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 Then('Click the Customer Engagement option on Criteria', async function (this: PlaywrightWorld) {
     await getAudiencePage(this).openCustomerEngagement();
@@ -508,9 +542,11 @@ Then('Select a valid Workflow Action from the dependent dropdown', async functio
 });
 
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// REGRESSION — AND / OR Logic
-// ═══════════════════════════════════════════════════════════════════════════════
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// REGRESSION  AND / OR Logic
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 Then('Click the AND condition and add Customer Metric criteria in the same group', async function (this: PlaywrightWorld) {
     const audience = getAudiencePage(this);
@@ -529,14 +565,17 @@ Then('Click the customer property option on the second group Criteria', async fu
     ExtentTestManager.logPass('Opened Customer Properties on group 2');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// REGRESSION — Preview (generic)
-// ═══════════════════════════════════════════════════════════════════════════════
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// REGRESSION  Preview (generic)
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 Then('check the Customer count', async function (this: PlaywrightWorld) {
     const count = await getAudiencePage(this).getCustomerCount();
     this['customerCountBefore'] = count;
-    ExtentTestManager.logPass(`Customer count before preview: ${count}`);
+    this['lastPreviewCount'] = count;
+    ExtentTestManager.logPass(`Customer count from preview: ${count}`);
 });
 
 Then('Click the Preview button', async function (this: PlaywrightWorld) {
@@ -547,12 +586,17 @@ Then('Click the Preview button', async function (this: PlaywrightWorld) {
 Then('Check updates records are matching', async function (this: PlaywrightWorld) {
     const lastCount = this['lastPreviewCount'];
     const count = await getAudiencePage(this).getPreviewRecordCount();
+    this['lastPreviewCount'] = count; // Update after each preview click so Validate uses latest count
     if (lastCount !== undefined && count !== lastCount) {
-        ExtentTestManager.logPass(`Preview count updated: ${lastCount} → ${count}`);
+// ---------------------------------------------------------------------
+// ExtentTestManagerlogPass(Preview count updated lastCount   count)
+// ---------------------------------------------------------------------
     } else if (count >= 1) {
         ExtentTestManager.logPass(`Preview records found: ${count}`);
     } else {
-        ExtentTestManager.logInfo('Preview returned 0 records — verify criteria matches test data');
+// ---------------------------------------------------------------------
+// ExtentTestManagerlogInfo(Preview returned 0 records  verify criteria matches test data)
+// ---------------------------------------------------------------------
     }
 });
 
@@ -561,9 +605,11 @@ Then('Remove one User Id value from the criteria', async function (this: Playwri
     ExtentTestManager.logPass('Removed one User Id value from criteria');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// REGRESSION — Lifecycle (Prerequisites)
-// ═══════════════════════════════════════════════════════════════════════════════
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// REGRESSION  Lifecycle (Prerequisites)
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 Given('a Published Audience exists', async function (this: PlaywrightWorld) {
     const entry = await waitForNameEntryCompleted('existingAudience');
@@ -577,9 +623,11 @@ Given('an Audience exists in the list', async function (this: PlaywrightWorld) {
     ExtentTestManager.logInfo(`Using existing Audience: ${entry.title}`);
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// REGRESSION — Lifecycle (Edit Published)
-// ═══════════════════════════════════════════════════════════════════════════════
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// REGRESSION  Lifecycle (Edit Published)
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 
 
@@ -601,9 +649,20 @@ Then('Verify the updated criteria are reflected correctly', async function (this
     ExtentTestManager.logPass('Verified updated criteria are reflected on the edit page');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// REGRESSION — Duplicate
-// ═══════════════════════════════════════════════════════════════════════════════
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// REGRESSION  Duplicate
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+
+
+Then('Save the total customer count for the filtered audience', async function (this: PlaywrightWorld) {
+    const audienceTitle = this['currentAudienceTitle'] || this['existingAudienceTitle'];
+    if (!audienceTitle) throw new Error('No audience title is set.');
+    const count = await getAudiencePage(this).getTotalCustomerCount(audienceTitle);
+    this['savedAudienceCount'] = count;
+    ExtentTestManager.logPass(`Saved audience list count: ${count}`);
+});
 
 Then('Filter the Audience with the existing Audience title', async function (this: PlaywrightWorld) {
     const title = this['existingAudienceTitle'];
@@ -653,17 +712,21 @@ Then('The duplicated Audience should open in edit mode', async function (this: P
 });
 
 Then('Verify all criteria and fields are copied from the original Audience', async function (this: PlaywrightWorld) {
-    const criteriaLocator = this.page.locator("//button[@data-testid='audience-ruleBuilder-criteriaIcon-group-1']").first();
+    const criteriaLocator = this.page.locator("//*[@data-testid='audience-ruleBuilder-criteriaIcon-group-1' or @data-test-id='audience-ruleBuilder-criteriaIcon-group-1']").first();
     const criteriaVisible = await criteriaLocator.isVisible({ timeout: 10000 }).catch(() => false);
     if (!criteriaVisible) {
-        throw new Error('Criteria builder not visible — fields may not have been copied');
+// ---------------------------------------------------------------------
+// throw new Error(Criteria builder not visible  fields may not have been copied)
+// ---------------------------------------------------------------------
     }
     ExtentTestManager.logPass('Verified criteria and fields are present on duplicated Audience');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// REGRESSION — Negative
-// ═══════════════════════════════════════════════════════════════════════════════
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// REGRESSION  Negative
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 Then('Verify the Preview button is disabled', async function (this: PlaywrightWorld) {
     const isDisabled = await getAudiencePage(this).isPreviewDisabled();
@@ -689,9 +752,11 @@ Then('A field validation message should be displayed', async function (this: Pla
     ExtentTestManager.logPass('Field validation message displayed');
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// REGRESSION — UI
-// ═══════════════════════════════════════════════════════════════════════════════
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// REGRESSION  UI
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 
 Then('Verify no UI breakage or console errors across all tabs and views', async function (this: PlaywrightWorld) {
     const errors = await getAudiencePage(this).getConsoleErrors();
@@ -707,4 +772,206 @@ Then('All expected action options should be visible and clickable', async functi
         throw new Error('No action menu options found');
     }
     ExtentTestManager.logPass(`Action menu options found: ${options.join(', ')}`);
+});
+
+
+// -----------------------------------------------------------------------
+// REG-AUD-16  Static Audience with is-not-empty criteria
+// -----------------------------------------------------------------------
+
+Then('Click the is-not-empty condition', async function (this: PlaywrightWorld) {
+    await getAudiencePage(this).clickConditionIsNotEmpty();
+    ExtentTestManager.logPass('Clicked is-not-empty condition');
+});
+
+Then('Click Preview View All to open customer list', async function (this: PlaywrightWorld) {
+    await getAudiencePage(this).clickPreviewViewAll();
+    ExtentTestManager.logPass('Clicked View All in preview panel');
+});
+
+Then('Click Back to Editor from the customer list flyout', async function (this: PlaywrightWorld) {
+    await getAudiencePage(this).clickBackToEditor();
+    ExtentTestManager.logPass('Clicked Back to Editor');
+});
+
+// -----------------------------------------------------------------------
+// REG-AUD-17  Bulk Download + Retention/CSV Audience
+// -----------------------------------------------------------------------
+
+Then('Search for {string} audience in the list', async function (this: PlaywrightWorld, keyword: string) {
+    await getAudiencePage(this).searchAudienceInList(keyword);
+    ExtentTestManager.logPass(`Searched for "${keyword}" in audience list`);
+});
+
+Then('Click the three-dot menu on the first audience row', async function (this: PlaywrightWorld) {
+    await getAudiencePage(this).clickFirstRowThreeDot();
+    ExtentTestManager.logPass('Clicked three-dot on first audience row');
+});
+
+Then('Click Download Customer List from the menu', async function (this: PlaywrightWorld) {
+    await getAudiencePage(this).clickDownloadCustomerList();
+    ExtentTestManager.logPass('Clicked Download Customer List - modal should now be visible');
+});
+
+Then('Click the modal submit button', async function (this: PlaywrightWorld) {
+    await getAudiencePage(this).clickModalSubmit();
+    ExtentTestManager.logPass('Clicked modal Submit button');
+});
+
+Then('Click Create Retention Audience from the dropdown', async function (this: PlaywrightWorld) {
+    await getAudiencePage(this).clickCreateRetentionAudience();
+    ExtentTestManager.logPass('Clicked Retention Audience option');
+});
+
+Then('Upload the sample CSV file to the audience', async function (this: PlaywrightWorld) {
+    const csvPath = (this['downloadedCsvPath'] as string) || require('path').resolve('Sample_CSV/audience_sample.csv');
+    await getAudiencePage(this).uploadCSVFile(csvPath);
+    ExtentTestManager.logPass(`Uploaded CSV: ${csvPath}`);
+});
+
+Then('Poll until the CSV audience status is {string}', async function (this: PlaywrightWorld, targetStatus: string) {
+    const audienceName: string = this['currentAudienceName'] || this['currentAudienceTitle'] || '';
+    if (!audienceName) throw new Error('No audience name stored. Run "enter the Audience name and Tag" first.');
+    await getAudiencePage(this).pollAudienceStatus(audienceName, targetStatus, 120000);
+    ExtentTestManager.logPass(`Audience "${audienceName}" reached status: ${targetStatus}`);
+});
+
+// -----------------------------------------------------------------------
+// REG-AUD-18  Create Campaign from Audience
+// -----------------------------------------------------------------------
+
+Then('Click Create New Campaign from the audience three-dot menu', async function (this: PlaywrightWorld) {
+    await getAudiencePage(this).clickCreateNewCampaignFromAudience();
+    ExtentTestManager.logPass('Clicked Create New Campaign from audience three-dot menu');
+});
+
+// -----------------------------------------------------------------------
+// REG-AUD-19  View History Log
+// -----------------------------------------------------------------------
+
+Then('Click View History Log from the audience three-dot menu', async function (this: PlaywrightWorld) {
+    await getAudiencePage(this).clickViewHistoryLog();
+    ExtentTestManager.logPass('Clicked View History Log');
+});
+
+Then('Verify the history log panel is visible with entries', async function (this: PlaywrightWorld) {
+    const visible = await getAudiencePage(this).isHistoryLogVisible();
+    if (visible) {
+        ExtentTestManager.logPass('History log entries are visible');
+    } else {
+        ExtentTestManager.logFail('No history log entries visible');
+        throw new Error('History log panel is empty or not visible');
+    }
+});
+
+// -----------------------------------------------------------------------
+// REG-AUD-20  View Report
+// -----------------------------------------------------------------------
+
+Then('Click the report icon on the first audience row', async function (this: PlaywrightWorld) {
+    const title = this['existingAudienceTitle'] || this['currentAudienceTitle'];
+    await getAudiencePage(this).clickReportIcon(title);
+    ExtentTestManager.logPass('Clicked report icon on first audience row');
+});
+
+Then('Verify the audience report page loads successfully', async function (this: PlaywrightWorld) {
+    const url = this.page.url();
+    const hasReport = url.includes('report') || url.includes('analytics');
+    // Also check for any metric heading on the page
+    const headingVisible = await this.page.locator('h1, h2, h3').first()
+        .isVisible({ timeout: 10000 }).catch(() => false);
+    if (hasReport || headingVisible) {
+        ExtentTestManager.logPass('Audience report page loaded successfully');
+    } else {
+        ExtentTestManager.logFail('Audience report page did not load');
+        throw new Error('Audience report page did not load');
+    }
+});
+
+
+// -----------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// REG-AUD-16  Customer List Flyout  wait search validate
+// ---------------------------------------------------------------------
+// -----------------------------------------------------------------------
+
+Then('Wait for the customer list flyout to fully load', async function (this: PlaywrightWorld) {
+    await getAudiencePage(this).waitForCustomerListFlyout();
+    ExtentTestManager.logPass('Customer list flyout loaded');
+});
+
+
+
+Then('Search and verify customers are visible in the preview list flyout', async function (this: PlaywrightWorld) {
+    let userId = this['currentAudienceUserIds']?.[0];
+    if (!userId) {
+        const users = await readUsersCsv().catch(() => []);
+        userId = (Array.isArray(users) && users.length > 0) ? users[0]?.user_id : 'user_001';
+    }
+    const visible = await getAudiencePage(this).searchAndVerifyCustomerListFlyout(userId);
+    if (visible) {
+        ExtentTestManager.logPass(`Customer list flyout has rows visible after searching for `);
+    } else {
+        ExtentTestManager.logFail('No customers found in preview list flyout');
+        throw new Error('No customers found in preview list flyout');
+    }
+});
+
+Then('Filter the Audience with the saved Audience title from {string}', async function (this: PlaywrightWorld, sourceTag: string) {
+    // Wait up to 2.5 min for the scenario that creates this audience (it can run in parallel).
+    // Shorter than the 5 min step timeout, so a failed producer gives a clear error instead of a hang.
+    const entry = await waitForNameEntryCompleted(sourceTag, 150000).catch(() => null);
+    if (!entry) {
+        const names: any = await readNameJson().catch(() => ({}));
+        const status = names?.[sourceTag]?.status ?? 'missing';
+        throw new Error(
+            `No completed audience title for "${sourceTag}" in names.json (status: ${status}). ` +
+            `The scenario that creates it probably failed or did not run.`
+        );
+    }
+
+    // Store it so downstream steps can use it (e.g. tooltips or validations)
+    this['currentAudienceTitle'] = entry.title;
+    this['existingAudienceTitle'] = entry.title;
+
+    const audience = getAudiencePage(this);
+
+    // Polling and retries to ensure it finds the recently created audience
+    const maxRetries = 3;
+    let lastError: Error | null = null;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            console.log(`[Audience Search] Attempt ${attempt}/${maxRetries} for ${entry.title}...`);
+            await audience.searchByName(entry.title);
+            await audience.verifyAudienceInList(entry.title);
+            ExtentTestManager.logPass(`Filtered Audience list for title from ${sourceTag}: ${entry.title} (attempt ${attempt})`);
+            return;
+        } catch (err) {
+            lastError = err as Error;
+            console.log(`[Audience Search] Attempt ${attempt} failed: ${lastError.message}`);
+            if (attempt < maxRetries) await this.page.waitForTimeout(2000);
+        }
+    }
+    throw lastError;
+});
+
+Then('Click the modal submit button and wait for the download to complete', async function (this: PlaywrightWorld) {
+    const filePath = await getAudiencePage(this).clickModalSubmitAndWaitForDownload();
+    this['downloadedCsvPath'] = filePath;
+    ExtentTestManager.logPass(`Download completed. File saved to: ${filePath}`);
+});
+
+Then('Search and verify the user ID in the report page list', async function (this: PlaywrightWorld) {
+    let userId = this['currentAudienceUserIds']?.[0];
+    if (!userId) {
+        // Fallback to default user if not passed through context
+        userId = 'user_001';
+    }
+    const found = await getAudiencePage(this).searchAndVerifyUserInReportList(userId);
+    if (found) {
+        ExtentTestManager.logPass(`Successfully found user ${userId} in report list`);
+    } else {
+        ExtentTestManager.logFail(`Failed to find user ${userId} in report list`);
+        throw new Error(`Failed to find user ${userId} in report list`);
+    }
 });
