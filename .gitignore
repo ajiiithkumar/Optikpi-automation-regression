@@ -7,6 +7,10 @@ reports/
 # Log files
 *.log
 
+# Local backups and diff dumps
+*.bak
+*.diff
+
 # Auth tokens & session data (sensitive)
 data/auth/
 data/.user-locks/

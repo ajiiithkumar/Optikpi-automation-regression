@@ -40,6 +40,10 @@ jobs:
       - name: Write users config from secret
         run: echo '${{ secrets.USERS_CONFIG_JSON }}' > data/users-config/users.json
 
+      - name: Reset test data
+        # names.json is a runtime store; start every CI run clean so no stale audience/campaign names are used.
+        run: echo '{}' > data/names.json
+
       - name: Run regression suite
         id: run-tests
         continue-on-error: true
