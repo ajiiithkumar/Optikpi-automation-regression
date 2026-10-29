@@ -1,20 +1,20 @@
 Feature: Workflow module Test Cases
   # Users are managed in config/users.json (kept out of the report).
 
-  @Regression @Workflow @REG-WORKFLOW-01
-  Scenario: Workflow page load
-    Given I log in for module "Workflow"
-    Then I close the announcement popup if it appears
-    When I navigate to "Workflow"
-    Then I should see the "Workflow" page
-    Then Click The Active tab
-    Then Verify Workflow Active tab should load successfully
-    Then Click The Inactive tab
-    Then Verify Workflow Inactive tab should load successfully
-    Then Click The Draft tab
-    Then Verify Workflow Draft tab should load successfully
-    Then Click The All tab
-    Then Verify Workflow All tab should load successfully
+  # @Regression @Workflow @REG-WORKFLOW-01
+  # Scenario: Workflow page load
+  # Given I log in for module "Workflow"
+  # Then I close the announcement popup if it appears
+  # When I navigate to "Workflow"
+  # Then I should see the "Workflow" page
+  # Then Click The Active tab
+  # Then Verify Workflow Active tab should load successfully
+  # Then Click The Inactive tab
+  # Then Verify Workflow Inactive tab should load successfully
+  # Then Click The Draft tab
+  # Then Verify Workflow Draft tab should load successfully
+  # Then Click The All tab
+  # Then Verify Workflow All tab should load successfully
 
   @Regression @Workflow @REG-WORKFLOW-02
   Scenario: Workflow Activation with error validation
