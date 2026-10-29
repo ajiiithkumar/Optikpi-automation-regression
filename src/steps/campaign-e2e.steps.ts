@@ -36,7 +36,7 @@ const getNav = (world: PlaywrightWorld): NavigationBar => new NavigationBar(worl
 const getWorkflowPage = (world: PlaywrightWorld): WorkflowPage => new WorkflowPage(world.page);
 
 const EXECUTION_TIMEOUT_MS = envMinutes('E2E_EXECUTION_TIMEOUT_MIN', 30);
-const PROCESSING_WINDOW_MS = envMinutes('E2E_PROCESSING_WINDOW_MIN', 10);
+const PROCESSING_WINDOW_MS = envMinutes('E2E_PROCESSING_WINDOW_MIN', 5);
 /**
  * Report update order on Dev: Logs at launch, Engagement a few minutes later. The Overview counters are
  * not validated: they do not update reliably on Dev/Demo (known application issue), so Logs + Engagement are the source of truth.
@@ -294,7 +294,7 @@ Then('Verify the campaign audience preview count equals the E2E user count', asy
     ExtentTestManager.logPass(`Campaign audience resolves to ${count} active customers before publishing`);
 });
 
-/** Needed before a control group can be entered: see CampaignPage.reloadCampaignDraft. */
+/** Not used by C6 any more (the control group unlocks after the audience Preview); kept for manual debugging. */
 Then('Reload the new campaign draft', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).reloadCampaignDraft();
     ExtentTestManager.logPass('Reloaded the new campaign draft');

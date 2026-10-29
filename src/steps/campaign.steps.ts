@@ -176,6 +176,10 @@ Then('click the Open Goal button', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).clickGoalOpen();
     ExtentTestManager.logPass('Clicked Goal button (Engagement Open)');
 });
+Then('click the Login Goal button', async function (this: PlaywrightWorld) {
+    await getCampaignPage(this).clickGoalLogin();
+    ExtentTestManager.logPass('Clicked Goal button (Engagement Login)');
+});
 //3
 Then('Verify the Open Goal should be set successfully', async function (this: PlaywrightWorld) {
     await getCampaignPage(this).verifyOpenGoalSet();

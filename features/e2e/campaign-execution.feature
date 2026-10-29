@@ -103,8 +103,7 @@ Feature: Campaign execution end-to-end
     Then Enter the Campaign Name and Campaign Tag
     Then Click the Create campaign button
     Then Verify the Campaign should should Create and navigate to the Edit Campaign page
-    Then Reload the new campaign draft
-    Then click the Open Goal button
+    Then click the Login Goal button
     Then click the Set Goal button
     Then Select the E2E audience in the campaign
     Then Verify the campaign audience preview count equals the E2E user count

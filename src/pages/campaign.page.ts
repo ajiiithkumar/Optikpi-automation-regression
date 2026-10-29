@@ -23,6 +23,7 @@ export class CampaignPage extends BasePage {
         // Goal
         goalClick: "//div[@data-testid='campaign-goal-Engagement-Click-undefined' or @data-test-id='campaign-goal-Engagement-Click-undefined']",
         goalOpen: "//div[@data-testid='campaign-goal-Engagement-Open-undefined' or @data-test-id='campaign-goal-Engagement-Open-undefined']",
+        goalLogin: "//div[@data-testid='campaign-goal-Engagement-Login-undefined' or @data-test-id='campaign-goal-Engagement-Login-undefined']",
         setGoalBtn: "//button[@data-testid='campaign-stepper-set-goal-button' or @data-test-id='campaign-stepper-set-goal-button']",
         editGoal: "//button[normalize-space()='Edit goal'] | //span[normalize-space()='Edit goal']",
         financialTab: "//button[@data-test-id='campaign-tab-financial']",
@@ -320,6 +321,11 @@ export class CampaignPage extends BasePage {
         await this.click(this.sel.goalOpen);
     }
 
+    /** Engagement → Login goal. With this goal the control-group input is editable (with Open it stays read-only). */
+    async clickGoalLogin(): Promise<void> {
+        await this.click(this.sel.goalLogin);
+    }
+
     async clickFinancialTab() {
         await this.click(this.sel.financialTab);
     }
@@ -471,13 +477,18 @@ export class CampaignPage extends BasePage {
         await this.waitForVisible(this.sel.goalOpen, 15000);
     }
 
-    /** Enters the control-group percentage and checks it was accepted (fails clearly when the input is read-only). */
+    /**
+     * Enters the control-group percentage and checks it was accepted. The input only becomes editable
+     * after an audience is selected and its Preview has loaded, so wait for that before typing.
+     */
     async enterControlGroupPercentageChecked(value: string): Promise<void> {
         const input = this.page.locator(this.sel.controlGroupInput).first();
         await input.waitFor({ state: 'visible', timeout: 10000 });
-        if (await input.evaluate((el: HTMLInputElement) => el.readOnly || el.disabled)) {
-            throw new Error('Control group input is read-only. Reload the new campaign draft before setting the goal and audience ' +
-                '(step "Reload the new campaign draft").');
+        const isLocked = (): Promise<boolean> => input.evaluate((el: HTMLInputElement) => el.readOnly || el.disabled);
+        for (let i = 0; i < 20 && await isLocked(); i++) await this.pause(1000);
+        if (await isLocked()) {
+            throw new Error('Control group input is still read-only 20s after the audience Preview. ' +
+                'Select the audience and click Preview before entering the control group.');
         }
         await input.fill('');
         await input.fill(value);
