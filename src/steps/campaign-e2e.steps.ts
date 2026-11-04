@@ -8,7 +8,7 @@ import { NavigationBar } from '../pages/components/navigation-bar.component';
 import { WorkflowPage } from '../pages/workflow.page';
 import { ExtentTestManager } from '../utils/extent-test-manager';
 import { PlaywrightWorld } from '../support/world';
-import { readUsersCsv, uniqueId } from '../utils/helper';
+import { captureScreenshot, readUsersCsv, uniqueId } from '../utils/helper';
 import { envMinutes, pollUntil } from '../utils/polling';
 import { createSuccessfulDepositCsv } from '../utils/customer-event-csv';
 import {
@@ -495,6 +495,23 @@ Then('Verify no user outside the E2E audience was processed', async function (th
         extra.length ? `unexpected users: ${extra.join(', ')}` : `users in logs: ${[...summary.keys()].join(', ')}`, extra.length === 0);
 });
 
+/**
+ * Adds Engagement and Summary tab screenshots to the report, then returns to the Logs tab
+ * (the Verify-step hook screenshots Logs at the end of the step).
+ * A Summary tab that fails to open is logged, not failed: the checks themselves use Engagement, Logs and the API.
+ */
+async function captureReportTabs(world: PlaywrightWorld, report: CampaignReportPage): Promise<void> {
+    await report.openEngagementTab();
+    await captureScreenshot(world, { label: 'Engagement tab', writeToDisk: false, filePrefix: 'E2E-ENGAGEMENT-TAB', attachToReport: true });
+    try {
+        await report.openSummaryTab();
+        await captureScreenshot(world, { label: 'Summary tab', writeToDisk: false, filePrefix: 'E2E-SUMMARY-TAB', attachToReport: true });
+    } catch (err) {
+        ExtentTestManager.logInfo(`Summary tab screenshot skipped: ${String(err)}`);
+    }
+    await report.openLogsTab();
+}
+
 Then('Verify the engagement table and logs agree with the communication logs', LONG_STEP, async function (this: PlaywrightWorld) {
     const c = getCase(caseId(this));
     const id = campaignIdOf(c);
@@ -508,6 +525,7 @@ Then('Verify the engagement table and logs agree with the communication logs', L
     const tableRows = await report.readEngagementTable();
     const logs = await report.readLogMessages();
     const sentInLogs = CampaignReportPage.sentCountFromLogs(logs);
+    await captureReportTabs(this, report);
 
     const tableUsers = [...new Set(tableRows.map((r) => r.userId))].sort();
     const apiUsers = [...summary.keys()].sort();

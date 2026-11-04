@@ -32,6 +32,7 @@ export class CampaignReportPage extends BasePage {
         variantsTab: "//button[@data-testid='campaign-performance-report-variants' or @data-test-id='campaign-performance-report-variants']",
         engagementTab: "//button[@data-testid='campaign-performance-report-engagement' or @data-test-id='campaign-performance-report-engagement']",
         logsTab: "//button[@data-testid='campaign-performance-report-logs' or @data-test-id='campaign-performance-report-logs']",
+        summaryTab: "//button[@data-testid='campaign-performance-report-summary' or @data-test-id='campaign-performance-report-summary' or (normalize-space()='Summary' and following-sibling::button[@data-testid='campaign-performance-report-logs'])]",
         engagementRow: "//*[@data-testid='campaign-performance-report-engagement-row']",
         engagementNext: "//button[@data-testid='campaign-engagement-table-next-button' or @data-test-id='campaign-engagement-table-next-button']",
         logsRow: "//*[@data-testid='campaign-stepper-form-logs']//tbody//tr | //table[.//th[normalize-space()='Message']]//tbody//tr",
@@ -128,6 +129,24 @@ export class CampaignReportPage extends BasePage {
         await this.page.goto(this.reportUrl(campaignId, versionId), { waitUntil: 'domcontentloaded' });
         await this.waitForVisible(this.sel.engagementTab, 30000);
         await this.collapseSidebar();
+    }
+
+    /** Opens the Engagement tab (first page) and waits for it to load, e.g. for a report screenshot. */
+    async openEngagementTab(): Promise<void> {
+        await this.click(this.sel.engagementTab);
+        await this.waitForNetworkIdle(10000);
+    }
+
+    /** Opens the Summary tab and waits for it to load. */
+    async openSummaryTab(): Promise<void> {
+        await this.click(this.sel.summaryTab);
+        await this.waitForNetworkIdle(10000);
+    }
+
+    /** Opens the Logs tab and waits for it to load. */
+    async openLogsTab(): Promise<void> {
+        await this.click(this.sel.logsTab);
+        await this.waitForNetworkIdle(10000);
     }
 
     /** Reads every page of the Engagement table (control group excluded, like the API default). */

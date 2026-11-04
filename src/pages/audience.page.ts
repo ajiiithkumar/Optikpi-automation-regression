@@ -1155,9 +1155,11 @@ export class AudiencePage extends BasePage {
         console.log('[Download] started: ' + download.suggestedFilename());
         const os = require('os');
         const path = require('path');
-        const targetPath = path.join(os.tmpdir(), 'audience-download-' + Date.now() + '.csv');
-        await download.saveAs(targetPath);
-        console.log('[Download] saved with .csv to: ' + targetPath);
+        const rawPath = path.join(os.tmpdir(), 'audience-download-' + Date.now() + '.bin');
+        await download.saveAs(rawPath);
+        // The customer list now downloads as a zip protected with the brand's workspace ID; older builds send a plain CSV.
+        const targetPath = await this.extractCsvFromDownload(rawPath);
+        console.log('[Download] CSV ready at: ' + targetPath);
         await this.pause(1000);
         // Ensure the download modal is closed so it doesn't block downstream actions
         const closeBtn = this.page.locator("//div[@role='dialog' or contains(@class,'modal')]//button[contains(@class,'close') or @aria-label='Close' or normalize-space()='Cancel' or normalize-space()='Close' or .//*[name()='svg']]").first();
@@ -1167,6 +1169,52 @@ export class AudiencePage extends BasePage {
         await this.page.keyboard.press('Escape').catch(() => {});
         await this.pause(1000);
         return targetPath;
+    }
+
+    /**
+     * Returns a CSV path for a downloaded customer list. A plain CSV is renamed to .csv; a zip is opened with the
+     * workspace ID as password and its first .csv entry is written next to it. The workspace ID is never logged.
+     */
+    private async extractCsvFromDownload(rawPath: string): Promise<string> {
+        const fs = require('fs');
+        const data: Buffer = fs.readFileSync(rawPath);
+        const csvPath = rawPath.replace(/\.bin$/, '.csv');
+        const isZip = data.length > 3 && data[0] === 0x50 && data[1] === 0x4b && data[2] === 0x03 && data[3] === 0x04;
+        if (!isZip) {
+            fs.renameSync(rawPath, csvPath);
+            return csvPath;
+        }
+        const password = await this.getWorkspaceId();
+        const { ZipReader, Uint8ArrayReader, Uint8ArrayWriter } = require('@zip.js/zip.js');
+        const reader = new ZipReader(new Uint8ArrayReader(new Uint8Array(data)), { password });
+        try {
+            const entries = await reader.getEntries();
+            const csvEntry = entries.find((e: any) => !e.directory && /\.csv$/i.test(e.filename));
+            if (!csvEntry) throw new Error(`Downloaded zip has no .csv file (entries: ${entries.map((e: any) => e.filename).join(', ') || 'none'})`);
+            let content: Uint8Array;
+            try {
+                content = await csvEntry.getData(new Uint8ArrayWriter());
+            } catch (err) {
+                throw new Error(`Could not open the downloaded zip with the workspace ID as password: ${String(err)}`);
+            }
+            fs.writeFileSync(csvPath, Buffer.from(content));
+        } finally {
+            await reader.close();
+            fs.unlinkSync(rawPath);
+        }
+        ExtentTestManager.logInfo('Customer list downloaded as a password-protected zip; extracted the CSV with the workspace ID');
+        return csvPath;
+    }
+
+    /** Workspace ID of the current brand, read from the audience list API with the logged-in session. */
+    private async getWorkspaceId(): Promise<string> {
+        const url = new URL('/en/api/audience?page=1&pageSize=1&tab=all&search=', this.page.url()).toString();
+        const res = await this.page.request.get(url);
+        if (!res.ok()) throw new Error(`Could not read the workspace ID: GET /en/api/audience -> ${res.status()}`);
+        const body = await res.json();
+        const workspaceId = body?.data?.records?.[0]?.workspaceId;
+        if (!workspaceId) throw new Error('Could not read the workspace ID: no audience record with workspaceId in /en/api/audience');
+        return String(workspaceId);
     }
 
     async clickCreateRetentionAudience() {

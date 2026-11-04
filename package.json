@@ -48,6 +48,7 @@
         "@playwright/test": "^1.59.1",
         "@types/cucumber": "^7.0.0",
         "@types/node": "^22.13.1",
+        "@zip.js/zip.js": "^2.7.57",
         "cross-env": "^10.1.0",
         "cucumber-js-extent": "^0.1.0",
         "playwright": "^1.58.2",
