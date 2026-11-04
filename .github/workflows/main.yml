@@ -6,7 +6,7 @@ on:
 jobs:
   regression-tests:
     name: Cucumber + Playwright - Audience & Campaign
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
 
     env:
@@ -76,7 +76,7 @@ jobs:
     name: Campaign execution E2E
     needs: regression-tests
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
 
     env:
