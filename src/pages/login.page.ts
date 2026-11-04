@@ -10,16 +10,19 @@ export class LoginPage extends BasePage {
         emailInput:    "//input[@name='email']",
         passwordInput: "//input[@name='password']",
         submitButton:  "//button[@type='submit']",
+        rememberMeCheckbox: "//input[@type='checkbox'] | //label[contains(normalize-space(),'Remember for 30 days')]",
+        addPasskeyBtn: "//button[contains(normalize-space(),'Add passkey')]",
+        continueWithoutPasskeyBtn: "//button[contains(normalize-space(),'Continue without a passkey')]",
         // Headless UI modal overlay that can block the nav on first login
         headlessOverlay: "//*[@id='headlessui-portal-root']//div[contains(@class,'fixed') and contains(@class,'inset-0')]",
-        // "Got it" / "OK" / "Close" / "Dismiss" dismiss buttons for first-login modals
+        // 'Got it' / 'OK' / 'Close' / 'Dismiss' dismiss buttons for first-login modals
         firstLoginDismiss: "//button[contains(normalize-space(),'Got it') or contains(normalize-space(),'OK') or contains(normalize-space(),'Dismiss') or contains(normalize-space(),'Close') or contains(normalize-space(),'Continue')]",
         announcementTitle: "//*[normalize-space()='Introducing the new Dashboard']",
         announcementDialog: "//*[@role='dialog' and .//*[normalize-space()='Introducing the new Dashboard']] | //*[@id='headlessui-portal-root']//*[.//*[normalize-space()='Introducing the new Dashboard']]",
         announcementCloseButton: ".//button[@aria-label='Close' or @title='Close' or normalize-space()='x' or normalize-space()='X' or .//*[local-name()='svg']]",
     };
 
-    readonly baseUrl = 'https://demo.optikpi.com/en';
+    readonly baseUrl = process.env.BASE_URL || 'https://demo.optikpi.com/en';
 
     /** Navigate to the base URL and wait for the page to fully load (React hydrated). */
     async goto() {
@@ -31,11 +34,43 @@ export class LoginPage extends BasePage {
         return this.isVisible(this.sel.emailInput, 5000);
     }
 
+    /** Check if we are currently on the 'Set up your passkey' screen. */
+    async isOnPasskeyPage(): Promise<boolean> {
+        return this.page.url().includes('/add-passkey') ||
+               await this.isVisible(this.sel.addPasskeyBtn, 3000);
+    }
+
+    /**
+     * Bypass the 'Set up your passkey' screen.
+     * Mocks navigator.credentials.create, clicks '+ Add passkey', then
+     * waits for and clicks 'Continue without a passkey'.
+     */
+    async bypassPasskeyScreen(): Promise<void> {
+        console.log('[Login] Bypassing passkey screen...');
+        await this.page.evaluate(() => {
+            if (window.navigator && window.navigator.credentials) {
+                (window.navigator.credentials as any).create = () => Promise.reject(new DOMException('Cancelled', 'NotAllowedError'));
+            }
+        }).catch(() => {});
+
+        await this.page.locator(this.sel.addPasskeyBtn).first().click().catch(() => {});
+
+        const continueWithout = this.page.locator(this.sel.continueWithoutPasskeyBtn).first();
+        await continueWithout.waitFor({ state: 'visible', timeout: 8000 });
+        await continueWithout.click();
+
+        await this.page.waitForURL(
+            url => !url.toString().includes('/add-passkey') && !url.toString().includes('/login'),
+            { timeout: 20000 }
+        ).catch(() => {});
+        console.log('[Login] Passkey screen bypassed, now at:', this.page.url());
+    }
+
     /**
      * Fill a form field with automatic retry.
      *
      * React controlled inputs can be reset by the framework mid-fill.
-     * Strategy: fill() → verify value → if mismatch, retry up to maxAttempts.
+     * Strategy: fill() -> verify value -> if mismatch, retry up to maxAttempts.
      * Last resort: pressSequentially (types char-by-char, bypasses React value reset).
      */
     private async fillWithRetry(locator: Locator, value: string, maxAttempts = 3): Promise<void> {
@@ -67,40 +102,58 @@ export class LoginPage extends BasePage {
         await emailLoc.waitFor({ state: 'visible', timeout: 30000 });
         await this.fillWithRetry(emailLoc, username);
 
+        // Click Continue if on the two-step email screen
+        const submit = this.page.locator(this.sel.submitButton).first();
         const passLoc = this.page.locator(this.sel.passwordInput);
-        await passLoc.waitFor({ state: 'visible', timeout: 10000 });
+        if (!(await passLoc.isVisible({ timeout: 1500 }).catch(() => false))) {
+            await submit.click().catch(() => {});
+            await this.pause(1000);
+        }
+
+        // Fill password
+        await passLoc.waitFor({ state: 'visible', timeout: 15000 });
         await this.fillWithRetry(passLoc, password);
 
-        // ── Pre-submit verification ───────────────────────────────────────────
-        // React can re-render and clear the email field AFTER the password is
-        // filled. Check email value one final time before clicking Sign in.
-        const emailBeforeSubmit = await emailLoc.inputValue().catch(() => '');
-        if (emailBeforeSubmit !== username) {
-            console.log(`[Login] Email was cleared after password fill (got: "${emailBeforeSubmit}") — re-filling`);
-            await this.fillWithRetry(emailLoc, username);
+        // Check 'Remember for 30 days' if present
+        const rememberMe = this.page.locator(this.sel.rememberMeCheckbox).first();
+        if (await rememberMe.isVisible({ timeout: 2000 }).catch(() => false)) {
+            const isChecked = await rememberMe.isChecked().catch(() => false);
+            if (!isChecked) {
+                await rememberMe.click().catch(() => {});
+            }
         }
 
         await this.pause(500);
 
-        const submit = this.page.locator(this.sel.submitButton);
-        await submit.waitFor({ state: 'attached', timeout: 30000 });
+        // Click Sign in
+        await submit.click({ force: true }).catch(async () => {
+            await this.page.keyboard.press('Enter');
+        });
 
-        const networkIdleTimeout = new Promise<void>((_, reject) =>
-            setTimeout(() => reject(new Error('networkidle timeout after 20s — proceeding')), 20000)
-        );
-
-        await Promise.all([
-            Promise.race([
-                this.page.waitForLoadState('networkidle'),
-                networkIdleTimeout,
-            ]).catch(() => {}),
-            submit.click({ force: true }).catch(async () => {
-                await this.page.keyboard.press('Enter');
-            }),
-        ]);
-
+        // Wait up to 15s to see where Sign-in redirects us:
+        //   - /en/add-passkey  → passkey setup page
+        //   - anything else    → dashboard / main app
         await this.page.waitForURL(
-            url => !url.toString().endsWith('/en') && !url.toString().endsWith('/en/'),
+            url => url.toString().includes('/add-passkey') ||
+                   (!url.toString().includes('/login') &&
+                    !url.toString().endsWith('/en') &&
+                    !url.toString().endsWith('/en/')),
+            { timeout: 15000 }
+        ).catch(() => {});
+
+        // If we landed on the passkey setup page, bypass it
+        if (this.page.url().includes('/add-passkey') ||
+            await this.page.locator(this.sel.addPasskeyBtn).isVisible({ timeout: 2000 }).catch(() => false)) {
+            console.log('[Login] "Set up your passkey" screen detected — bypassing...');
+            await this.bypassPasskeyScreen();
+        }
+
+        // Final wait: make sure we are fully on a post-login page
+        await this.page.waitForURL(
+            url => !url.toString().includes('/login') &&
+                   !url.toString().includes('/add-passkey') &&
+                   !url.toString().endsWith('/en') &&
+                   !url.toString().endsWith('/en/'),
             { timeout: 30000 }
         ).catch(() => {});
     }

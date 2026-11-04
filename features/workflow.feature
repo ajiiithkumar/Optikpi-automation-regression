@@ -103,6 +103,9 @@ Feature: Workflow module Test Cases
     Then Click the communication that comes first in the list
     Then Click the workflow apply button
     Then Click the Add new node button "3"
+    Then Click the delay node button
+    Then Click the workflow apply button
+    Then Click the Add new node button "4"
     Then Click the new exit node button
     Then Click the exit node mark as goal button and verify toggle is ON
     Then Click the workflow apply button

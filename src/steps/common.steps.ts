@@ -26,6 +26,18 @@ const loginIfNeeded = async (page: any, username: string, password: string) => {
 
     await loginPage.goto();
 
+    // If session was restored but landed on the passkey setup page, bypass it
+    if (await loginPage.isOnPasskeyPage()) {
+        console.log('[loginIfNeeded] Passkey screen detected after session restore - bypassing...');
+        await loginPage.bypassPasskeyScreen();
+        const navReady = await navBar.waitForAnyNavVisible(30000);
+        if (!navReady) {
+            throw new Error('Timed out waiting for navigation after passkey bypass (30s).');
+        }
+        return true;
+    }
+
+
     const loginVisible = await loginPage.isLoginFormVisible();
     if (!loginVisible) {
         return false;
@@ -159,6 +171,18 @@ async function loginForModule(this: PlaywrightWorld, moduleName: string) {
                     const navBar = new NavigationBar(this.page!);
 
                     await loginPage.goto();
+
+    // If session was restored but landed on the passkey setup page, bypass it
+    if (await loginPage.isOnPasskeyPage()) {
+        console.log('[loginIfNeeded] Passkey screen detected after session restore - bypassing...');
+        await loginPage.bypassPasskeyScreen();
+        const navReady = await navBar.waitForAnyNavVisible(30000);
+        if (!navReady) {
+            throw new Error('Timed out waiting for navigation after passkey bypass (30s).');
+        }
+        return true;
+    }
+
                     const loginVisible = await loginPage.isLoginFormVisible();
                     if (!loginVisible) {
                         // Already logged in (session recovered) — nothing to do
