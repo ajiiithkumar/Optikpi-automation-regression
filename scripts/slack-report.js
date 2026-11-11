@@ -13,7 +13,7 @@
  *
  * Optional env vars:
  *   RUN_LABEL    — label for this run (e.g. "OptiKPI V2.0 Regression Test")
- *   HTML_REPORT  — Extent HTML report to attach (default reports/extent/OptiKPI_V2.0_Smoke_Test.html);
+ *   HTML_REPORT  — Extent HTML report(s) to attach, comma-separated (default reports/extent/OptiKPI_V2.0_Smoke_Test.html);
  *                  the campaign E2E job sets reports/extent/Campaign_E2E.html
  */
 
@@ -24,9 +24,10 @@ const path = require('path');
 const { WebClient } = require('@slack/web-api');
 
 const SUMMARY_FILE = path.join(process.cwd(), 'reports', 'run-summary.json');
-const HTML_REPORT  = process.env.HTML_REPORT
-  ? path.resolve(process.env.HTML_REPORT)
-  : path.join(process.cwd(), 'reports', 'extent', 'OptiKPI_V2.0_Smoke_Test.html');
+// HTML_REPORT may list several reports separated by commas (the workflow E2E run has one per batch).
+const HTML_REPORTS = process.env.HTML_REPORT
+  ? process.env.HTML_REPORT.split(',').map(p => p.trim()).filter(Boolean).map(p => path.resolve(p))
+  : [path.join(process.cwd(), 'reports', 'extent', 'OptiKPI_V2.0_Smoke_Test.html')];
 
 // ── Read run summary ──────────────────────────────────────────────────────────
 let summary;
@@ -143,23 +144,26 @@ if (summary.failedScenarios && summary.failedScenarios.length > 0) {
   }
   console.log('[slack-report] Summary message posted successfully.');
 
-  // 2. Upload the HTML report as a file attachment (if it exists)
-  if (fs.existsSync(HTML_REPORT)) {
+  // 2. Upload each HTML report as a file attachment (if it exists)
+  for (const [i, report] of HTML_REPORTS.entries()) {
+    if (!fs.existsSync(report)) {
+      console.warn('[slack-report] HTML report not found at:', report);
+      continue;
+    }
+    const part = HTML_REPORTS.length > 1 ? `_part${i + 1}` : '';
     const uploadResult = await client.filesUploadV2({
       channel_id: channelId,
-      file: fs.createReadStream(HTML_REPORT),
-      filename: `${runLabel.replace(/[^A-Za-z0-9.]+/g, '_')}_${new Date().toISOString().replace(/[:.]/g, '-')}.html`,
-      title: `${runLabel} — Extent Report (${summary.timestamp})`,
+      file: fs.createReadStream(report),
+      filename: `${runLabel.replace(/[^A-Za-z0-9.]+/g, '_')}${part}_${new Date().toISOString().replace(/[:.]/g, '-')}.html`,
+      title: `${runLabel}${part ? ` (${path.basename(report, '.html')})` : ''} — Extent Report (${summary.timestamp})`,
       initial_comment: 'HTML Extent Report attached. Download and open in a browser to view.',
     });
 
     if (!uploadResult.ok) {
       console.warn('[slack-report] Warning: HTML report upload failed:', uploadResult.error);
     } else {
-      console.log('[slack-report] HTML report uploaded successfully.');
+      console.log('[slack-report] HTML report uploaded successfully:', path.basename(report));
     }
-  } else {
-    console.warn('[slack-report] HTML report not found at:', HTML_REPORT);
   }
 })().catch(err => {
   console.error('[slack-report] Fatal error:', err.message);

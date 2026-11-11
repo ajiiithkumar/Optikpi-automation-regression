@@ -1,0 +1,86 @@
+name: OptiKPI Workflow E2E Tests
+
+# Manual run. Workflow execution E2E (WF-01..09) on the environment in ENV_FILE (Demo): publishes real
+# workflows and follows the wf_user_* test users through Delay / Branch / Action / Exit. Runs in 3 batches of
+# 3 cases (scripts/workflow-e2e-batches.js) so every Verify starts soon after its workflow goes live, then
+# deletes the workflows and audiences the run created. Uses its own logins (USERS_CONFIG_WORKFLOW_JSON, falls
+# back to USERS_CONFIG_JSON).
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: optikpi-workflow-e2e
+  cancel-in-progress: false
+
+jobs:
+  workflow-e2e-tests:
+    name: Workflow execution E2E
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+
+    env:
+      HEADLESS: "true"
+      PARALLEL_THREADS: "4"
+      CI: "true"
+      TZ: Asia/Kolkata
+      E2E_STATE_DIR: data/workflow-e2e-state
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Create required directories
+        run: mkdir -p data/users-config
+
+      - name: Write .env from secret
+        run: echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Write users config from secret
+        run: echo '${{ secrets.USERS_CONFIG_WORKFLOW_JSON || secrets.USERS_CONFIG_JSON }}' > data/users-config/users.json
+
+      - name: Reset test data
+        run: echo '{}' > data/names.json
+
+      - name: Run workflow E2E (3 batches, then cleanup)
+        id: run-e2e
+        continue-on-error: true
+        run: npm run test:workflow-e2e:ci
+
+      - name: Show workflow E2E status
+        if: always()
+        run: npm run test:workflow-e2e:status
+
+      - name: Upload workflow E2E reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-e2e-reports
+          path: |
+            reports/
+            data/workflow-e2e-state/
+          retention-days: 14
+
+      - name: Send Slack notification
+        if: always() && env.SLACK_BOT_TOKEN != ''
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          RUN_LABEL: "OptiKPI V2.0 Workflow E2E Test"
+          HTML_REPORT: reports/extent/Workflow_E2E_batch1.html,reports/extent/Workflow_E2E_batch2.html,reports/extent/Workflow_E2E_batch3.html
+        run: npm run slack:report
+
+      - name: Fail job if tests failed
+        if: steps.run-e2e.outcome == 'failure'
+        run: exit 1

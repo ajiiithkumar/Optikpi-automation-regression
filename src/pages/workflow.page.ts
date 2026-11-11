@@ -50,6 +50,32 @@ export class WorkflowPage extends BasePage {
         libraryUseContent:  "//*[@data-testid='campaign-communication-list-hover'] | //*[@data-testid='library-use-this-content-btn' or contains(normalize-space(),'Use this content')]",
         actionAddContent:   "//*[@data-testid='workflow-actions-communication-add-content-btn' or @data-test-id='workflow-actions-communication-add-content-btn'] | //button[contains(normalize-space(),'Add content') or contains(.,'Add Content')]",
         exitMarkAsGoal:     "//button[@role='switch']",
+        // Delay node settings: "Amount of time" and "Live event" switches (both on = event OR time)
+        delayAmountSwitch:  "//*[@id='delay-amount-of-time']",
+        delayLiveSwitch:    "//*[@id='delay-live-event']",
+        delayAmountValue:   "//*[@data-testid='workflow-node-flyout-body']//input[@type='number' and @placeholder='Value']",
+        delayAmountUnit:    "//*[@data-testid='amount-of-time-dropdown']",
+        delayUnitMinutes:   "//*[@role='menuitem' and normalize-space()='Minute(s)'] | //*[@role='menu']//button[normalize-space()='Minute(s)']",
+        delayFlyoutBody:    "//*[@data-testid='workflow-node-flyout-body']",
+        delayEventDelete:   "//*[@data-testid='workflow-node-flyout-body']//button[@title='Delete event']",
+        eventPickerAddBtn:  "//*[@role='dialog']//button[normalize-space()='Add event']",
+        eventPickerDeposit: "//*[@role='dialog']//button[@aria-expanded and normalize-space()='Deposit']",
+        successfulDeposit:  "//label[@for='successful_deposit'] | //*[@data-testid='successful_deposit']",
+        // Workflow list row menu (View full report, Edit, Duplicate, Set as Active/Inactive, Delete Workflow)
+        rowMenuBtn:         "//*[@data-testid='workflow-operations-dropdown']",
+        rowMenuDuplicate:   "//*[@data-testid='workflow-operations-dropdown-duplicate']",
+        rowMenuInactive:    "//*[@data-testid='workflow-operations-dropdown-set-as-inactive']",
+        rowMenuDelete:      "//*[@data-testid='workflow-operations-dropdown-delete-workflow']",
+        modalSubmit:        "//*[@role='dialog']//button[@data-testid='modal-submit-button' or @data-test-id='modal-submit-button']",
+        // "Deactivate workflow" dialog: hidden radio, click its label
+        deactivateEntire:   "//label[@for='entire-workflow-set-as-inactive']",
+        // "Delete workflow" dialog: type the workflow name, then Delete
+        deleteNameInput:    "//*[@role='dialog']//input[@data-testid='workflow-name-input']",
+        deleteConfirmBtn:   "//*[@role='dialog']//button[@data-testid='workflow-action-button']",
+        // Duplicate dialog shares the name input and action button test ids with the delete dialog
+        duplicateNameInput: "//*[@role='dialog']//input[@data-testid='workflow-name-input']",
+        duplicateConfirmBtn: "//*[@role='dialog']//button[@data-testid='workflow-action-button']",
+        reportEditBtn:      "//*[@data-testid='workflow-report-edit-btn']",
         nodeEditButtons:    "//button[@data-testid='node-edit-btn']",
         nodeEditBtn:"//*[@data-testid='node-edit-btn' or @data-testid='node-operations-dropdown-edit']",
         headerThreeDotBtn:  "//button[@data-testid='workflow-header-operations-dropdown' or @data-test-id='workflow-header-operations-dropdown']",
@@ -73,6 +99,32 @@ export class WorkflowPage extends BasePage {
         filterActive:    "//input[@id='active']",
         filterApplyBtn:  "//button[@data-testid='workflow-filters-apply-button' or @data-test-id='workflow-filters-apply-button']",
         filterSearch:    "//input[@name='search-input-box']",
+
+        // Node settings flyout (ticket 869fhmnb6: Apply only enabled when something changed)
+        flyoutApplyBtn:     "//button[@data-testid='workflow-node-apply-button' or @data-test-id='workflow-node-apply-button']",
+        flyoutCardName:     "//*[@data-testid='workflow-node-flyout-body']//input[@id='cardName']",
+        enrollmentNodeCard: "//div[@data-testid='rf__node-1']",
+        triggerReEnroll:    "//button[@id='trigger-re-enrollment']",
+        branchYesNoTab:     "//button[@data-testid='yesNo' or @data-test-id='yesNo']",
+        branchMultiTab:     "//button[@data-testid='multiBranch' or @data-test-id='multiBranch']",
+        branchCriteriaBtn:  "//*[@data-testid='workflow-node-flyout-body']//button[normalize-space()='criteria']",
+        exitFlowTab:        "//button[@data-testid='exitFlow' or @data-test-id='exitFlow']",
+        exitGoToWorkflowTab: "//button[@data-testid='goToWorkflow' or @data-test-id='goToWorkflow']",
+        exitGoalSwitch:     "//*[@data-testid='workflow-node-flyout-body']//button[@role='switch']",
+        repeatMaxTimes:     "//input[@id='repeat-flow-max-times']",
+        menuAddDelay:       "//button[@data-testid='add-node-dropdown-add-delay']",
+        menuAddBranch:      "//button[@data-testid='add-node-dropdown-add-branch']",
+        menuAddExit:        "//button[@data-testid='add-node-dropdown-exit-flow']",
+        menuAddRepeat:      "//button[@data-testid='add-node-dropdown-repeat-flow']",
+        // '+' after a step that sits on a Branch path (placeholder node rf__node-p-<stepId>)
+        pathStepAddBtn:     "//div[starts-with(@data-testid,'rf__node-p-')]//button[@data-testid='add-node-dropdown']",
+    };
+
+    /** Enrollment trigger tabs by their label in the flyout. */
+    private readonly enrollmentTabIds: Record<string, string> = {
+        'Live event': 'liveEvent',
+        'Existing audience': 'existingAudience',
+        'New audience': 'newAudience',
     };
 
     // â”€â”€â”€ Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -589,5 +641,351 @@ export class WorkflowPage extends BasePage {
     async verifyWorkflowInList(name: string): Promise<boolean> {
         const row = this.page.locator(`//tr[.//span[normalize-space()='${name}']]`).first();
         return row.isVisible().catch(() => false);
+    }
+
+    // ─── Delay node settings (Workflow E2E) ──────────────────────────────────
+
+    /** Turns a Delay switch on or off and checks it stuck. */
+    private async setDelaySwitch(selector: string, on: boolean): Promise<void> {
+        await this.waitForVisible(selector, 10000);
+        const sw = this.page.locator(selector).first();
+        if (((await sw.getAttribute('aria-checked')) === 'true') !== on) {
+            await sw.click();
+            await this.pause(800);
+        }
+        if (((await sw.getAttribute('aria-checked')) === 'true') !== on) {
+            throw new Error(`Delay switch ${selector} did not turn ${on ? 'on' : 'off'}`);
+        }
+    }
+
+    /**
+     * Configures the open Delay flyout. minutes > 0 turns "Amount of time" on with that many Minute(s);
+     * successfulDeposit turns "Live event" on with only the Successful Deposit event. Each setting not given is turned off.
+     */
+    async configureDelay(opts: { minutes?: number; successfulDeposit?: boolean }): Promise<void> {
+        await this.waitForVisible(this.sel.delayFlyoutBody, 15000);
+        // At least one switch must stay on: turn the needed ones on before turning the other off.
+        if (opts.successfulDeposit) await this.setDelaySwitch(this.sel.delayLiveSwitch, true);
+        await this.setDelaySwitch(this.sel.delayAmountSwitch, !!opts.minutes);
+        if (opts.minutes) {
+            await this.fill(this.sel.delayAmountValue, String(opts.minutes));
+            const unit = await this.getText(this.sel.delayAmountUnit);
+            if (!/Minute/i.test(unit)) {
+                await this.click(this.sel.delayAmountUnit);
+                await this.click(this.sel.delayUnitMinutes);
+            }
+        }
+        await this.setDelaySwitch(this.sel.delayLiveSwitch, !!opts.successfulDeposit);
+        if (opts.successfulDeposit) await this.selectSuccessfulDepositEvent();
+        await this.pause(500);
+    }
+
+    /** Leaves exactly one live event in the Delay flyout: Successful Deposit. */
+    private async selectSuccessfulDepositEvent(): Promise<void> {
+        // Remove an event chosen earlier (e.g. Login) so the "+ simple event" picker button is shown.
+        for (let i = 0; i < 3 && !await this.isVisible(this.sel.selectLiveEventOption, 1500); i++) {
+            if (!await this.isVisible(this.sel.delayEventDelete, 1500)) break;
+            await this.click(this.sel.delayEventDelete);
+            await this.pause(500);
+        }
+        await this.click(this.sel.selectLiveEventOption);
+        await this.waitForVisible(this.sel.eventPickerDeposit, 10000);
+        const deposit = this.page.locator(this.sel.eventPickerDeposit).first();
+        if ((await deposit.getAttribute('aria-expanded')) !== 'true') await deposit.click();
+        await this.click(this.sel.successfulDeposit);
+        // The picker's own "Add event" button (the panel's "+ Add live event" shares its test id).
+        if (await this.isVisible(this.sel.eventPickerAddBtn, 3000)) await this.click(this.sel.eventPickerAddBtn);
+        await this.pause(1000);
+        // Chosen: "+ simple event" is replaced by the event and Apply becomes enabled.
+        const apply = this.page.locator(this.sel.nodeApplyBtn).first();
+        const stillEmpty = await this.isVisible(this.sel.selectLiveEventOption, 1500);
+        if (stillEmpty || await apply.isDisabled()) {
+            const text = await this.page.locator(this.sel.delayFlyoutBody).first().innerText();
+            throw new Error(`Successful Deposit was not added to the Delay node (Apply disabled): ${text.slice(0, 200)}`);
+        }
+    }
+
+    // ─── Workflow list row actions (Workflow E2E) ────────────────────────────
+
+    /** Searches the list for the workflow and opens its row menu. */
+    async openRowMenu(name: string): Promise<void> {
+        await this.searchWorkflow(name);
+        const row = `//tr[.//*[normalize-space()='${name}' or @title='${name}']]`;
+        await this.waitForVisible(row, 20000);
+        await this.click(`${row}${this.sel.rowMenuBtn}`);
+        await this.pause(800);
+    }
+
+    async clickRowDuplicate(): Promise<void> {
+        await this.click(this.sel.rowMenuDuplicate);
+        await this.pause(2000);
+    }
+
+    /** Row menu → Set as Inactive → "Deactivate entire workflow" → Confirm. */
+    async clickRowSetInactive(): Promise<void> {
+        await this.click(this.sel.rowMenuInactive);
+        await this.click(this.sel.deactivateEntire);
+        await this.click(this.sel.modalSubmit);
+        await this.page.locator(this.sel.modalSubmit).first().waitFor({ state: 'hidden', timeout: 20000 });
+    }
+
+    /** Row menu → Delete Workflow → type the workflow name → Delete. */
+    async clickRowDelete(name: string): Promise<void> {
+        await this.click(this.sel.rowMenuDelete);
+        await this.fill(this.sel.deleteNameInput, name);
+        await this.click(this.sel.deleteConfirmBtn);
+        await this.page.locator(this.sel.deleteConfirmBtn).first().waitFor({ state: 'hidden', timeout: 20000 });
+    }
+
+    /** Duplicate dialog: name the copy and confirm; the copy opens in the builder as a draft. */
+    async confirmDuplicate(name: string): Promise<void> {
+        await this.fill(this.sel.duplicateNameInput, name);
+        await this.click(this.sel.duplicateConfirmBtn);
+        await this.page.locator(this.sel.duplicateConfirmBtn).first().waitFor({ state: 'hidden', timeout: 20000 });
+        await this.waitForEditPage();
+    }
+
+    /** From the workflow report: Edit opens the builder of the active workflow (Cancel / Publish changes). */
+    async clickReportEdit(): Promise<void> {
+        await this.click(this.sel.reportEditBtn);
+        await this.waitForVisible(this.sel.publishBtn, 30000);
+        await this.waitForNetworkIdle(10000);
+    }
+
+    /** Publish changes -> "Publish changes to active workflow" dialog -> Update. */
+    async publishChanges(): Promise<void> {
+        await this.click(this.sel.publishBtn);
+        await this.click(this.sel.modalSubmit);
+        await this.page.locator(this.sel.modalSubmit).first().waitFor({ state: 'hidden', timeout: 30000 });
+    }
+
+    // ─── Node settings flyout: Apply state (ticket 869fhmnb6) ────────────────
+
+    private baseUrl(): string {
+        const base = process.env.BASE_URL;
+        if (!base) throw new Error('BASE_URL is not set (.env or TV_ENV)');
+        return base.endsWith('/') ? base : `${base}/`;
+    }
+
+    /** XPath of a canvas card by its title (card name). */
+    private canvasCard(name: string): string {
+        // The title is the card's truncate span; other text (e.g. "Repeats from Delay 1") must not match.
+        return `//div[starts-with(@data-testid,'rf__node-') and .//span[contains(@class,'truncate') and normalize-space()='${name}']]`;
+    }
+
+    /** Ids of draft workflows with exactly this name, newest first (list API). */
+    async findDraftWorkflowIds(name: string): Promise<string[]> {
+        const url = `${this.baseUrl()}api/workflow?name=${encodeURIComponent(name)}&status=draft&page=1&pageSize=50`;
+        const res = await this.page.request.get(url);
+        if (!res.ok()) throw new Error(`Workflow list API returned ${res.status()} for "${name}"`);
+        const body = await res.json();
+        const rows: any[] = body?.result?.data ?? [];
+        return rows.filter((w: any) => w?.name === name && w?.status === 'draft').map((w: any) => String(w.id));
+    }
+
+    /** Deletes every draft workflow with exactly this name (Draft list → row menu → Delete). Returns how many. */
+    async deleteDraftWorkflowsNamed(name: string): Promise<number> {
+        let deleted = 0;
+        for (let i = 0; i < 5; i++) {
+            const ids = await this.findDraftWorkflowIds(name);
+            if (!ids.length) return deleted;
+            await this.page.goto(`${this.baseUrl()}workflow/list/draft`, { waitUntil: 'domcontentloaded' });
+            await this.waitForVisible(this.sel.filterSearch, 30000);
+            await this.openRowMenu(name);
+            await this.clickRowDelete(name);
+            deleted++;
+        }
+        throw new Error(`Draft workflow "${name}" is still listed after 5 deletes`);
+    }
+
+    /** Opens the workflow builder by id and waits for the Enrollment Trigger card. */
+    async openWorkflowBuilder(id: string): Promise<void> {
+        await this.page.goto(`${this.baseUrl()}workflow/${id}`, { waitUntil: 'domcontentloaded' });
+        await this.waitForVisible(this.sel.enrollmentNodeCard, 30000);
+        await this.waitForNetworkIdle(10000);
+    }
+
+    /** Opens the settings flyout of a saved canvas node (pencil shows on hover). */
+    private async openCardSettings(cardXPath: string): Promise<void> {
+        await this.waitForVisible(cardXPath, 20000);
+        await this.collapseSidebar();
+        const card = this.page.locator(cardXPath).first();
+        await card.scrollIntoViewIfNeeded().catch(() => false);
+        await card.hover();
+        const edit = card.locator("xpath=.//button[@data-testid='node-edit-btn']").first();
+        await edit.waitFor({ state: 'visible', timeout: 10000 });
+        await edit.click();
+        await this.waitForVisible(this.sel.flyoutApplyBtn, 15000);
+    }
+
+    async openEnrollmentTriggerSettings(): Promise<void> {
+        await this.openCardSettings(this.sel.enrollmentNodeCard);
+    }
+
+    async openNodeSettings(cardName: string): Promise<void> {
+        await this.openCardSettings(this.canvasCard(cardName));
+    }
+
+    /**
+     * Waits (up to timeoutMs) for the flyout Apply button to reach the expected disabled state
+     * and returns the state it ended in, so the step can report it.
+     */
+    async waitForApplyDisabledState(disabled: boolean, timeoutMs = 5000): Promise<boolean> {
+        await this.waitForVisible(this.sel.flyoutApplyBtn, 15000);
+        const btn = this.page.locator(this.sel.flyoutApplyBtn).first();
+        const end = Date.now() + timeoutMs;
+        for (;;) {
+            const actual = await btn.isDisabled();
+            if (actual === disabled || Date.now() > end) return actual;
+            await this.pause(250);
+        }
+    }
+
+    /** Clicks the flyout Apply button and waits for the flyout to close. */
+    async clickFlyoutApply(): Promise<void> {
+        if (await this.waitForApplyDisabledState(false)) throw new Error('Node Apply button is disabled, cannot apply');
+        await this.click(this.sel.flyoutApplyBtn);
+        await this.page.locator(this.sel.flyoutApplyBtn).first().waitFor({ state: 'hidden', timeout: 15000 });
+    }
+
+    async getFlyoutText(): Promise<string> {
+        return this.getText(this.sel.delayFlyoutBody, 15000);
+    }
+
+    async setCardName(name: string): Promise<void> {
+        await this.fill(this.sel.flyoutCardName, name);
+        await this.pause(500); // form validation runs on change; no DOM signal when it is done
+    }
+
+    async clickEnrollmentTab(label: string): Promise<void> {
+        const id = this.enrollmentTabIds[label];
+        if (!id) throw new Error(`Unknown enrollment trigger tab "${label}"`);
+        await this.click(`//button[@data-testid='${id}' or @data-test-id='${id}']`);
+    }
+
+    /** The selected tab's inner div is the only one with cursor-default. */
+    async isEnrollmentTabActive(label: string): Promise<boolean> {
+        const id = this.enrollmentTabIds[label];
+        if (!id) throw new Error(`Unknown enrollment trigger tab "${label}"`);
+        return this.isVisible(`//button[@data-testid='${id}']/div[contains(@class,'cursor-default')]`, 5000);
+    }
+
+    /** Turns a switch on/off and checks it stuck. */
+    private async setSwitch(selector: string, on: boolean, label: string): Promise<void> {
+        await this.waitForVisible(selector, 10000);
+        const sw = this.page.locator(selector).first();
+        if (((await sw.getAttribute('aria-checked')) === 'true') !== on) {
+            await sw.click();
+            await this.pause(800);
+        }
+        if (((await sw.getAttribute('aria-checked')) === 'true') !== on) {
+            throw new Error(`${label} switch did not turn ${on ? 'on' : 'off'}`);
+        }
+    }
+
+    async setTriggerReEnrollment(on: boolean): Promise<void> {
+        await this.setSwitch(this.sel.triggerReEnroll, on, 'Re-enrollment');
+    }
+
+    async setDelayLiveEvent(on: boolean): Promise<void> {
+        await this.setSwitch(this.sel.delayLiveSwitch, on, 'Delay Live event');
+    }
+
+    async setDelayAmountValue(value: number): Promise<void> {
+        await this.fill(this.sel.delayAmountValue, String(value));
+        await this.pause(500); // form validation runs on change; no DOM signal when it is done
+    }
+
+    async clickBranchType(type: string): Promise<void> {
+        if (type === 'Yes/No') await this.click(this.sel.branchYesNoTab);
+        else if (type === 'Multi-branch') await this.click(this.sel.branchMultiTab);
+        else throw new Error(`Unknown Branch type "${type}"`);
+    }
+
+    async clickBranchCriteria(): Promise<void> {
+        await this.click(this.sel.branchCriteriaBtn);
+        await this.page.waitForURL(/rule-builder/, { timeout: 20000 });
+    }
+
+    async clickExitTab(tab: string): Promise<void> {
+        if (tab === 'Exit Flow') await this.click(this.sel.exitFlowTab);
+        else if (tab === 'Go to workflow') await this.click(this.sel.exitGoToWorkflowTab);
+        else throw new Error(`Unknown Exit Flow tab "${tab}"`);
+    }
+
+    async setExitMarkAsGoal(on: boolean): Promise<void> {
+        await this.setSwitch(this.sel.exitGoalSwitch, on, 'Mark as goal');
+    }
+
+    private async clickAddMenuItem(kind: string): Promise<void> {
+        const items: Record<string, string> = {
+            Delay: this.sel.menuAddDelay, Branch: this.sel.menuAddBranch, Action: this.sel.addActionNode,
+            'Exit Flow': this.sel.menuAddExit, 'Repeat Flow': this.sel.menuAddRepeat,
+        };
+        const item = items[kind];
+        if (!item) throw new Error(`Unknown node type "${kind}"`);
+        await this.click(item);
+    }
+
+    /** Adds a node after the last step on the canvas (bottom-most "+"). */
+    async addNodeAfterLastStep(kind: string): Promise<void> {
+        await this.clickAddNodeDropdown('2');
+        await this.clickAddMenuItem(kind);
+    }
+
+    /** Adds a node on a Yes/No Branch path ("Yes" = first path, "No" = second). */
+    async addNodeOnBranchPath(path: string, kind: string): Promise<void> {
+        const p = path === 'Yes' ? 'p1' : path === 'No' ? 'p2' : '';
+        if (!p) throw new Error(`Unknown Branch path "${path}"`);
+        await this.click(`//div[starts-with(@data-testid,'rf__node-${p}-')]//button[@data-testid='add-node-dropdown']`);
+        await this.clickAddMenuItem(kind);
+    }
+
+    /** Adds a node after the step already on a Branch path (e.g. Exit after the Yes-path Action). */
+    async addNodeAfterBranchPathStep(kind: string): Promise<void> {
+        await this.click(this.sel.pathStepAddBtn);
+        await this.clickAddMenuItem(kind);
+    }
+
+    /** Repeat Flow: pick the target step on the canvas, then wait for the flyout. */
+    async pickRepeatTarget(cardName: string): Promise<void> {
+        await this.click(this.canvasCard(cardName));
+        await this.waitForVisible(this.sel.repeatMaxTimes, 15000);
+    }
+
+    async setRepeatMaxTimes(times: number): Promise<void> {
+        await this.fill(this.sel.repeatMaxTimes, String(times));
+        const value = await this.getInputValue(this.sel.repeatMaxTimes);
+        if (value !== String(times)) throw new Error(`Repeat max times shows ${value}, expected ${times}`);
+    }
+
+    /**
+     * Rule builder: "Add to Enrollment trigger" / "Add to Branch criteria", then wait for the canvas flyout.
+     * A click right after "Add values" can be ignored by the app (it stays on the rule builder), so retry.
+     */
+    async addCriteriaAndReturnToWorkflow(): Promise<void> {
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            await this.click(this.sel.addToEnrollmentBtn);
+            const back = await this.page.waitForURL((url) => !url.pathname.includes('rule-builder'), { timeout: 8000 })
+                .then(() => true).catch(() => false);
+            if (back) {
+                await this.waitForVisible(this.sel.flyoutApplyBtn, 15000);
+                return;
+            }
+        }
+        throw new Error('Still on the rule builder after clicking "Add to ..." 3 times');
+    }
+
+    async isCanvasCardVisible(name: string): Promise<boolean> {
+        return this.isVisible(this.canvasCard(name), 10000);
+    }
+
+    async getEnrollmentCardText(): Promise<string> {
+        return this.getText(this.sel.enrollmentNodeCard, 15000);
+    }
+
+    /** After Save draft → Confirm the app returns to the workflow list. */
+    async waitForWorkflowList(): Promise<void> {
+        await this.page.waitForURL(/\/workflow\/list/, { timeout: 30000 });
     }
 }

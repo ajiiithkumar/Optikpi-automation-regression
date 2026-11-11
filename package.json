@@ -33,7 +33,10 @@
         "test:campaign-e2e:verify": "cross-env PARALLEL_THREADS=4 EXTENT_REPORT_PATH=reports/extent/Campaign_E2E.html JSON_REPORT_PATH=reports/json/campaign-e2e.json cucumber-js -c config/cucumber.js features/e2e/campaign-execution.feature --retry 0 --tags \"@E2E-Verify\"",
         "test:campaign-e2e:immediate": "cross-env E2E_RUN_MODE=full PARALLEL_THREADS=4 EXTENT_REPORT_PATH=reports/extent/Campaign_E2E.html JSON_REPORT_PATH=reports/json/campaign-e2e.json cucumber-js -c config/cucumber.js features/e2e/campaign-execution.feature --retry 0 --tags \"@E2E-Immediate\"",
         "test:campaign-e2e:scheduled": "cross-env E2E_RUN_MODE=full PARALLEL_THREADS=4 EXTENT_REPORT_PATH=reports/extent/Campaign_E2E.html JSON_REPORT_PATH=reports/json/campaign-e2e.json cucumber-js -c config/cucumber.js features/e2e/campaign-execution.feature --retry 0 --tags \"@E2E-Scheduled\"",
-        "test:campaign-e2e:status": "node scripts/campaign-e2e-status.js"
+        "test:campaign-e2e:status": "node scripts/campaign-e2e-status.js",
+        "test:workflow-e2e": "cross-env E2E_STATE_DIR=data/workflow-e2e-state EXTENT_REPORT_PATH=reports/extent/Workflow_E2E.html JSON_REPORT_PATH=reports/json/workflow-e2e.json E2E_RUN_MODE=full PARALLEL_THREADS=3 cucumber-js -c config/cucumber.js features/e2e/workflow-execution.feature --retry 0 --tags \"@WorkflowE2E\"",
+        "test:workflow-e2e:status": "cross-env E2E_STATE_DIR=data/workflow-e2e-state node scripts/campaign-e2e-status.js",
+        "test:workflow-e2e:ci": "node scripts/workflow-e2e-batches.js"
     },
     "keywords": [],
     "author": "",

@@ -47,6 +47,18 @@ export interface CaseState {
     setup: string;
     audience?: { title: string; userIds: string[] };
     campaign?: { name: string; id?: string; versionId?: string; url?: string; publishedAt?: string; startAt?: string };
+    /** Workflow E2E (features/e2e/workflow-execution.feature): the published workflow and its Delay entries. */
+    workflow?: {
+        name: string; id?: string; url?: string; publishedAt?: string; startAt?: string; endAt?: string;
+        delayNodeId?: string; delayConfig?: string;
+        /** First "Entered" time of each user at the Delay node. */
+        delayEntries?: Record<string, string>;
+        deleted?: boolean;
+        /** When the workflow was edited and republished (edit cases). */
+        changesPublishedAt?: string;
+        /** The duplicated copy (WF-09). */
+        duplicate?: { name: string; id?: string; url?: string; delayNodeId?: string; delayEntries?: Record<string, string>; deleted?: boolean };
+    };
     users: string[];
     events: EventRecord[];
     /** Distinct communication ids per user, from the latest check. */
@@ -126,8 +138,11 @@ let runLockChecked = false;
 function checkRunLock(): void {
     if (runLockChecked) return;
     fs.mkdirSync(STATE_DIR, { recursive: true });
-    const owner = Number((readJson<{ runId: string }>(RUN_LOCK))?.runId ?? 0);
-    if (owner && String(owner) !== RUN_ID && isAlive(owner)) {
+    const lock = readJson<{ runId: string; startedAt?: string }>(RUN_LOCK);
+    const owner = Number(lock?.runId ?? 0);
+    // Older than 12 h counts as stale even if the process id looks alive (ids get reused, e.g. on Windows).
+    const fresh = !lock?.startedAt || Date.now() - Date.parse(lock.startedAt) < 12 * 60 * 60 * 1000;
+    if (owner && String(owner) !== RUN_ID && fresh && isAlive(owner)) {
         throw new Error(`Another campaign E2E run (process ${owner}) is using ${STATE_DIR}. ` +
             'Wait for it to finish, or stop it, before starting a new run.');
     }
@@ -208,6 +223,15 @@ export function getSharedAudience(userIds: string[]): SharedAudience | undefined
 
 export function saveSharedAudience(audience: SharedAudience): void {
     writeJson(audienceFile(audience.userIds), audience);
+}
+
+/** Every shared audience recorded in this state folder. */
+export function listSharedAudiences(): SharedAudience[] {
+    migrateLegacy();
+    if (!fs.existsSync(AUDIENCES_DIR)) return [];
+    return fs.readdirSync(AUDIENCES_DIR).filter((n) => n.endsWith('.json'))
+        .map((n) => readJson<SharedAudience>(path.join(AUDIENCES_DIR, n)))
+        .filter((a): a is SharedAudience => !!a?.title);
 }
 
 /** Forget a shared audience that no longer matches its user ids, so it is created again. */

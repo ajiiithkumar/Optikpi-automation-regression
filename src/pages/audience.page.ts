@@ -67,6 +67,9 @@ export class AudiencePage extends BasePage {
         editScheduleBtn: "//*[@data-testid='audience-type-modal.edit-schedule' or @data-test-id='audience-type-modal.edit-schedule']",
         updateBtn: "//*[@data-testid='audience-edit-update-btn' or @data-test-id='audience-edit-update-btn']",
         updateConfirm: "//*[@data-testid='audience-publish-edit-btn' or @data-test-id='audience-publish-edit-btn']",
+        rowDeleteAudience: "//*[@data-testid='audience-listView-tableList-dropdownIcon-1-delete-audience']",
+        deleteConfirmInput: "//*[@role='dialog']//input",
+        deleteConfirmBtn: "//*[@role='dialog']//button[normalize-space()='Delete']",
 
         // Filter & Search
         filterBtn: "//*[@data-testid='audience-table-listing-filter-btn' or @data-test-id='audience-table-listing-filter-btn']",
@@ -78,6 +81,10 @@ export class AudiencePage extends BasePage {
         criteriaEventPerformed: "//*[@data-testid='audience-ruleBuilder-criteriaIcon-group-1-event-performed' or @data-test-id='audience-ruleBuilder-criteriaIcon-group-1-event-performed']",
         criteriaevent: "//button[normalize-space()='+ event' or contains(@data-testid,'event-performed-group-1-event-btn-')]",
         eventLoginOption: "//input[@data-testid='login' or @data-test-id='login']",
+        eventCategoryDeposit: "//button[@aria-expanded][.//*[normalize-space()='Deposit'] or normalize-space()='Deposit']",
+        eventSuccessfulDeposit: "//label[@for='successful_deposit'] | //*[@data-testid='successful_deposit']",
+        eventPickerAddBtn: "//*[@role='dialog']//button[normalize-space()='Add event']",
+        ruleBuilderMain: "//main",
         eventOccurrenceExactlyOnce: "//span[@data-testid='audience-ruleBuilder-event-performed-group-1-occurrence-condition-btn-1' or @data-test-id='audience-ruleBuilder-event-performed-group-1-occurrence-condition-btn-1']",
         eventOccurrenceAtLeast: "//input[@data-testid='atleast-[#]-time' or @data-test-id='atleast-[#]-time']",
         occurrenceCountInput: "//input[@class='w-10 px-2 py-1 text-sm outline-none border-none bg-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none']",
@@ -661,6 +668,22 @@ export class AudiencePage extends BasePage {
         await this.pause(500);
     }
 
+    /** "+ event" -> Deposit -> Successful Deposit -> Add event. The row defaults to "Atleast 1 time in Today". */
+    async selectSuccessfulDepositEvent(): Promise<void> {
+        await this.clickLast(this.sel.criteriaevent);
+        await this.waitForVisible(this.sel.eventCategoryDeposit, 10000);
+        if ((await this.page.locator(this.sel.eventCategoryDeposit).first().getAttribute('aria-expanded')) !== 'true') {
+            await this.click(this.sel.eventCategoryDeposit);
+        }
+        await this.click(this.sel.eventSuccessfulDeposit);
+        if (await this.isVisible(this.sel.eventPickerAddBtn, 3000)) await this.click(this.sel.eventPickerAddBtn);
+        await this.pause(1000); // the criteria row re-renders after the picker closes; no stable signal
+    }
+
+    async getRuleBuilderText(): Promise<string> {
+        return this.getText(this.sel.ruleBuilderMain, 15000);
+    }
+
     async setAtLeastOneTime() {
         await this.click(this.sel.eventOccurrenceExactlyOnce);
         await this.pause(1000);
@@ -983,6 +1006,16 @@ export class AudiencePage extends BasePage {
 
 
 
+    /** Row menu -> Delete Audience -> type the title -> Delete (the list must already be searched to this audience). */
+    async deleteAudience(title: string): Promise<void> {
+        const titleXPath = !title.includes("'") ? `'${title}'` : `"${title}"`;
+        await this.click(`//tr[.//span[contains(normalize-space(.), ${titleXPath})]]//button[contains(@data-testid,'audience-listView-tableList-dropdownIcon')]`);
+        await this.click(this.sel.rowDeleteAudience);
+        await this.fill(this.sel.deleteConfirmInput, title);
+        await this.click(this.sel.deleteConfirmBtn);
+        await this.page.locator(this.sel.deleteConfirmBtn).first().waitFor({ state: 'hidden', timeout: 20000 });
+    }
+
     async saveUpdatedAudience() {
         const updateBtn = this.page.locator(this.sel.updateBtn).first();
         if (await updateBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
@@ -1204,6 +1237,17 @@ export class AudiencePage extends BasePage {
         }
         ExtentTestManager.logInfo('Customer list downloaded as a password-protected zip; extracted the CSV with the workspace ID');
         return csvPath;
+    }
+
+    /** Status and total customer count of the audience with this exact title, from the audience list API. */
+    async getAudienceSummaryByTitle(title: string): Promise<{ status: string; totalCustomers: number } | undefined> {
+        const params = new URLSearchParams({ page: '1', pageSize: '5', tab: 'all', search: title });
+        const url = new URL(`/en/api/audience?${params.toString()}`, this.page.url()).toString();
+        const res = await this.page.request.get(url);
+        if (!res.ok()) throw new Error(`GET /en/api/audience -> ${res.status()}`);
+        const body = await res.json();
+        const record = (body?.data?.records ?? []).find((r: any) => r.name === title);
+        return record ? { status: String(record.status), totalCustomers: Number(record.totalCustomers ?? 0) } : undefined;
     }
 
     /** Workspace ID of the current brand, read from the audience list API with the logged-in session. */
