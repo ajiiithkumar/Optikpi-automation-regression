@@ -36,7 +36,12 @@ jobs:
         run: npm ci
 
       - name: Install Chromium browser
-        run: npx playwright install --with-deps chromium
+        # The runner's default Ubuntu mirror (azure.archive.ubuntu.com) can be unreachable. Use the main
+        # Ubuntu archive; if the system packages still cannot be installed, install only the browser
+        # (downloaded from Playwright, not from Ubuntu).
+        run: |
+          sudo sed -i 's#http://azure.archive.ubuntu.com#http://archive.ubuntu.com#g' /etc/apt/sources.list.d/ubuntu.sources /etc/apt/sources.list 2>/dev/null || true
+          timeout 600 npx playwright install --with-deps chromium || npx playwright install chromium
 
       - name: Create required directories
         run: mkdir -p data/users-config
